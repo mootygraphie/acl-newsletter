@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ACL Newsletter – Générateur</title>
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,400;0,600;0,700;1,700&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --yellow: #FCD900; --black: #1A1A1A; --grey: #EFEFEF;
+  --mid: #888; --border: #E0E0E0; --font: 'Albert Sans', Helvetica, Arial, sans-serif; --radius: 10px;
+}
+body { font-family: var(--font); background: var(--grey); color: var(--black); font-size: 14px; }
+
+/* ── LOGIN ── */
+#loginScreen {
+  position: fixed; inset: 0; background: var(--black); display: flex;
+  align-items: center; justify-content: center; z-index: 9999; flex-direction: column; gap: 24px;
+}
+#loginScreen img { height: 36px; }
+.login-box { background: #222; border-radius: 12px; padding: 36px 40px; width: 340px; text-align: center; }
+.login-box h2 { font-size: 14px; font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: 0.1em; color: var(--yellow); margin-bottom: 24px; }
+.login-box input { width: 100%; padding: 12px 14px; border: 1px solid #444; border-radius: 8px; background: #111; color: #fff; font-family: var(--font); font-size: 14px; margin-bottom: 14px; outline: none; }
+.login-box input:focus { border-color: var(--yellow); }
+.login-box button { width: 100%; padding: 12px; background: var(--yellow); color: var(--black); font-family: var(--font); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; border: none; border-radius: 22px; cursor: pointer; transition: opacity 0.15s; }
+.login-box button:hover { opacity: 0.85; }
+.login-error { font-size: 12px; color: #F87171; margin-top: 10px; min-height: 18px; }
+
+/* ── APP (hidden until logged in) ── */
+#app { display: none; }
+
+/* ── TOPBAR ── */
+.topbar { background: var(--black); padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 200; gap: 16px; flex-wrap: wrap; }
+.topbar-logo { height: 24px; display: block; }
+.topbar-title { font-size: 11px; font-weight: 700; font-style: italic; letter-spacing: 0.1em; text-transform: uppercase; color: var(--yellow); }
+.topbar-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+/* ── TABS ── */
+.tabs-bar { background: #fff; border-bottom: 2px solid var(--border); padding: 0 32px; display: flex; position: sticky; top: 56px; z-index: 190; }
+.tab-btn { padding: 14px 22px; font-family: var(--font); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mid); background: none; border: none; border-bottom: 3px solid transparent; margin-bottom: -2px; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
+.tab-btn.active { color: var(--black); border-bottom-color: var(--yellow); }
+.tab-badge { display: inline-block; font-size: 9px; background: var(--grey); border-radius: 8px; padding: 2px 7px; margin-left: 6px; color: var(--mid); vertical-align: middle; }
+.tab-btn.active .tab-badge { background: var(--yellow); color: var(--black); }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* ── CONTENT ── */
+.content { padding: 28px 32px 160px; max-width: 1280px; margin: 0 auto; }
+
+/* ── AI BANNER ── */
+.ai-banner { background: var(--black); border-radius: var(--radius); padding: 18px 22px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.ai-banner-text { font-size: 13px; color: #AAA; flex: 1; line-height: 1.5; }
+.ai-banner-text strong { color: #fff; }
+.btn-ai { flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px; background: var(--yellow); color: var(--black); font-family: var(--font); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; border: none; border-radius: 20px; padding: 10px 20px; cursor: pointer; transition: opacity 0.15s; }
+.btn-ai:hover { opacity: 0.85; }
+.btn-ai:disabled { opacity: 0.4; pointer-events: none; }
+
+/* ── FORM SECTIONS ── */
+.form-section { background: #fff; border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; border: 1px solid var(--border); }
+.form-section-header { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--border); background: #FAFAFA; }
+.form-section-icon { font-size: 15px; }
+.form-section-title { font-size: 12px; font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: 0.08em; }
+.form-section-body { padding: 16px 20px; }
+
+/* ── GRIDS ── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.g4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+
+/* ── FIELDS ── */
+.field { margin-bottom: 10px; }
+.field:last-child { margin-bottom: 0; }
+.field label { display: block; font-size: 10px; font-weight: 700; color: #666; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+.field input, .field textarea, .field select { width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-family: var(--font); font-size: 13px; color: var(--black); background: #FAFAFA; }
+.field input:focus, .field textarea:focus { outline: none; border-color: var(--yellow); background: #fff; }
+.field textarea { resize: vertical; min-height: 56px; }
+.img-prev { width: 100%; height: 70px; object-fit: cover; border-radius: 5px; margin-top: 5px; border: 1px solid var(--border); display: block; }
+
+/* ── CARD GROUP ── */
+.cg { background: var(--grey); border-radius: 8px; padding: 12px; }
+.cg-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.cg-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mid); }
+
+/* ── DYNAMIC ITEMS ── */
+.dyn-item { background: #fff; border: 1px solid var(--border); border-radius: 7px; padding: 12px; margin-bottom: 8px; position: relative; }
+.btn-rm { background: none; border: none; cursor: pointer; color: #CCC; font-size: 18px; position: absolute; top: 8px; right: 10px; line-height: 1; }
+.btn-rm:hover { color: #E44; }
+.btn-add { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mid); background: none; border: 1.5px dashed var(--border); border-radius: 6px; padding: 7px 14px; cursor: pointer; margin-top: 6px; transition: border-color 0.15s; }
+.btn-add:hover { border-color: var(--yellow); color: var(--black); }
+
+/* ── EDITIONS ── */
+.ed-dropdown { position: relative; }
+.ed-menu { position: absolute; bottom: 48px; left: 0; background: #fff; border: 1px solid var(--border); border-radius: 8px; min-width: 230px; box-shadow: 0 4px 20px rgba(0,0,0,.1); z-index: 300; max-height: 300px; overflow-y: auto; display: none; }
+.ed-item { padding: 11px 16px; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px; border-bottom: 1px solid var(--border); }
+.ed-item:last-child { border-bottom: none; }
+.ed-item:hover { background: var(--grey); }
+.ed-item .ed-name { font-weight: 600; }
+.ed-item .ed-date { font-size: 10px; color: var(--mid); }
+.ed-item .ed-del { color: #CCC; }
+.ed-item .ed-del:hover { color: #E44; }
+.ed-empty { padding: 14px; text-align: center; font-size: 12px; color: var(--mid); }
+
+/* ── BOTTOM BAR ── */
+.bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid var(--border); padding: 11px 32px; display: flex; align-items: center; gap: 10px; z-index: 150; box-shadow: 0 -4px 20px rgba(0,0,0,.07); flex-wrap: wrap; }
+.btn-p { display: inline-flex; align-items: center; gap: 8px; background: var(--yellow); color: var(--black); font-family: var(--font); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; border: none; border-radius: 22px; padding: 10px 22px; cursor: pointer; transition: opacity 0.15s; }
+.btn-p:hover { opacity: 0.85; }
+.btn-s { display: inline-flex; align-items: center; gap: 8px; background: var(--black); color: #fff; font-family: var(--font); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; border: none; border-radius: 22px; padding: 10px 18px; cursor: pointer; }
+.btn-o { display: inline-flex; align-items: center; gap: 8px; background: none; color: var(--black); font-family: var(--font); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; border: 1.5px solid var(--border); border-radius: 22px; padding: 9px 16px; cursor: pointer; }
+.btn-o:hover { border-color: var(--black); }
+.btn-green { background: #16A34A !important; color: #fff !important; }
+.info { font-size: 11px; color: var(--mid); margin-left: auto; }
+
+/* ── TOAST ── */
+.toast { position: fixed; bottom: 72px; right: 28px; background: var(--black); color: #fff; padding: 11px 18px; border-radius: 8px; font-size: 12px; font-weight: 600; z-index: 999; opacity: 0; transform: translateY(8px); transition: opacity 0.2s, transform 0.2s; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.green { background: #16A34A; }
+.toast.red { background: #DC2626; }
+
+/* ── TRANSLATED NOTICE ── */
+.tl-notice { background: #FFFBEB; border: 1px solid var(--yellow); border-radius: 8px; padding: 12px 16px; margin-bottom: 18px; font-size: 12px; color: #7A6200; display: flex; align-items: center; gap: 12px; }
+.tl-notice span { flex: 1; }
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="loginScreen">
+  <img src="https://img.mailinblue.com/4363334/images/content_library/original/69e0e48670b2c00d2a044283.png" alt="ACL" />
+  <div class="login-box">
+    <h2>Accès Générateur Newsletter</h2>
+    <input type="password" id="pwdInput" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkPwd()" autofocus />
+    <button onclick="checkPwd()">Connexion</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:14px;">
+    <img src="https://img.mailinblue.com/4363334/images/content_library/original/69e0e48670b2c00d2a044283.png" alt="ACL" class="topbar-logo" />
+    <span class="topbar-title">Générateur de Newsletter</span>
+  </div>
+  <div class="topbar-actions">
+    <div class="ed-dropdown" id="edDropdown">
+      <button class="btn-o" onclick="toggleEdMenu()">📂 Éditions</button>
+      <div class="ed-menu" id="edMenu"></div>
+    </div>
+    <button class="btn-o" onclick="saveEdition()">💾 Sauvegarder</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <button class="tab-btn active" onclick="switchTab('fr',this)">🇫🇷 Français <span class="tab-badge" id="badge-fr">Source</span></button>
+  <button class="tab-btn" onclick="switchTab('en',this)">🇬🇧 English <span class="tab-badge" id="badge-en">—</span></button>
+  <button class="tab-btn" onclick="switchTab('de',this)">🇩🇪 Deutsch <span class="tab-badge" id="badge-de">—</span></button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ══ TAB FR ══ -->
+<div class="tab-pane active" id="pane-fr">
+<div class="content">
+
+  <!-- AI Banner -->
+  <div class="ai-banner">
+    <div class="ai-banner-text"><strong>✨ Génération automatique</strong> — Remplissez les sections, puis générez l'intro, l'objet et le preheader en 1 clic.</div>
+    <button class="btn-ai" id="btnAI" onclick="generateAIContent()">Générer intro &amp; objet</button>
+  </div>
+
+  <!-- AI OUTPUT -->
+  <div id="aiOutput" style="display:none;" class="form-section">
+    <div class="form-section-header"><span class="form-section-icon">✨</span><span class="form-section-title">Contenu généré par IA</span></div>
+    <div class="form-section-body">
+      <div class="g3">
+        <div class="field"><label>Objet email</label><input type="text" id="ai_subject" /></div>
+        <div class="field"><label>Preheader</label><input type="text" id="ai_preheader" /></div>
+        <div style="display:flex;align-items:flex-end;gap:8px;">
+          <button class="btn-ai" style="margin-bottom:0;" onclick="applyAIToForm()">Appliquer au formulaire</button>
+        </div>
+      </div>
+      <div class="field" style="margin-top:10px;"><label>Texte d'introduction</label><textarea id="ai_intro" rows="4"></textarea></div>
+    </div>
+  </div>
+
+  <!-- PARAMÈTRES -->
+  <div class="form-section">
+    <div class="form-section-header"><span class="form-section-icon">⚙️</span><span class="form-section-title">Paramètres généraux</span></div>
+    <div class="form-section-body">
+      <div class="g3">
+        <div class="field"><label>Édition</label><input type="text" id="fr_edition" value="Juin 2026" /></div>
+        <div class="field"><label>UTM campaign</label><input type="text" id="fr_utm" value="ACL Newsletter FR JUIN 2026" /></div>
+        <div class="field"><label>Preheader</label><input type="text" id="fr_preheader" value="Rapport annuel 2025 · Test vacances · Rallye Lëtzebuerg · Croisière Yangtze" /></div>
+      </div>
+      <div class="field" style="margin-top:10px;"><label>Texte d'introduction</label>
+        <textarea id="fr_intro" rows="4">L'été approche, et votre Club est là pour vous aider à en profiter pleinement.
+
+Ce mois-ci, nous avons réuni tout ce qu'il vous faut avant les grands départs : comment préparer votre véhicule, les meilleurs bons plans loisirs, et nos derniers essais auto.
+
+Nous sommes aussi fiers de partager les résultats de notre Rapport annuel 2025 — une année de croissance qui reflète votre confiance.
+
+Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine, séjours linguistiques pour vos enfants, et tous nos événements de la saison. Bonne lecture !</textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- PUB 1 -->
+  <div class="form-section">
+    <div class="form-section-header"><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 1</span></div>
+    <div class="form-section-body g2">
+      <div class="field"><label>URL image</label><input type="url" id="fr_pub1_img" value="https://img.mailinblue.com/4363334/images/content_library/original/6a300abac8e9e1c3ee19ff90.jpg" oninput="previewImg(this,'pp1')" /><img id="pp1" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/6a300abac8e9e1c3ee19ff90.jpg" /></div>
+      <div class="field"><label>Lien cliquable (opt.)</label><input type="url" id="fr_pub1_link" placeholder="https://..." /></div>
+    </div>
+  </div>
+
+  <!-- À LA UNE -->
+  <div class="form-section">
+    <div class="form-section-header"><span class="form-section-icon">🗞</span><span class="form-section-title">À la une</span></div>
+    <div class="form-section-body g2">
+      <div>
+        <div class="field"><label>Image (640×300)</label><input type="url" id="fr_une_img" value="https://img.mailinblue.com/4363334/images/content_library/original/6a2fbe4b4c87acf1b003cc4d.png" oninput="previewImg(this,'ppu')" /><img id="ppu" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/6a2fbe4b4c87acf1b003cc4d.png" /></div>
+        <div class="field"><label>Étiquette thème</label><input type="text" id="fr_une_tag" value="Rapport annuel 2025" /></div>
+      </div>
+      <div>
+        <div class="field"><label>Titre</label><input type="text" id="fr_une_title" value="L'ACL en 2025 : les chiffres d'une année de croissance" /></div>
+        <div class="field"><label>Texte</label><textarea id="fr_une_text">Près de 196 000 appels traités, 85 % de pannes résolues sur place, 98 % de membres satisfaits et plus de 10 000 nouveaux adhérents : 2025 confirme l'ACL dans son rôle de partenaire de mobilité au quotidien.</textarea></div>
+        <div class="g2"><div class="field"><label>CTA texte</label><input type="text" id="fr_une_cta" value="En savoir plus" /></div><div class="field"><label>CTA lien</label><input type="url" id="fr_une_url" value="https://www.acl.lu/fr/magazine/communique-de-presse/ag2026/" /></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTUALITÉS -->
+  <div class="form-section">
+    <div class="form-section-header"><span class="form-section-icon">📰</span><span class="form-section-title">Actualités — vignettes</span></div>
+    <div class="form-section-body"><div id="fr_actu_c" class="g2"></div><button class="btn-add" onclick="addActu('fr')">+ Ajouter une vignette</button></div>
+  </div>
+
+  <!-- EN BREF -->
+  <div class="form-section">
+    <div class="form-section-header"><span class="form-section-icon">⚡</span><span class="form-section-title">En bref</span></div>
+    <div class="form-section-body"><div id="fr_bref_c"></div><button class="btn-add" onclick="addBref('fr')">+ Ajouter un item</button></div>
+  </div>
+
+  <!-- PUB 2 -->
+  <div class="form-section">
+    <div class="form-section-header"><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 2</span></div>
+    <div class="form-section-body g2">
+      <div class="field"><label>URL image</label><input type="url" id="fr_pub2_img" value="https://img.mailinblue.com/4363334/images/content_library/original/69675df04a53a52a8e9e9f56.jpg" oninput="previewImg(this,'pp2')" /><img id="pp2" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/69675df04a53a52a8e9e9f56.jpg" /></div>
+      <div class="field"><label>Lien cliquable (opt.)</label><input type="url" id="fr_pub2_link" placeholder="https://..." /></div>
+    </div>
+  </div>
+
+  <!-- BANC D'ESSAI -->
+  <div class="form-section">
+    <div class="form-section-header"><span class="form-section-icon">🚗</span><span class="form-section-title">Au banc d'essai</span></div>
+    <div class="form-section-body"><div id="fr_banc_c"></div><button class="btn-add" onclick="addBanc('fr')">+ Ajouter un essai</button></div>
+  </div>
+
+  <!-- VOYAGES -->
+  <div class="form-section">
+    <div class="form-section-header"><span class="form-section-icon">✈️</span><span class="form-section-title">Nos Voyages</span></div>
+    <div class="form-section-body">
+      <div class="cg" style="margin-bottom:14px;">
+        <div class="cg-label" style="margin-bottom:10px;">Article principal (pleine largeur)</div>
+        <div class="g2">
+          <div class="field"><label>Image</label><input type="url" id="fr_vm_img" value="https://img.mailinblue.com/4363334/images/content_library/original/6a2fcda487ff7b8ea43e0df0.png" oninput="previewImg(this,'ppvm')" /><img id="ppvm" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/6a2fcda487ff7b8ea43e0df0.png" /></div>
+          <div>
+            <div class="field"><label>Titre</label><input type="text" id="fr_vm_title" value="Séjours linguistiques avec Juvigo" /></div>
+            <div class="field"><label>Texte</label><textarea id="fr_vm_text">Des expériences inoubliables pour les enfants et les adolescents</textarea></div>
+            <div class="field"><label>Lien CTA</label><input type="url" id="fr_vm_url" value="https://www.acl.lu/fr/voyages-organises/destinations/sejours-linguistiques-avec-juvigo/" /></div>
+          </div>
+        </div>
+      </div>
+      <div id="fr_voy_c" class="g2"></div>
+      <button class="btn-add" onclick="addVoy('fr')">+ Ajouter une carte voyage</button>
+    </div>
+  </div>
+
+  <!-- AGENDA -->
+  <div class="form-section">
+    <div class="form-section-header"><span class="form-section-icon">📅</span><span class="form-section-title">L'Agenda</span></div>
+    <div class="form-section-body"><div id="fr_agenda_c"></div><button class="btn-add" onclick="addAgenda('fr')">+ Ajouter un événement</button></div>
+  </div>
+
+  <!-- AUTOTOURING -->
+  <div class="form-section">
+    <div class="form-section-header"><span class="form-section-icon">📖</span><span class="form-section-title">Autotouring</span></div>
+    <div class="form-section-body g2">
+      <div class="field"><label>Image</label><input type="url" id="fr_auto_img" value="https://img.mailinblue.com/4363334/images/content_library/original/69fc509afbf75c9e7ebbd9c8.png" oninput="previewImg(this,'ppa')" /><img id="ppa" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/69fc509afbf75c9e7ebbd9c8.png" /></div>
+      <div>
+        <div class="field"><label>Date de parution</label><input type="text" id="fr_auto_date" value="29 juin 2026" /></div>
+        <div class="field"><label>Lien</label><input type="url" id="fr_auto_url" value="https://autotouring.acl.lu/fr/publications/" /></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECRUTEMENT -->
+  <div class="form-section">
+    <div class="form-section-header"><span class="form-section-icon">💼</span><span class="form-section-title">Recrutement</span></div>
+    <div class="form-section-body">
+      <div class="field" style="margin-bottom:12px;"><label>Lien "Toutes nos offres"</label><input type="url" id="fr_job_url" value="https://www.acl.lu/fr/nos-offres-demplois/" /></div>
+      <div id="fr_jobs_c"></div>
+      <button class="btn-add" onclick="addJob('fr')">+ Ajouter un poste</button>
+    </div>
+  </div>
+
+  <!-- PARRAINAGE -->
+  <div class="form-section">
+    <div class="form-section-header"><span class="form-section-icon">🎁</span><span class="form-section-title">Parrainage</span></div>
+    <div class="form-section-body g2">
+      <div class="field"><label>Image (opt.)</label><input type="url" id="fr_parr_img" placeholder="https://..." /></div>
+      <div>
+        <div class="field"><label>Texte</label><textarea id="fr_parr_text">Faites découvrir l'ACL à vos proches et recevez un bon d'achat dès leur adhésion.</textarea></div>
+        <div class="field"><label>Lien CTA</label><input type="url" id="fr_parr_url" value="https://www.acl.lu/myacl/fr/referral/" /></div>
+      </div>
+    </div>
+  </div>
+
+</div></div><!-- /pane FR -->
+
+<!-- ══ TABS EN & DE — remplis dynamiquement ══ -->
+<div class="tab-pane" id="pane-en">
+  <div class="content">
+    <div class="tl-notice"><span>🤖 <strong>Onglet traduit automatiquement depuis le FR.</strong> Modifiez les champs si nécessaire avant de générer.</span><button class="btn-ai" onclick="translateTab('en')">↻ Re-traduire</button></div>
+    <div id="en_fields"></div>
+  </div>
+</div>
+
+<div class="tab-pane" id="pane-de">
+  <div class="content">
+    <div class="tl-notice"><span>🤖 <strong>Onglet traduit automatiquement depuis le FR.</strong> Modifiez les champs si nécessaire avant de générer.</span><button class="btn-ai" onclick="translateTab('de')">↻ Re-traduire</button></div>
+    <div id="de_fields"></div>
+  </div>
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bottom-bar">
+  <button class="btn-p" id="btnGC" onclick="generateAndCopy(currentLang)">
+    <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 3l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Générer &amp; Copier
+  </button>
+  <button class="btn-s" onclick="openPreview(currentLang)">👁 Aperçu</button>
+  <button class="btn-ai" id="btnTranslate" style="display:none;" onclick="translateAll()">🌐 Traduire EN + DE</button>
+  <span class="info" id="charsInfo"></span>
+</div>
+
+</div><!-- /app -->
+
+<!-- ══════════════════════════════════
+     FIREBASE SDK (module)
+══════════════════════════════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyAxHoNVE8SRT_w7c7W4-kM1jwVFwsZvzjI",
+  authDomain: "newsletter-acl.firebaseapp.com",
+  projectId: "newsletter-acl",
+  storageBucket: "newsletter-acl.firebasestorage.app",
+  messagingSenderId: "625374792473",
+  appId: "1:625374792473:web:f14b1f8f089de98967d388"
+});
+
+const db = getFirestore(app);
+window._db = db;
+window._fs = { collection, doc, setDoc, getDocs, deleteDoc, query, orderBy };
+document.dispatchEvent(new Event('firebase-ready'));
+</script>
+
+<!-- ══════════════════════════════════
+     MAIN JS
+══════════════════════════════════ -->
+<script>
+// ── PASSWORD ──────────────────────────────────────
+const HASH = '9e930104ae3310baf5493c4540c5e3af4e753cc5dcf0c9468af7d17d004247e3';
+
+async function checkPwd() {
+  const val = document.getElementById('pwdInput').value;
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(val));
+  const hex = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  if (hex === HASH) {
+    sessionStorage.setItem('acl_auth','1');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initApp();
+  } else {
+    document.getElementById('loginError').textContent = 'Mot de passe incorrect';
+    document.getElementById('pwdInput').value = '';
+  }
+}
+
+// Auto-login si déjà authentifié dans cette session
+if (sessionStorage.getItem('acl_auth') === '1') {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}
+
+// ── STATE ─────────────────────────────────────────
+let currentLang = 'fr';
+let generatedHTML = { fr: '', en: '', de: '' };
+
+const D = {
+  fr: {
+    actu: [
+      { img: 'https://img.mailinblue.com/4363334/images/content_library/original/6a2fbed387ff7b8ea43e055c.png', title: "Les vacances d'été approchent. Comment bien se préparer en 8 points !", url: 'https://www.acl.lu/fr/magazine/conseils/les-vacances-dete-approchent-comment-bien-se-preparer-en-8-points/' },
+      { img: 'https://img.mailinblue.com/4363334/images/content_library/original/6a2fbffcc8e9e1c3ee19d947.png', title: "Parc d'attraction, les bons plans de l'ACL", url: 'https://www.acl.lu/fr/magazine/actualites/des-loisirs-a-prix-reduit-avec-lacl/' }
+    ],
+    bref: [
+      { cat: 'Conseil', title: "Test vacances au Diagnostic Center", url: 'https://www.acl.lu/fr/mobilite/diagnostic-vehicule/' },
+      { cat: 'Sport', title: 'Rallye Lëtzebuerg 2026 : le programme arrive', url: 'https://www.acl.lu/sport/fr/magazine/automobile/la-brochure-du-rallye-letzebuerg-2026-en-vente-a-lacl/' },
+      { cat: 'Actu', title: "Le Centre de Logopédie en visite à l'ACL", url: 'https://www.acl.lu/fr/magazine/actualites/le-centre-de-logopedie-de-strassen-en-visite-a-lacl/' },
+      { cat: 'Club', title: "Enquête : quels services pour votre véhicule de prestige ?", url: 'https://acl-assistance-prestige2026.paperform.co/' }
+    ],
+    banc: [
+      { img: 'https://img.mailinblue.com/4363334/images/content_library/original/6a2fc89387ff7b8ea43e0ada.png', title: 'JAECOO J8 SHS-P, le grand SUV chinois qui dérange !', url: 'https://youtu.be/_U9VsVUVKrY', luxgear: true },
+      { img: 'https://img.mailinblue.com/4363334/images/content_library/original/6a2fc72d87ff7b8ea43e0a02.png', title: 'Aston Martin DB12 S, le grand tourisme dans toute sa splendeur', url: 'https://autotouring.acl.lu/fr/aston-martin-db12-s/', luxgear: false }
+    ],
+    voy: [
+      { img: 'https://img.mailinblue.com/4363334/images/content_library/original/6a201c0518dc4e63a0c1ef01.png', badge: "Séance d'info · 01.07.2026", title: 'Croisière sur le Yangtze & la légendaire Route de la Soie', text: 'Deux voyages en Chine. Séances en allemand (17h) et français (19h30).', url: 'https://www.acl.lu/fr/agenda/evenements/seance-dinformation-20-ans-deuroasie-deux-voyages-exceptionnels-en-chine/' },
+      { img: 'https://img.mailinblue.com/4363334/images/content_library/original/6a2fcd7d4c87acf1b003d4f2.png', badge: 'Témoignage', title: 'Toscana Splendida', text: "L'Italie dans toute sa splendeur, par Lydia Mutsch.", url: 'https://www.acl.lu/fr/magazine/temoignages-de-voyages/toscana-splendida-litalie-dans-toute-sa-splendeur/' }
+    ],
+    agenda: [
+      { jour: 'SAM', num: '28', mois: 'JUIN', cat: 'Diagnostic', title: 'Test vacances au Diagnostic Center', details: 'ACL Bertrange · Sur rendez-vous', url: 'https://www.acl.lu/fr/mobilite/diagnostic-vehicule/' },
+      { jour: 'MER', num: '01', mois: 'JUIL', cat: "Séance d'info", title: '20 ans EuroAsie : deux voyages en Chine', details: 'ACL Bertrange · 17h00 (DE) & 19h30 (FR)', url: 'https://www.acl.lu/fr/agenda/' },
+      { jour: 'SAM', num: '05', mois: 'JUIL', cat: 'Formation', title: 'Stage de perfectionnement moto', details: 'ACL Driving Center · 08h30', url: 'https://www.acl.lu/fr/agenda/' },
+      { jour: 'SAM', num: '12', mois: 'JUIL', cat: 'Atelier', title: 'Sécurité des enfants à bord', details: 'ACL Bertrange · 10h00', url: 'https://www.acl.lu/fr/agenda/' }
+    ],
+    jobs: [
+      { title: 'Dépanneur / Dépanneuse', detail: 'H/F · CDI · Temps plein', url: 'https://www.acl.lu/fr/carrieres/une-depanneur-depanneuse-h-f-cdi-temps-plein/' },
+      { title: 'Agent « Assistance Center »', detail: 'H/F · CDI · Temps plein', url: 'https://www.acl.lu/fr/carrieres/un-agent-assistance-center-h-f-cdi-temps-plein/' },
+      { title: 'Chargé(e) de Projets Communication', detail: 'CDI · Temps plein', url: 'https://www.acl.lu/fr/carrieres/charge-projets-communication/' }
+    ]
+  },
+  en: { actu:[], bref:[], banc:[], voy:[], agenda:[], jobs:[] },
+  de: { actu:[], bref:[], banc:[], voy:[], agenda:[], jobs:[] }
+};
+
+// ── HELPERS ───────────────────────────────────────
+function v(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+function esc(s) { return (s||'').replace(/&(?!amp;|lt;|gt;|quot;|#)/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function previewImg(el, id) { const t = document.getElementById(id); if(t) t.src = el.value; }
+function toast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show ' + type;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function utm(url, lang) {
+  const c = encodeURIComponent(v(lang+'_utm') || 'ACL Newsletter');
+  if (!url) return '#';
+  return url + (url.includes('?')? '&':'?') + 'utm_source=brevo&utm_medium=email&utm_campaign='+c;
+}
+
+// ── RENDER DYNAMIC SECTIONS ───────────────────────
+function renderAll(lang) {
+  renderActu(lang); renderBref(lang); renderBanc(lang);
+  renderVoy(lang); renderAgenda(lang); renderJobs(lang);
+}
+
+function renderActu(lang) {
+  const c = document.getElementById(lang+'_actu_c'); if(!c) return;
+  const data = D[lang].actu;
+  c.innerHTML = data.map((d,i) => `
+    <div class="cg"><div class="cg-header"><span class="cg-label">Vignette ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','actu',${i})">×</button></div>
+    <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].actu[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /></div>
+    <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].actu[${i}].title=this.value" /></div>
+    <div class="field"><label>Lien</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].actu[${i}].url=this.value" /></div>
+    </div>`).join('');
+}
+
+function renderBref(lang) {
+  const c = document.getElementById(lang+'_bref_c'); if(!c) return;
+  const data = D[lang].bref;
+  c.innerHTML = data.map((d,i) => `
+    <div class="dyn-item"><button class="btn-rm" onclick="rm('${lang}','bref',${i})">×</button>
+    <div class="g3" style="gap:8px;">
+      <div class="field"><label>Catégorie</label><input type="text" value="${esc(d.cat||'')}" oninput="D['${lang}'].bref[${i}].cat=this.value" /></div>
+      <div class="field" style="grid-column:span 2"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].bref[${i}].title=this.value" /></div>
+    </div>
+    <div class="field"><label>Lien</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].bref[${i}].url=this.value" /></div>
+    </div>`).join('');
+}
+
+function renderBanc(lang) {
+  const c = document.getElementById(lang+'_banc_c'); if(!c) return;
+  const data = D[lang].banc;
+  c.innerHTML = data.map((d,i) => `
+    <div class="dyn-item"><button class="btn-rm" onclick="rm('${lang}','banc',${i})">×</button>
+    <div class="g2" style="gap:10px;">
+      <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].banc[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /></div>
+      <div>
+        <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].banc[${i}].title=this.value" /></div>
+        <div class="field"><label>Lien</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].banc[${i}].url=this.value" /></div>
+        <div class="field"><label><input type="checkbox" ${d.luxgear?'checked':''} onchange="D['${lang}'].banc[${i}].luxgear=this.checked" /> Bouton LuxGear</label></div>
+      </div>
+    </div></div>`).join('');
+}
+
+function renderVoy(lang) {
+  const c = document.getElementById(lang+'_voy_c'); if(!c) return;
+  const data = D[lang].voy;
+  c.innerHTML = data.map((d,i) => `
+    <div class="cg"><div class="cg-header"><span class="cg-label">Carte ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','voy',${i})">×</button></div>
+    <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].voy[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /></div>
+    <div class="field"><label>Badge</label><input type="text" value="${esc(d.badge||'')}" oninput="D['${lang}'].voy[${i}].badge=this.value" /></div>
+    <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].voy[${i}].title=this.value" /></div>
+    <div class="field"><label>Texte</label><textarea oninput="D['${lang}'].voy[${i}].text=this.value">${esc(d.text||'')}</textarea></div>
+    <div class="field"><label>Lien</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].voy[${i}].url=this.value" /></div>
+    </div>`).join('');
+}
+
+function renderAgenda(lang) {
+  const c = document.getElementById(lang+'_agenda_c'); if(!c) return;
+  const data = D[lang].agenda;
+  c.innerHTML = data.map((d,i) => `
+    <div class="dyn-item"><button class="btn-rm" onclick="rm('${lang}','agenda',${i})">×</button>
+    <div class="g4" style="gap:8px;margin-bottom:8px;">
+      <div class="field"><label>Jour</label><input type="text" value="${esc(d.jour||'')}" placeholder="SAM" oninput="D['${lang}'].agenda[${i}].jour=this.value" /></div>
+      <div class="field"><label>Num</label><input type="text" value="${esc(d.num||'')}" placeholder="28" oninput="D['${lang}'].agenda[${i}].num=this.value" /></div>
+      <div class="field"><label>Mois</label><input type="text" value="${esc(d.mois||'')}" placeholder="JUIN" oninput="D['${lang}'].agenda[${i}].mois=this.value" /></div>
+      <div class="field"><label>Catégorie</label><input type="text" value="${esc(d.cat||'')}" oninput="D['${lang}'].agenda[${i}].cat=this.value" /></div>
+    </div>
+    <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].agenda[${i}].title=this.value" /></div>
+    <div class="field"><label>Détails (lieu · horaire)</label><input type="text" value="${esc(d.details||'')}" oninput="D['${lang}'].agenda[${i}].details=this.value" /></div>
+    <div class="field"><label>Lien</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].agenda[${i}].url=this.value" /></div>
+    </div>`).join('');
+}
+
+function renderJobs(lang) {
+  const c = document.getElementById(lang+'_jobs_c'); if(!c) return;
+  const data = D[lang].jobs;
+  c.innerHTML = data.map((d,i) => `
+    <div class="dyn-item"><button class="btn-rm" onclick="rm('${lang}','jobs',${i})">×</button>
+    <div class="g3" style="gap:8px;">
+      <div class="field" style="grid-column:span 2"><label>Intitulé</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].jobs[${i}].title=this.value" /></div>
+      <div class="field"><label>Détails</label><input type="text" value="${esc(d.detail||'')}" oninput="D['${lang}'].jobs[${i}].detail=this.value" /></div>
+    </div>
+    <div class="field"><label>Lien offre</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].jobs[${i}].url=this.value" /></div>
+    </div>`).join('');
+}
+
+function rm(lang, key, i) { D[lang][key].splice(i,1); ({ actu:renderActu, bref:renderBref, banc:renderBanc, voy:renderVoy, agenda:renderAgenda, jobs:renderJobs })[key](lang); }
+function addActu(l)  { D[l].actu.push({img:'',title:'',url:''}); renderActu(l); }
+function addBref(l)  { D[l].bref.push({cat:'',title:'',url:''}); renderBref(l); }
+function addBanc(l)  { D[l].banc.push({img:'',title:'',url:'',luxgear:false}); renderBanc(l); }
+function addVoy(l)   { D[l].voy.push({img:'',badge:'',title:'',text:'',url:''}); renderVoy(l); }
+function addAgenda(l){ D[l].agenda.push({jour:'',num:'',mois:'',cat:'',title:'',details:'',url:''}); renderAgenda(l); }
+function addJob(l)   { D[l].jobs.push({title:'',detail:'',url:''}); renderJobs(l); }
+
+// ── TABS ─────────────────────────────────────────
+function switchTab(lang, btn) {
+  currentLang = lang;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('pane-'+lang).classList.add('active');
+  document.getElementById('btnTranslate').style.display = lang === 'fr' ? 'none' : 'inline-flex';
+}
+
+// ── INIT APP ──────────────────────────────────────
+function initApp() {
+  renderAll('fr');
+  loadEditionsList();
+}
+document.addEventListener('DOMContentLoaded', () => {
+  if (sessionStorage.getItem('acl_auth') === '1') initApp();
+});
+
+// ── ANTHROPIC API ─────────────────────────────────
+async function callClaude(prompt, maxTokens=2000) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6', max_tokens: maxTokens,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const data = await res.json();
+  const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+  const clean = text.replace(/```json[\s\S]*?```|```/g,'').trim();
+  try { return JSON.parse(clean); } catch { return text; }
+}
+
+// ── AI GENERATE ───────────────────────────────────
+async function generateAIContent() {
+  const btn = document.getElementById('btnAI');
+  btn.disabled = true; btn.textContent = '⏳ Génération...';
+  const titles = [v('fr_une_title'), ...D.fr.actu.map(c=>c.title), ...D.fr.bref.map(c=>c.title), ...D.fr.banc.map(c=>c.title), v('fr_vm_title'), ...D.fr.voy.map(c=>c.title), ...D.fr.agenda.map(c=>c.title)].filter(Boolean);
+  const prompt = `Tu rédiges pour la newsletter de l'ACL (Automobile Club du Luxembourg). Ton : chaleureux, proche, "votre Club", "nous", jamais corporate. Édition : ${v('fr_edition')}.
+
+Articles : ${titles.map((t,i)=>`${i+1}. ${t}`).join('\n')}
+
+Génère en JSON strict (sans markdown) :
+{"subject":"Objet email court et accrocheur (max 60 car.)","preheader":"Aperçu boite mail, 1 phrase max 110 car.","intro":"Introduction en 3-4 paragraphes courts séparés par \\n\\n, ton proche"}`;
+  try {
+    const r = await callClaude(prompt, 800);
+    document.getElementById('aiOutput').style.display = 'block';
+    if (typeof r === 'object') {
+      document.getElementById('ai_subject').value = r.subject||'';
+      document.getElementById('ai_preheader').value = r.preheader||'';
+      document.getElementById('ai_intro').value = r.intro||'';
+    }
+    toast('Contenu généré ✓', 'green');
+  } catch(e) { toast('Erreur API : '+e.message, 'red'); }
+  btn.disabled = false; btn.textContent = '↻ Regénérer';
+}
+
+function applyAIToForm() {
+  const s = v('ai_subject'), p = v('ai_preheader'), i = v('ai_intro');
+  if (p) document.getElementById('fr_preheader').value = p;
+  if (i) document.getElementById('fr_intro').value = i;
+  toast('Appliqué au formulaire ✓', 'green');
+}
+
+// ── TRANSLATION ───────────────────────────────────
+async function translateAll() { await translateTab('en'); await translateTab('de'); }
+
+async function translateTab(lang) {
+  const langName = lang === 'en' ? 'English' : 'German';
+  toast('⏳ Traduction '+lang.toUpperCase()+'...');
+  const frData = collectFR();
+  const prompt = `Translate this ACL Luxembourg newsletter content to ${langName}. Keep warm, member-friendly tone. Keep all URLs unchanged. Keep technical terms (CDI, H/F) as-is. Return ONLY valid JSON, no markdown.\n\n${JSON.stringify(frData)}`;
+  try {
+    const r = await callClaude(prompt, 4000);
+    if (typeof r === 'object') {
+      applyTranslation(lang, r);
+      document.getElementById('badge-'+lang).textContent = '✓ Traduit';
+      toast('Traduction '+lang.toUpperCase()+' ✓', 'green');
+    } else { toast('Réponse inattendue', 'red'); }
+  } catch(e) { toast('Erreur : '+e.message, 'red'); }
+}
+
+function collectFR() {
+  return {
+    edition: v('fr_edition'), utm: v('fr_utm'), preheader: v('fr_preheader'), intro: v('fr_intro'),
+    pub1_link: v('fr_pub1_link'), pub1_img: v('fr_pub1_img'),
+    pub2_link: v('fr_pub2_link'), pub2_img: v('fr_pub2_img'),
+    une: { img: v('fr_une_img'), tag: v('fr_une_tag'), title: v('fr_une_title'), text: v('fr_une_text'), cta: v('fr_une_cta'), url: v('fr_une_url') },
+    actu: D.fr.actu, bref: D.fr.bref, banc: D.fr.banc,
+    vm: { img: v('fr_vm_img'), title: v('fr_vm_title'), text: v('fr_vm_text'), url: v('fr_vm_url') },
+    voy: D.fr.voy, agenda: D.fr.agenda,
+    auto: { img: v('fr_auto_img'), date: v('fr_auto_date'), url: v('fr_auto_url') },
+    job_url: v('fr_job_url'), jobs: D.fr.jobs,
+    parr: { img: v('fr_parr_img'), text: v('fr_parr_text'), url: v('fr_parr_url') }
+  };
+}
+
+function applyTranslation(lang, d) {
+  // Copy array data
+  if (d.actu) D[lang].actu = d.actu;
+  if (d.bref) D[lang].bref = d.bref;
+  if (d.banc) D[lang].banc = d.banc;
+  if (d.voy)  D[lang].voy  = d.voy;
+  if (d.agenda) D[lang].agenda = d.agenda;
+  if (d.jobs) D[lang].jobs = d.jobs;
+
+  const u = d.une||{}, vm = d.vm||{}, au = d.auto||{}, pa = d.parr||{};
+
+  document.getElementById(lang+'_fields').innerHTML = buildTranslatedFields(lang, d);
+  renderAll(lang);
+}
+
+function buildTranslatedFields(lang, d) {
+  const u = d.une||{}, vm = d.vm||{}, au = d.auto||{}, pa = d.parr||{};
+  return `
+  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">⚙️</span><span class="form-section-title">Paramètres généraux</span></div>
+  <div class="form-section-body"><div class="g3">
+    <div class="field"><label>Édition</label><input type="text" id="${lang}_edition" value="${esc(d.edition||'')}" /></div>
+    <div class="field"><label>UTM</label><input type="text" id="${lang}_utm" value="${esc(d.utm||'')}" /></div>
+    <div class="field"><label>Preheader</label><input type="text" id="${lang}_preheader" value="${esc(d.preheader||'')}" /></div>
+  </div><div class="field" style="margin-top:10px;"><label>Introduction</label><textarea id="${lang}_intro" rows="4">${esc(d.intro||'')}</textarea></div></div></div>
+
+  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">🗞</span><span class="form-section-title">À la une</span></div>
+  <div class="form-section-body g2">
+    <div><div class="field"><label>Image</label><input type="url" id="${lang}_une_img" value="${esc(u.img||'')}" /><img class="img-prev" src="${u.img||''}" /></div>
+    <div class="field"><label>Étiquette</label><input type="text" id="${lang}_une_tag" value="${esc(u.tag||'')}" /></div></div>
+    <div><div class="field"><label>Titre</label><input type="text" id="${lang}_une_title" value="${esc(u.title||'')}" /></div>
+    <div class="field"><label>Texte</label><textarea id="${lang}_une_text">${esc(u.text||'')}</textarea></div>
+    <div class="g2"><div class="field"><label>CTA</label><input type="text" id="${lang}_une_cta" value="${esc(u.cta||'')}" /></div>
+    <div class="field"><label>URL</label><input type="url" id="${lang}_une_url" value="${esc(u.url||'')}" /></div></div></div>
+  </div></div>
+
+  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">📰</span><span class="form-section-title">Actualités</span></div>
+  <div class="form-section-body"><div id="${lang}_actu_c" class="g2"></div><button class="btn-add" onclick="addActu('${lang}')">+ Ajouter</button></div></div>
+
+  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">⚡</span><span class="form-section-title">En bref</span></div>
+  <div class="form-section-body"><div id="${lang}_bref_c"></div><button class="btn-add" onclick="addBref('${lang}')">+ Ajouter</button></div></div>
+
+  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">🚗</span><span class="form-section-title">Au banc d'essai</span></div>
+  <div class="form-section-body"><div id="${lang}_banc_c"></div><button class="btn-add" onclick="addBanc('${lang}')">+ Ajouter</button></div></div>
+
+  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">✈️</span><span class="form-section-title">Voyages</span></div>
+  <div class="form-section-body">
+    <div class="cg" style="margin-bottom:12px;"><div class="cg-label" style="margin-bottom:8px;">Principal</div>
+    <div class="g2"><div class="field"><label>Image</label><input type="url" id="${lang}_vm_img" value="${esc(vm.img||'')}" /><img class="img-prev" src="${vm.img||''}" /></div>
+    <div><div class="field"><label>Titre</label><input type="text" id="${lang}_vm_title" value="${esc(vm.title||'')}" /></div>
+    <div class="field"><label>Texte</label><textarea id="${lang}_vm_text">${esc(vm.text||'')}</textarea></div>
+    <div class="field"><label>URL</label><input type="url" id="${lang}_vm_url" value="${esc(vm.url||'')}" /></div></div></div></div>
+    <div id="${lang}_voy_c" class="g2"></div><button class="btn-add" onclick="addVoy('${lang}')">+ Ajouter</button>
+  </div></div>
+
+  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">📅</span><span class="form-section-title">Agenda</span></div>
+  <div class="form-section-body"><div id="${lang}_agenda_c"></div><button class="btn-add" onclick="addAgenda('${lang}')">+ Ajouter</button></div></div>
+
+  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">📖</span><span class="form-section-title">Autotouring</span></div>
+  <div class="form-section-body g2">
+    <div class="field"><label>Image</label><input type="url" id="${lang}_auto_img" value="${esc(au.img||'')}" /><img class="img-prev" src="${au.img||''}" /></div>
+    <div><div class="field"><label>Date</label><input type="text" id="${lang}_auto_date" value="${esc(au.date||'')}" /></div>
+    <div class="field"><label>URL</label><input type="url" id="${lang}_auto_url" value="${esc(au.url||'')}" /></div></div>
+  </div></div>
+
+  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">💼</span><span class="form-section-title">Recrutement</span></div>
+  <div class="form-section-body"><div class="field" style="margin-bottom:10px;"><label>URL offres</label><input type="url" id="${lang}_job_url" value="${esc(d.job_url||'')}" /></div>
+  <div id="${lang}_jobs_c"></div><button class="btn-add" onclick="addJob('${lang}')">+ Ajouter</button></div></div>
+
+  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">🎁</span><span class="form-section-title">Parrainage</span></div>
+  <div class="form-section-body g2">
+    <div class="field"><label>Image (opt.)</label><input type="url" id="${lang}_parr_img" value="${esc(pa.img||'')}" /></div>
+    <div><div class="field"><label>Texte</label><textarea id="${lang}_parr_text">${esc(pa.text||'')}</textarea></div>
+    <div class="field"><label>URL</label><input type="url" id="${lang}_parr_url" value="${esc(pa.url||'')}" /></div></div>
+  </div></div>`;
+}
+
+// ── HTML GENERATION ───────────────────────────────
+function generateAndCopy(lang) {
+  const html = buildHTML(lang);
+  generatedHTML[lang] = html;
+  navigator.clipboard.writeText(html).then(() => {
+    const btn = document.getElementById('btnGC');
+    const orig = btn.innerHTML;
+    btn.classList.add('btn-green'); btn.textContent = '✓ HTML généré & copié !';
+    document.getElementById('charsInfo').textContent = html.length.toLocaleString('fr-FR') + ' caractères';
+    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('btn-green'); }, 3000);
+  }).catch(() => toast('Erreur clipboard', 'red'));
+}
+
+function openPreview(lang) {
+  const html = generatedHTML[lang] || buildHTML(lang);
+  const w = window.open('', '_blank');
+  w.document.write(html); w.document.close();
+}
+
+function buildHTML(lang) {
+  const p = lang+'_';
+  const uu = (url) => { if(!url) return '#'; const s=url.includes('?')?'&':'?'; return url+s+'utm_source=brevo&utm_medium=email&utm_campaign='+encodeURIComponent(v(p+'utm')||'ACL Newsletter'); };
+
+  const salut = lang === 'de'
+    ? '{% if contact.CIVILITE == "Frau" %}Liebes{% else %}Liebes{% endif %} {% if contact.PRENOM %}{{ contact.PRENOM }}{% else %}Mitglied{% endif %}'
+    : lang === 'en'
+    ? '{% if contact.PRENOM %}Dear {{ contact.PRENOM }}{% else %}Dear Member{% endif %}'
+    : '{% if contact.CIVILITE == "Madame" %}Chère{% else %}Cher{% endif %} {% if contact.PRENOM %}{{ contact.PRENOM }}{% else %}Membre{% endif %}';
+
+  const introParas = (v(p+'intro')||'').split('\n\n').filter(Boolean)
+    .map(t => `    <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:14px;line-height:1.75;color:#555555;margin:0 0 12px 0;">${esc(t)}</p>`).join('\n');
+
+  const agendaH = D[lang].agenda.map(ev => `
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:10px;background-color:#FFFFFF;border-radius:6px;">
+      <tr>
+        <td width="68" valign="middle" align="center" style="background-color:#1A1A1A;border-radius:6px 0 0 6px;padding:14px 10px;">
+          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;color:#FCD900;margin:0;line-height:1;">${esc(ev.jour)}</p>
+          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:24px;color:#FFFFFF;margin:2px 0;line-height:1;">${esc(ev.num)}</p>
+          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;color:#FCD900;margin:0;line-height:1;">${esc(ev.mois)}</p>
+        </td>
+        <td style="padding:14px 16px;vertical-align:middle;">
+          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FCD900;margin:0 0 4px 0;">${esc(ev.cat)}</p>
+          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#1A1A1A;margin:0 0 3px 0;line-height:1.3;">${esc(ev.title)}</p>
+          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;color:#888888;margin:0;">${esc(ev.details)}</p>
+        </td>
+        <td width="44" align="center" valign="middle" style="padding-right:8px;">
+          <a target="_blank" href="${uu(ev.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:700;color:#FCD900!important;text-decoration:none;">→</a>
+        </td>
+      </tr>
+    </table>`).join('');
+
+  const jobsH = D[lang].jobs.map(j => `
+            <tr><td style="padding:0;">
+              <a target="_blank" href="${uu(j.url)}" style="display:block;background-color:#FFFFFF;padding:10px 14px;border-radius:8px;text-decoration:none;">
+                <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
+                  <td style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A;line-height:1.4;">${esc(j.title)}<span style="display:block;font-weight:400;font-size:12px;color:#888888;margin-top:2px;">${esc(j.detail)}</span></td>
+                  <td width="20" align="right" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#FCD900;padding-left:8px;">→</td>
+                </tr></table>
+              </a>
+            </td></tr>
+            <tr><td style="height:6px;font-size:0;line-height:0;">&nbsp;</td></tr>`).join('');
+
+  const n = D[lang].actu.length;
+  const actuH = n === 0 ? '' : `
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+      <tr>${D[lang].actu.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/n)}%" valign="top" style="padding:0 ${i<n-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.35;color:#1A1A1A;margin:13px 0 0 0;">${esc(d.title)}</p></td>`).join('')}</tr>
+      <tr>${D[lang].actu.map((_,i) => `${i?'<td width="2%" style="font-size:0;">&nbsp;</td>':''}<td style="border-top:1px solid #E8E8E8;padding-top:14px;font-size:0;line-height:0;padding-right:${i<n-1?'12px':'0'};padding-left:${i>0?'12px':'0'};">&nbsp;</td>`).join('')}</tr>
+      <tr>${D[lang].actu.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/n)}%" valign="top" style="padding:0 ${i<n-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;padding-top:14px;display:block;">En savoir plus →</a></td>`).join('')}</tr>
+    </table>`;
+
+  const brefH = D[lang].bref.map((d,i,a) => `
+      <tr><td style="padding:14px 0;${i<a.length-1?'border-bottom:1px solid #F0F0F0;':''}">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
+          <td width="70" style="vertical-align:middle;"><span style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FCD900;">${esc(d.cat)}</span></td>
+          <td style="vertical-align:middle;"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#1A1A1A!important;text-decoration:none;line-height:1.3;">${esc(d.title)}</a></td>
+          <td width="44" align="right" style="vertical-align:middle;padding-right:8px;"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:700;color:#FCD900!important;text-decoration:none;">→</a></td>
+        </tr></table>
+      </td></tr>`).join('');
+
+  const nb = D[lang].banc.length;
+  const bancH = nb === 0 ? '' : `
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+      <tr>${D[lang].banc.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/nb)}%" valign="top" style="padding:0 ${i<nb-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#FFFFFF;border-radius:6px;"><tr><td width="180" style="padding:0;vertical-align:top;line-height:0;font-size:0;"><img src="${esc(d.img)}" width="180" alt="${esc(d.title)}" style="display:block;width:180px;height:130px;object-fit:cover;border-radius:6px 0 0 6px;" /></td><td style="padding:16px 16px 16px 18px;vertical-align:middle;"><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.35;color:#1A1A1A;margin:0 0 10px 0;">${esc(d.title)}</p><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:block;">${d.luxgear?'À regarder sur LuxGear →':'En savoir plus →'}</a></td></tr></table></td>`).join('')}</tr>
+    </table>`;
+
+  const nv = D[lang].voy.length;
+  const voyH = nv === 0 ? '' : `
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+      <tr>${D[lang].voy.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/nv)}%" valign="top" style="padding:0 ${i<nv-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" />${d.badge?`<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:11px 0 8px;"><tr><td style="background-color:#EEEEEE;padding:4px 10px;border-radius:10px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#666666;">${esc(d.badge)}</td></tr></table>`:''}<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:13px;line-height:1.3;color:#1A1A1A;margin:0 0 6px 0;">${esc(d.title)}</p><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.55;color:#666666;margin:0;">${esc(d.text||'')}</p></td>`).join('')}</tr>
+      <tr>${D[lang].voy.map((_,i) => `${i?'<td width="2%" style="font-size:0;">&nbsp;</td>':''}<td style="border-top:1px solid #F0F0F0;padding-top:14px;font-size:0;line-height:0;">&nbsp;</td>`).join('')}</tr>
+      <tr>${D[lang].voy.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/nv)}%" valign="top" style="padding:0 ${i<nv-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;padding-top:14px;display:block;">En savoir plus →</a></td>`).join('')}</tr>
+    </table>`;
+
+  const pub1 = v(p+'pub1_img')||'https://img.mailinblue.com/4363334/images/content_library/original/6a300abac8e9e1c3ee19ff90.jpg';
+  const pub2 = v(p+'pub2_img')||'https://img.mailinblue.com/4363334/images/content_library/original/69675df04a53a52a8e9e9f56.jpg';
+  const pub1l = v(p+'pub1_link');
+  const pub2l = v(p+'pub2_link');
+  const p1 = `<img src="${pub1}" width="584" alt="" style="display:block;width:100%;max-width:584px;border-radius:4px;margin:0 auto;" />`;
+  const p2 = `<img src="${pub2}" width="584" alt="" style="display:block;width:100%;max-width:584px;border-radius:4px;margin:0 auto;" />`;
+  const pub1H = pub1l ? `<a target="_blank" href="${uu(pub1l)}" style="display:block;line-height:0;">${p1}</a>` : p1;
+  const pub2H = pub2l ? `<a target="_blank" href="${uu(pub2l)}" style="display:block;line-height:0;">${p2}</a>` : p2;
+
+  const parrImg = v(p+'parr_img');
+  const parrImgH = parrImg
+    ? `<td width="45%" valign="bottom" style="padding:28px 28px 28px 0;vertical-align:bottom;line-height:0;font-size:0;"><img src="${parrImg}" width="100%" alt="Parrainage" style="display:block;width:100%;border-radius:6px;" /></td>`
+    : `<td width="45%" valign="bottom" style="padding:28px 28px 28px 0;vertical-align:bottom;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:220px;background-color:#E6C400;border-radius:6px;text-align:center;vertical-align:middle;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:9px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#B89900;">[ IMAGE PARRAINAGE ]</td></tr></table></td>`;
+
+  const autoImg = v(p+'auto_img')||'https://img.mailinblue.com/4363334/images/content_library/original/69fc509afbf75c9e7ebbd9c8.png';
+
+  return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="${lang}">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="color-scheme" content="light" />
+<title>ACL Newsletter – ${esc(v(p+'edition'))}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,400;0,500;0,700;1,700&display=swap" rel="stylesheet" />
+<!--[if mso]><style>table{border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;}td,p,a,span,strong{font-family:Helvetica,Arial,sans-serif!important;}</style><![endif]-->
+<style>
+body,#bodyTable{margin:0!important;padding:0!important;width:100%!important;}
+img{border:0;height:auto;line-height:100%;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;display:block;}
+table{border-collapse:collapse!important;mso-table-lspace:0pt;mso-table-rspace:0pt;}
+a{color:#FCD900;text-decoration:none;}p{margin:0;padding:0;}
+body{background-color:#EFEFEF;font-family:'Albert Sans',Helvetica,Arial,sans-serif;color:#1A1A1A;font-size:16px;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;}
+@media only screen and (max-width:520px){
+  .email-wrapper{width:100%!important;}
+  .col2{display:block!important;width:100%!important;padding:0 20px 22px!important;}
+  .col2-divider{display:none!important;}
+  .footer-col{display:block!important;width:100%!important;padding:0 0 16px!important;}
+}
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#EFEFEF;">
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;color:#EFEFEF;line-height:1px;">${esc(v(p+'preheader'))}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>
+<table id="bodyTable" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#EFEFEF;">
+<tr><td align="center" valign="top" style="padding:0;">
+<table class="email-wrapper" width="640" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width:640px;width:100%;">
+
+<!-- TOPBAR -->
+<tr><td style="background-color:#3A3A3A;padding:10px 24px;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
+    <td valign="middle" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;">
+      <a target="_blank" href="${uu('https://www.acl.lu/fr/mobilite/informations-trafic/info-trafic/')}" style="color:#FCD900!important;text-decoration:none;font-weight:700;">Info Trafic</a>
+      <span style="color:#FCD900;margin:0 8px;opacity:0.4;">·</span>
+      <a target="_blank" href="${uu('https://www.acl.lu/fr/newsletter/')}" style="color:#FCD900!important;text-decoration:none;font-weight:700;">Newsletters</a>
+      <span style="color:#FCD900;margin:0 8px;opacity:0.4;">·</span>
+      <a target="_blank" href="${uu('https://www.acl.lu/fr/assistance/application-acl/')}" style="color:#FCD900!important;text-decoration:none;font-weight:700;">App ACL</a>
+    </td>
+    <td valign="middle" align="right" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:9px;color:#AAAAAA;white-space:nowrap;">
+      <a target="_blank" href="{{mirror}}" style="color:#AAAAAA!important;text-decoration:none;">Voir en ligne</a>
+    </td>
+  </tr></table>
+</td></tr>
+
+<!-- HEADER LOGO -->
+<tr><td style="background-color:#FFFFFF;padding:20px 24px;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
+    <td valign="middle"><img src="https://img.mailinblue.com/4363334/images/content_library/original/68af64976387e2214ec15275.jpg" width="150" alt="ACL" style="display:block;max-width:150px;" /></td>
+    <td valign="middle" align="right" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#888888;white-space:nowrap;">${esc(v(p+'edition'))}</td>
+  </tr></table>
+</td></tr>
+
+<!-- INTRO + PUB 1 -->
+<tr><td style="background-color:#FFFFFF;padding:0 24px 24px;border-bottom:1px solid #EEEEEE;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:4px;"><tr><td style="border-top:1px solid #EEEEEE;font-size:0;line-height:0;">&nbsp;</td></tr></table>
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-top:4px;"><tr><td style="border:1.5px dashed #CCCCCC;border-radius:6px;padding:0;line-height:0;font-size:0;text-align:center;">${pub1H}</td></tr></table>
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-top:20px;"><tr><td style="border-top:1px solid #EEEEEE;font-size:0;line-height:0;">&nbsp;</td></tr></table>
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.5;color:#1A1A1A;margin:18px 0 14px 0;">${salut},</p>
+${introParas}
+</td></tr>
+
+<!-- À LA UNE -->
+<tr><td style="background-color:#FFFFFF;padding:28px 28px 28px;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
+    <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">À la une</td>
+    <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+  </tr></table>
+  <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:14px;"><tr><td style="background-color:#FCD900;padding:4px 12px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#1A1A1A;">${esc(v(p+'une_tag'))}</td></tr></table>
+  <img src="${esc(v(p+'une_img'))}" width="584" alt="${esc(v(p+'une_title'))}" style="display:block;width:100%;max-width:584px;border-radius:8px;margin:0 auto 20px;" />
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:22px;line-height:1.25;color:#1A1A1A;margin:0 0 12px 0;text-align:center;">${esc(v(p+'une_title'))}</p>
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:16px;line-height:1.7;color:#555555;margin:0 0 22px 0;text-align:center;">${esc(v(p+'une_text'))}</p>
+  <div style="text-align:center;">
+    <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${uu(v(p+'une_url'))}" style="height:40px;v-text-anchor:middle;width:162px;" arcsize="20%" fillcolor="#FCD900" stroke="f"><w:anchorlock/><center style="color:#1A1A1A;font-family:Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">${esc(v(p+'une_cta')).toUpperCase()}</center></v:roundrect><![endif]-->
+    <!--[if !mso]><!--><a target="_blank" href="${uu(v(p+'une_url'))}" style="display:inline-block;background-color:#FCD900;color:#1A1A1A!important;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none!important;padding:11px 22px;border-radius:20px;">${esc(v(p+'une_cta'))}</a><!--<![endif]-->
+  </div>
+</td></tr>
+
+<!-- ACTUALITÉS -->
+<tr><td style="background-color:#EFF4EF;padding:28px 28px 28px;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
+    <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">Actualités</td>
+    <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+  </tr></table>
+  ${actuH}
+</td></tr>
+
+<!-- EN BREF -->
+<tr><td style="background-color:#FAF5EC;padding:28px 28px 28px;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
+    <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">En bref</td>
+    <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+  </tr></table>
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">${brefH}</table>
+</td></tr>
+
+<!-- PUB 2 -->
+<tr><td style="background-color:#EFEFEF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub2H}</td></tr>
+
+<!-- BANC D'ESSAI -->
+<tr><td style="background-color:#FDF6EE;padding:28px 28px 28px;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
+    <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">Au banc d'essai</td>
+    <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+  </tr></table>
+  ${bancH}
+</td></tr>
+
+<!-- NOS VOYAGES -->
+<tr><td style="background-color:#FFFFFF;padding:28px 28px 28px;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
+    <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">Nos Voyages</td>
+    <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+  </tr></table>
+  <img src="${esc(v(p+'vm_img'))}" width="584" alt="${esc(v(p+'vm_title'))}" style="display:block;width:100%;max-width:584px;border-radius:8px;margin:0 auto 18px;" />
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:18px;line-height:1.25;color:#1A1A1A;margin:0 0 8px 0;text-align:center;">${esc(v(p+'vm_title'))}</p>
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:15px;line-height:1.65;color:#555555;margin:0 0 16px 0;text-align:center;">${esc(v(p+'vm_text'))}</p>
+  <div style="text-align:center;margin-bottom:24px;">
+    <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${uu(v(p+'vm_url'))}" style="height:40px;v-text-anchor:middle;width:162px;" arcsize="20%" fillcolor="#FCD900" stroke="f"><w:anchorlock/><center style="color:#1A1A1A;font-family:Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">EN SAVOIR PLUS</center></v:roundrect><![endif]-->
+    <!--[if !mso]><!--><a target="_blank" href="${uu(v(p+'vm_url'))}" style="display:inline-block;background-color:#FCD900;color:#1A1A1A!important;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none!important;padding:11px 22px;border-radius:20px;">En savoir plus</a><!--<![endif]-->
+  </div>
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr><td style="border-top:1px solid #F0F0F0;font-size:0;line-height:0;">&nbsp;</td></tr></table>
+  ${voyH}
+</td></tr>
+
+<!-- AGENDA -->
+<tr><td style="background-color:#E8EEF5;padding:28px 28px 28px;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:6px;"><tr>
+    <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">L'Agenda</td>
+    <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+  </tr></table>
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:11px;color:#888888;margin:0 0 20px 0;letter-spacing:0.04em;text-transform:uppercase;">Formations &amp; événements</p>
+  ${agendaH}
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-top:16px;"><tr>
+    <td><a target="_blank" href="${uu('https://www.acl.lu/fr/agenda/')}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Voir tout l'agenda →</a></td>
+  </tr></table>
+</td></tr>
+
+<!-- AUTOTOURING + RECRUTEMENT -->
+<tr><td style="background-color:#FFFFFF;padding:28px 28px 0;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+    <tr>
+      <!-- AUTOTOURING contenu -->
+      <td width="49%" valign="top" style="padding:0 10px 0 0;background-color:#F5F5F5;border-radius:10px 10px 0 0;">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="padding:22px 22px 16px;">
+          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">Magazine</p>
+          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:0 0 14px 0;">Lisez Autotouring&nbsp;!</p>
+          <img src="${autoImg}" width="100%" alt="Autotouring" style="display:block;width:100%;border-radius:6px;margin-bottom:14px;" />
+          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0;">Disponible en FR, DE et EN. Prochaine édition le <strong style="color:#1A1A1A;">${esc(v(p+'auto_date'))}</strong>.</p>
+        </td></tr></table>
+      </td>
+      <td width="2%" style="font-size:0;">&nbsp;</td>
+      <!-- RECRUTEMENT contenu -->
+      <td width="49%" valign="top" style="background-color:#F5F5F5;border-radius:10px 10px 0 0;">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="padding:22px 22px 16px;">
+          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">On recrute</p>
+          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:0 0 16px 0;">Rejoignez l'équipe ACL</p>
+          <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">${jobsH}</table>
+        </td></tr></table>
+      </td>
+    </tr>
+    <!-- SÉPARATEURS -->
+    <tr>
+      <td style="background-color:#F5F5F5;border-top:1px solid #E0E0E0;font-size:0;line-height:0;padding:0 10px 0 0;">&nbsp;</td>
+      <td width="2%" style="font-size:0;">&nbsp;</td>
+      <td style="background-color:#F5F5F5;border-top:1px solid #E0E0E0;font-size:0;line-height:0;">&nbsp;</td>
+    </tr>
+    <!-- CTAs alignés -->
+    <tr>
+      <td valign="top" style="background-color:#F5F5F5;padding:0 10px 0 0;border-radius:0 0 10px 10px;">
+        <a target="_blank" href="${uu(v(p+'auto_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;padding:16px 22px 22px;">Lire le magazine digital →</a>
+      </td>
+      <td width="2%" style="font-size:0;">&nbsp;</td>
+      <td valign="top" style="background-color:#F5F5F5;border-radius:0 0 10px 10px;">
+        <a target="_blank" href="${uu(v(p+'job_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;padding:16px 22px 22px;">Toutes nos offres →</a>
+      </td>
+    </tr>
+  </table>
+</td></tr>
+
+<!-- PARRAINAGE -->
+<tr><td style="background-color:#FFFFFF;padding:20px 28px 28px;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#FCD900;border-radius:10px;overflow:hidden;">
+    <tr>
+      <td width="55%" valign="middle" style="padding:28px 20px 28px 28px;vertical-align:middle;">
+        <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:#1A1A1A;margin:0 0 8px 0;opacity:0.5;">Programme membres</p>
+        <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:20px;line-height:1.2;color:#1A1A1A;margin:0 0 12px 0;">Parrainez un proche,<br />gagnez 10&nbsp;€</p>
+        <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#1A1A1A;margin:0 0 20px 0;opacity:0.7;">${esc(v(p+'parr_text'))}</p>
+        <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${uu(v(p+'parr_url'))}" style="height:40px;v-text-anchor:middle;width:192px;" arcsize="20%" fillcolor="#1A1A1A" stroke="f"><w:anchorlock/><center style="color:#FCD900;font-family:Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">MON LIEN DE PARRAINAGE</center></v:roundrect><![endif]-->
+        <!--[if !mso]><!--><a target="_blank" href="${uu(v(p+'parr_url'))}" style="display:inline-block;background-color:#1A1A1A;color:#FCD900!important;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none!important;padding:11px 22px;border-radius:20px;">Mon lien de parrainage</a><!--<![endif]-->
+      </td>
+      ${parrImgH}
+    </tr>
+  </table>
+</td></tr>
+
+<!-- SOCIAL -->
+<tr><td style="background-color:#1A1A1A;padding:22px 28px;text-align:center;">
+  <a target="_blank" href="https://www.facebook.com/ACLluxembourg" style="display:inline-block;margin:0 7px;vertical-align:middle;line-height:0;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" style="display:block;"><path d="M18 5h-3.2C12 5 10.5 6.6 10.5 9.3V12H8v3.5h2.5V28h4V15.5h2.8L18 12h-3V9.6c0-.9.4-1.4 1.5-1.4H18V5z" fill="#FFFFFF"/></svg></a>
+  <a target="_blank" href="https://www.instagram.com/acl_luxembourg/" style="display:inline-block;margin:0 7px;vertical-align:middle;line-height:0;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" style="display:block;"><rect x="4" y="4" width="20" height="20" rx="6.5" fill="none" stroke="#FFFFFF" stroke-width="2"/><circle cx="14" cy="14" r="5" fill="none" stroke="#FFFFFF" stroke-width="2"/><circle cx="20.5" cy="7.5" r="1.3" fill="#FFFFFF"/></svg></a>
+  <a target="_blank" href="https://www.youtube.com/@ACLluxembourg" style="display:inline-block;margin:0 7px;vertical-align:middle;line-height:0;"><svg xmlns="http://www.w3.org/2000/svg" width="38" height="28" viewBox="0 0 38 28" style="display:block;"><rect x="1" y="1" width="36" height="26" rx="6" fill="none" stroke="#FFFFFF" stroke-width="2"/><polygon points="13,8 28,14 13,20" fill="#FFFFFF"/></svg></a>
+  <a target="_blank" href="https://wa.me/35245004510" style="display:inline-block;margin:0 7px;vertical-align:middle;line-height:0;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" style="display:block;"><path d="M14 2C7.4 2 2 7.4 2 14c0 2.2.6 4.3 1.7 6L2 26l6.3-1.6C10 25.4 12 26 14 26c6.6 0 12-5.4 12-12S20.6 2 14 2zm6.3 16.8c-.3.8-1.7 1.5-2.4 1.6-.6.1-1.4.1-4-.8-3.4-1.2-5.5-4.5-5.7-4.7-.2-.2-1.5-2-1.5-3.9 0-1.8 1-2.8 1.4-3.2.4-.4.7-.5 1-.5h.7c.2 0 .5.1.7.6l1.1 2.7c.1.3.1.6-.1.8l-.6.6c-.2.2-.3.4-.1.7.3.5 1.2 1.6 2.1 2.5 1.1 1 2.2 1.4 2.6 1.6.4.2.6.1.8-.1l.6-.7c.3-.3.5-.3.9-.1l2.7 1.3c.3.1.5.3.5.7l-.2 1.1z" fill="#FFFFFF"/></svg></a>
+  <a target="_blank" href="https://www.linkedin.com/company/acl-luxembourg/" style="display:inline-block;margin:0 7px;vertical-align:middle;line-height:0;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" style="display:block;"><rect x="3" y="10" width="4.5" height="15" fill="#FFFFFF"/><circle cx="5.25" cy="6.5" r="2.5" fill="#FFFFFF"/><path d="M12 10h4v2c.7-1.1 2.1-2.3 4.2-2.3C23.5 9.7 24 12.3 24 15.8V25h-4.5v-7.5c0-1.8-.1-4-2.5-4s-2.8 2-2.8 4V25H12V10z" fill="#FFFFFF"/></svg></a>
+  <a target="_blank" href="https://www.tiktok.com/@acl_luxembourg" style="display:inline-block;margin:0 7px;vertical-align:middle;line-height:0;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" style="display:block;"><path d="M20 4.5c-.8-.6-1.4-1.4-1.6-2.5h-3v13.8c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.2 0 .5 0 .7.1V11c-.2 0-.5-.1-.7-.1C10.3 11 7.5 13.8 7.5 17.3s2.8 6.3 6.2 6.3 6.2-2.8 6.2-6.3v-8c1 .7 2.1 1.2 3.4 1.3v-3c-.5-.1-2.3-.8-3.3-3.1z" fill="#FFFFFF"/></svg></a>
+</td></tr>
+
+<!-- FOOTER -->
+<tr><td style="background-color:#111111;padding:22px 28px 16px;text-align:center;border-top:1px solid #252525;">
+  <img src="https://img.mailinblue.com/4363334/images/content_library/original/69e0e48670b2c00d2a044283.png" width="100" alt="ACL" style="display:block;margin:0 auto;max-width:100px;" />
+</td></tr>
+<tr><td style="background-color:#111111;padding:4px 20px 24px;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
+    <td class="footer-col" width="33%" valign="top" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;color:#666666;line-height:1.75;padding:0 8px;text-align:center;"><strong style="color:#BBBBBB;display:block;margin-bottom:4px;">ACL Bertrange</strong>54, route de Longwy<br />L-8080 Bertrange<br /><a target="_blank" href="tel:+35245004510" style="color:#666666!important;text-decoration:none;">+352 45 00 45-1</a></td>
+    <td class="footer-col" width="33%" valign="top" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;color:#666666;line-height:1.75;padding:0 8px;text-align:center;"><strong style="color:#BBBBBB;display:block;margin-bottom:4px;">ACL Ingeldorf</strong>34, route d'Ettelbruck<br />L-9160 Ingeldorf<br /><a target="_blank" href="tel:+35245004520" style="color:#666666!important;text-decoration:none;">+352 45 00 45-2</a></td>
+    <td class="footer-col" width="33%" valign="top" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;color:#666666;line-height:1.75;padding:0 8px;text-align:center;"><strong style="color:#BBBBBB;display:block;margin-bottom:4px;">ACL Karting</strong>152, rue de Limpach<br />L-3932 Mondercange<br /><a target="_blank" href="tel:+352379001" style="color:#666666!important;text-decoration:none;">+352 37 90 01</a></td>
+  </tr></table>
+</td></tr>
+<tr><td style="background-color:#0A0A0A;padding:16px 28px 20px;text-align:center;border-top:1px solid #1E1E1E;">
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:9px;color:#666666;line-height:1.7;margin:0 0 5px 0;">Cet email a été envoyé à <a target="_blank" href="mailto:{{ contact.EMAIL }}" style="color:#888888!important;text-decoration:underline;">{{ contact.EMAIL }}</a>. Vous recevez cet email dans le cadre des services fournis en tant que membre ACL ou parce que vous vous êtes abonné(e) à notre newsletter.</p>
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:9px;color:#666666;line-height:1.7;margin:0 0 5px 0;"><a target="_blank" href="{{update_profile}}" style="color:#888888!important;text-decoration:underline;">Personnalisez vos préférences</a> ou <a target="_blank" href="{{unsubscribe}}" style="color:#888888!important;text-decoration:underline;">désinscrivez-vous</a>. Données dans votre espace <a target="_blank" href="https://www.acl.lu/myacl/" style="color:#888888!important;text-decoration:underline;">MyACL</a>.</p>
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:9px;color:#555555;line-height:1.7;margin:0;">Cet email vous a été transmis par un tiers ? <a target="_blank" href="${uu('https://www.acl.lu/fr/newsletter/')}" style="color:#888888!important;text-decoration:underline;">Inscrivez-vous ici.</a></p>
+</td></tr>
+
+</table></td></tr></table>
+</body>
+</html>`;
+}
+
+// ── FIREBASE — SAUVEGARDE & CHARGEMENT ──────────────
+function collectAllData() {
+  return {
+    savedAt: new Date().toISOString(),
+    name: v('fr_edition') || 'Sans titre',
+    fr: {
+      edition: v('fr_edition'), utm: v('fr_utm'), preheader: v('fr_preheader'), intro: v('fr_intro'),
+      pub1_img: v('fr_pub1_img'), pub1_link: v('fr_pub1_link'),
+      pub2_img: v('fr_pub2_img'), pub2_link: v('fr_pub2_link'),
+      une_img: v('fr_une_img'), une_tag: v('fr_une_tag'), une_title: v('fr_une_title'),
+      une_text: v('fr_une_text'), une_cta: v('fr_une_cta'), une_url: v('fr_une_url'),
+      actu: D.fr.actu, bref: D.fr.bref, banc: D.fr.banc,
+      vm_img: v('fr_vm_img'), vm_title: v('fr_vm_title'), vm_text: v('fr_vm_text'), vm_url: v('fr_vm_url'),
+      voy: D.fr.voy, agenda: D.fr.agenda,
+      auto_img: v('fr_auto_img'), auto_date: v('fr_auto_date'), auto_url: v('fr_auto_url'),
+      job_url: v('fr_job_url'), jobs: D.fr.jobs,
+      parr_img: v('fr_parr_img'), parr_text: v('fr_parr_text'), parr_url: v('fr_parr_url')
+    }
+  };
+}
+
+function setField(id, val) { const el = document.getElementById(id); if(el && val !== undefined) el.value = val; }
+
+function loadAllData(data) {
+  if (!data || !data.fr) return;
+  const f = data.fr;
+  setField('fr_edition', f.edition); setField('fr_utm', f.utm);
+  setField('fr_preheader', f.preheader); setField('fr_intro', f.intro);
+  setField('fr_pub1_img', f.pub1_img); setField('fr_pub1_link', f.pub1_link);
+  setField('fr_pub2_img', f.pub2_img); setField('fr_pub2_link', f.pub2_link);
+  setField('fr_une_img', f.une_img); setField('fr_une_tag', f.une_tag);
+  setField('fr_une_title', f.une_title); setField('fr_une_text', f.une_text);
+  setField('fr_une_cta', f.une_cta); setField('fr_une_url', f.une_url);
+  setField('fr_vm_img', f.vm_img); setField('fr_vm_title', f.vm_title);
+  setField('fr_vm_text', f.vm_text); setField('fr_vm_url', f.vm_url);
+  setField('fr_auto_img', f.auto_img); setField('fr_auto_date', f.auto_date);
+  setField('fr_auto_url', f.auto_url); setField('fr_job_url', f.job_url);
+  setField('fr_parr_img', f.parr_img); setField('fr_parr_text', f.parr_text);
+  setField('fr_parr_url', f.parr_url);
+  if (f.actu)   D.fr.actu   = f.actu;
+  if (f.bref)   D.fr.bref   = f.bref;
+  if (f.banc)   D.fr.banc   = f.banc;
+  if (f.voy)    D.fr.voy    = f.voy;
+  if (f.agenda) D.fr.agenda = f.agenda;
+  if (f.jobs)   D.fr.jobs   = f.jobs;
+  renderAll('fr');
+  // Update image previews
+  ['fr_pub1_img:pp1','fr_pub2_img:pp2','fr_une_img:ppu','fr_vm_img:ppvm','fr_auto_img:ppa'].forEach(pair => {
+    const [inp, prev] = pair.split(':');
+    const el = document.getElementById(prev); if(el) el.src = v(inp);
+  });
+}
+
+async function saveEdition() {
+  if (!window._db) { toast('Firebase non connecté', 'red'); return; }
+  const data = collectAllData();
+  const id = 'edition_' + Date.now();
+  try {
+    const { doc, setDoc } = window._fs;
+    await setDoc(doc(window._db, 'editions', id), data);
+    toast('Édition sauvegardée ✓', 'green');
+    loadEditionsList();
+  } catch(e) { toast('Erreur sauvegarde : '+e.message, 'red'); }
+}
+
+async function loadEditionsList() {
+  if (!window._db) return;
+  const { collection, getDocs, query, orderBy } = window._fs;
+  const menu = document.getElementById('edMenu');
+  try {
+    const snap = await getDocs(query(collection(window._db, 'editions'), orderBy('savedAt', 'desc')));
+    if (snap.empty) { menu.innerHTML = '<div class="ed-empty">Aucune édition sauvegardée</div>'; return; }
+    menu.innerHTML = snap.docs.map(d => {
+      const data = d.data();
+      const date = data.savedAt ? new Date(data.savedAt).toLocaleDateString('fr-FR', {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+      return `<div class="ed-item">
+        <div onclick="loadEdition('${d.id}')" style="flex:1;cursor:pointer;">
+          <div class="ed-name">${esc(data.name||'Sans titre')}</div>
+          <div class="ed-date">${date}</div>
+        </div>
+        <button class="ed-del" onclick="deleteEdition('${d.id}',event)" title="Supprimer">×</button>
+      </div>`;
+    }).join('');
+  } catch(e) { menu.innerHTML = '<div class="ed-empty">Erreur chargement</div>'; }
+}
+
+async function loadEdition(id) {
+  if (!window._db) return;
+  const { doc, getDoc } = window._fs;
+  try {
+    const snap = await getDoc(doc(window._db, 'editions', id));
+    if (snap.exists()) { loadAllData(snap.data()); toast('Édition chargée ✓', 'green'); toggleEdMenu(); }
+  } catch(e) { toast('Erreur chargement : '+e.message, 'red'); }
+}
+
+async function deleteEdition(id, e) {
+  e.stopPropagation();
+  if (!confirm('Supprimer cette édition ?')) return;
+  if (!window._db) return;
+  const { doc, deleteDoc } = window._fs;
+  try {
+    await deleteDoc(doc(window._db, 'editions', id));
+    toast('Édition supprimée', 'green');
+    loadEditionsList();
+  } catch(e) { toast('Erreur suppression : '+e.message, 'red'); }
+}
+
+function toggleEdMenu() {
+  const menu = document.getElementById('edMenu');
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  if (menu.style.display === 'block') loadEditionsList();
+}
+
+document.addEventListener('click', e => {
+  const dd = document.getElementById('edDropdown');
+  if (dd && !dd.contains(e.target)) document.getElementById('edMenu').style.display = 'none';
+});
+
+document.addEventListener('firebase-ready', () => { if(sessionStorage.getItem('acl_auth')==='1') loadEditionsList(); });
+
+// Init si déjà auth
+if (sessionStorage.getItem('acl_auth') === '1') {
+  document.addEventListener('DOMContentLoaded', initApp);
+  if (document.readyState !== 'loading') initApp();
+}
+</script>
+</body>
+</html>
