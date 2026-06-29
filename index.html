@@ -108,6 +108,11 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 .btn-s { display: inline-flex; align-items: center; gap: 8px; background: var(--black); color: #fff; font-family: var(--font); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; border: none; border-radius: 22px; padding: 10px 18px; cursor: pointer; }
 .btn-o { display: inline-flex; align-items: center; gap: 8px; background: none; color: var(--black); font-family: var(--font); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; border: 1.5px solid var(--border); border-radius: 22px; padding: 9px 16px; cursor: pointer; }
 .btn-o:hover { border-color: var(--black); }
+.btn-topbar { display: inline-flex; align-items: center; gap: 8px; background: none; color: #fff; font-family: var(--font); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; border: 1.5px solid #555; border-radius: 22px; padding: 9px 16px; cursor: pointer; transition: border-color 0.15s; }
+.btn-topbar:hover { border-color: #fff; }
+.btn-copy-lang { display: inline-flex; align-items: center; gap: 5px; background: none; color: var(--black); font-family: var(--font); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border: 1.5px solid var(--border); border-radius: 22px; padding: 8px 14px; cursor: pointer; transition: opacity 0.15s, border-color 0.15s; }
+.btn-copy-lang:not(:disabled):hover { border-color: var(--black); }
+.btn-copy-lang:disabled { opacity: 0.3; cursor: default; }
 .btn-green { background: #16A34A !important; color: #fff !important; }
 .info { font-size: 11px; color: var(--mid); margin-left: auto; }
 
@@ -153,10 +158,10 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
   <div class="topbar-actions">
     <div class="ed-dropdown" id="edDropdown">
-      <button class="btn-o" onclick="toggleEdMenu()">📂 Éditions</button>
+      <button class="btn-topbar" onclick="toggleEdMenu()">📂 Éditions</button>
       <div class="ed-menu" id="edMenu"></div>
     </div>
-    <button class="btn-o" onclick="saveEdition()">💾 Sauvegarder</button>
+    <button class="btn-topbar" onclick="saveEdition()">💾 Sauvegarder</button>
   </div>
 </div>
 
@@ -359,7 +364,12 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
     Générer &amp; Copier
   </button>
   <button class="btn-s" onclick="openPreview(currentLang)">👁 Aperçu</button>
-  <button class="btn-ai" id="btnTranslate" style="display:none;" onclick="translateAll()">🌐 Traduire EN + DE</button>
+  <button class="btn-ai" id="btnTranslate" onclick="translateAll()">🌐 Traduire EN + DE</button>
+  <div style="display:flex;gap:6px;align-items:center;">
+    <button class="btn-copy-lang" id="btnCopyFR" onclick="copyLang('fr')" disabled>📋 FR</button>
+    <button class="btn-copy-lang" id="btnCopyEN" onclick="copyLang('en')" disabled>📋 EN</button>
+    <button class="btn-copy-lang" id="btnCopyDE" onclick="copyLang('de')" disabled>📋 DE</button>
+  </div>
   <span class="info" id="charsInfo"></span>
 </div>
 
@@ -620,7 +630,6 @@ function switchTab(lang, btn) {
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('pane-'+lang).classList.add('active');
-  document.getElementById('btnTranslate').style.display = lang === 'fr' ? 'none' : 'inline-flex';
 }
 
 // ── INIT APP ──────────────────────────────────────
@@ -794,16 +803,46 @@ function buildTranslatedFields(lang, d) {
 }
 
 // ── HTML GENERATION ───────────────────────────────
-function generateAndCopy(lang) {
-  const html = buildHTML(lang);
-  generatedHTML[lang] = html;
-  navigator.clipboard.writeText(html).then(() => {
-    const btn = document.getElementById('btnGC');
-    const orig = btn.innerHTML;
-    btn.classList.add('btn-green'); btn.textContent = '✓ HTML généré & copié !';
+async function generateAndCopy(lang) {
+  const btn = document.getElementById('btnGC');
+  const orig = btn.innerHTML;
+  btn.disabled = true;
+
+  if (lang === 'fr') {
+    if (D.en.actu.length === 0) {
+      btn.textContent = '⏳ Traduction EN+DE...';
+      await translateAll();
+    }
+    btn.textContent = '⏳ Génération...';
+    generatedHTML.fr = buildHTML('fr');
+    generatedHTML.en = buildHTML('en');
+    generatedHTML.de = buildHTML('de');
+    ['FR','EN','DE'].forEach(l => { const b = document.getElementById('btnCopy'+l); if(b) b.disabled = false; });
+    await navigator.clipboard.writeText(generatedHTML.fr).catch(() => {});
+    document.getElementById('charsInfo').textContent = generatedHTML.fr.length.toLocaleString('fr-FR') + ' car. · Copier chaque langue ci-dessus';
+    btn.disabled = false;
+    btn.classList.add('btn-green');
+    btn.innerHTML = orig;
+    setTimeout(() => btn.classList.remove('btn-green'), 3000);
+    toast('3 langues générées · FR copié ✓', 'green');
+  } else {
+    btn.textContent = '⏳ Génération...';
+    const html = buildHTML(lang);
+    generatedHTML[lang] = html;
+    const cb = document.getElementById('btnCopy'+lang.toUpperCase()); if(cb) cb.disabled = false;
+    await navigator.clipboard.writeText(html).catch(() => toast('Erreur clipboard', 'red'));
     document.getElementById('charsInfo').textContent = html.length.toLocaleString('fr-FR') + ' caractères';
-    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('btn-green'); }, 3000);
-  }).catch(() => toast('Erreur clipboard', 'red'));
+    btn.disabled = false;
+    btn.classList.add('btn-green');
+    btn.innerHTML = orig;
+    setTimeout(() => btn.classList.remove('btn-green'), 3000);
+    toast('HTML ' + lang.toUpperCase() + ' copié ✓', 'green');
+  }
+}
+
+function copyLang(lang) {
+  if (!generatedHTML[lang]) { toast('Cliquez d\'abord sur Générer & Copier', 'red'); return; }
+  navigator.clipboard.writeText(generatedHTML[lang]).then(() => toast('HTML ' + lang.toUpperCase() + ' copié ✓', 'green')).catch(() => toast('Erreur clipboard', 'red'));
 }
 
 function openPreview(lang) {
