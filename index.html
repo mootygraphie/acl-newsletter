@@ -141,8 +141,10 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 .sw-info { font-size: 10px; color: var(--mid); margin-top: 5px; line-height: 1.4; }
 .sw-divider { height: 1px; background: var(--border); margin: 6px 0; }
 .sw-utils { padding: 6px 14px 14px; }
-.sw-util { display: block; width: 100%; text-align: left; background: none; color: var(--black); font-family: var(--font); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; border: none; padding: 7px 0; cursor: pointer; opacity: 0.55; line-height: 1; }
+.sw-util { display: block; width: 100%; text-align: left; background: none; color: var(--black); font-family: var(--font); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; border: none; padding: 7px 0; cursor: pointer; opacity: 0.45; line-height: 1; }
 .sw-util:hover { opacity: 1; }
+.sw-util-btn { display: block; width: 100%; text-align: left; background: var(--grey); color: var(--black); font-family: var(--font); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; cursor: pointer; margin-bottom: 5px; transition: border-color 0.15s, background 0.15s; }
+.sw-util-btn:hover { border-color: var(--black); background: #EDEDED; }
 
 /* ── TOAST ── */
 .toast { position: fixed; bottom: 24px; right: 28px; background: var(--black); color: #fff; padding: 11px 18px; border-radius: 8px; font-size: 12px; font-weight: 600; z-index: 999; opacity: 0; transform: translateY(8px); transition: opacity 0.2s, transform 0.2s; pointer-events: none; }
@@ -226,9 +228,9 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
     <div class="sw-divider"></div>
 
     <div class="sw-utils">
-      <button class="sw-util" onclick="openPreview(currentLang)">👁 Aperçu</button>
-      <button class="sw-util" onclick="saveEdition()">💾 Sauvegarder</button>
-      <div id="edDropdown" style="position:relative;">
+      <button class="sw-util-btn" onclick="openPreview(currentLang)">👁 Aperçu</button>
+      <button class="sw-util-btn" onclick="saveEdition()">💾 Sauvegarder</button>
+      <div id="edDropdown" style="position:relative;margin-top:4px;">
         <button class="sw-util" onclick="toggleEdMenu()">📂 Éditions</button>
       </div>
       <button class="sw-util" onclick="showApiModal()">🔑 Clé API</button>
