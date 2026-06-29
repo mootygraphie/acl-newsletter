@@ -117,6 +117,13 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 .toast.green { background: #16A34A; }
 .toast.red { background: #DC2626; }
 
+/* ── COLOR PICKER ── */
+.color-picker-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.color-picker-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mid); white-space: nowrap; }
+.color-swatch { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s, transform 0.1s; flex-shrink: 0; }
+.color-swatch:hover { transform: scale(1.15); }
+.color-swatch.selected { border-color: var(--black); }
+
 /* ── TRANSLATED NOTICE ── */
 .tl-notice { background: #FFFBEB; border: 1px solid var(--yellow); border-radius: 8px; padding: 12px 16px; margin-bottom: 18px; font-size: 12px; color: #7A6200; display: flex; align-items: center; gap: 12px; }
 .tl-notice span { flex: 1; }
@@ -221,7 +228,9 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
   <!-- À LA UNE -->
   <div class="form-section">
     <div class="form-section-header"><span class="form-section-icon">🗞</span><span class="form-section-title">À la une</span></div>
-    <div class="form-section-body g2">
+    <div class="form-section-body">
+      <div id="cpicker_fr_une"></div>
+      <div class="g2">
       <div>
         <div class="field"><label>Image (640×300)</label><input type="url" id="fr_une_img" value="https://img.mailinblue.com/4363334/images/content_library/original/6a2fbe4b4c87acf1b003cc4d.png" oninput="previewImg(this,'ppu')" /><img id="ppu" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/6a2fbe4b4c87acf1b003cc4d.png" /></div>
         <div class="field"><label>Étiquette thème</label><input type="text" id="fr_une_tag" value="Rapport annuel 2025" /></div>
@@ -237,13 +246,15 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
   <!-- ACTUALITÉS -->
   <div class="form-section">
     <div class="form-section-header"><span class="form-section-icon">📰</span><span class="form-section-title">Actualités — vignettes</span></div>
-    <div class="form-section-body"><div id="fr_actu_c" class="g2"></div><button class="btn-add" onclick="addActu('fr')">+ Ajouter une vignette</button></div>
+    <div class="form-section-body"><div id="cpicker_fr_actu"></div>
+      <div id="fr_actu_c" class="g2"></div><button class="btn-add" onclick="addActu('fr')">+ Ajouter une vignette</button></div>
   </div>
 
   <!-- EN BREF -->
   <div class="form-section">
     <div class="form-section-header"><span class="form-section-icon">⚡</span><span class="form-section-title">En bref</span></div>
-    <div class="form-section-body"><div id="fr_bref_c"></div><button class="btn-add" onclick="addBref('fr')">+ Ajouter un item</button></div>
+    <div class="form-section-body"><div id="cpicker_fr_bref"></div>
+      <div id="fr_bref_c"></div><button class="btn-add" onclick="addBref('fr')">+ Ajouter un item</button></div>
   </div>
 
   <!-- PUB 2 -->
@@ -258,7 +269,8 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
   <!-- BANC D'ESSAI -->
   <div class="form-section">
     <div class="form-section-header"><span class="form-section-icon">🚗</span><span class="form-section-title">Au banc d'essai</span></div>
-    <div class="form-section-body"><div id="fr_banc_c"></div><button class="btn-add" onclick="addBanc('fr')">+ Ajouter un essai</button></div>
+    <div class="form-section-body"><div id="cpicker_fr_banc"></div>
+      <div id="fr_banc_c"></div><button class="btn-add" onclick="addBanc('fr')">+ Ajouter un essai</button></div>
   </div>
 
   <!-- VOYAGES -->
@@ -276,6 +288,7 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
           </div>
         </div>
       </div>
+      <div id="cpicker_fr_voy"></div>
       <div id="fr_voy_c" class="g2"></div>
       <button class="btn-add" onclick="addVoy('fr')">+ Ajouter une carte voyage</button>
     </div>
@@ -284,7 +297,8 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
   <!-- AGENDA -->
   <div class="form-section">
     <div class="form-section-header"><span class="form-section-icon">📅</span><span class="form-section-title">L'Agenda</span></div>
-    <div class="form-section-body"><div id="fr_agenda_c"></div><button class="btn-add" onclick="addAgenda('fr')">+ Ajouter un événement</button></div>
+    <div class="form-section-body"><div id="cpicker_fr_agenda"></div>
+      <div id="fr_agenda_c"></div><button class="btn-add" onclick="addAgenda('fr')">+ Ajouter un événement</button></div>
   </div>
 
   <!-- AUTOTOURING -->
@@ -377,6 +391,52 @@ document.dispatchEvent(new Event('firebase-ready'));
      MAIN JS
 ══════════════════════════════════ -->
 <script>
+// ── PALETTE DE COULEURS ──
+const PALETTE = [
+  { label: 'Blanc',        value: '#FFFFFF' },
+  { label: 'Gris clair',   value: '#F5F5F5' },
+  { label: 'Blanc cassé',  value: '#FAFAFA' },
+  { label: 'Sable chaud',  value: '#FAF5EC' },
+  { label: 'Beige chaud',  value: '#FDF6EE' },
+  { label: 'Vert sauge',   value: '#EFF4EF' },
+  { label: 'Bleu ardoise', value: '#E8EEF5' },
+  { label: 'Bleu pâle',    value: '#F0F4F8' },
+  { label: 'Lavande',      value: '#F0EEF8' },
+  { label: 'Terracotta',   value: '#FAF0EE' },
+  { label: 'Gris foncé',   value: '#2E2E2E' },
+  { label: 'Noir',         value: '#1A1A1A' },
+  { label: 'Jaune ACL',    value: '#FCD900' },
+];
+
+// Couleurs par défaut de chaque section
+const SECTION_COLORS = {
+  fr_une:    '#FFFFFF',
+  fr_actu:   '#EFF4EF',
+  fr_bref:   '#FAF5EC',
+  fr_banc:   '#FDF6EE',
+  fr_voy:    '#FFFFFF',
+  fr_agenda: '#E8EEF5',
+};
+
+function colorPicker(sectionKey) {
+  var cur = SECTION_COLORS[sectionKey] || '#FFFFFF';
+  var html = '<div class="color-picker-row"><span class="color-picker-label">Couleur de fond :</span>';
+  PALETTE.forEach(function(p) {
+    var sel = p.value === cur ? ' selected' : '';
+    var brd = p.value === '#FFFFFF' ? 'border:1px solid #DDD;' : '';
+    html += '<div class="color-swatch' + sel + '" style="background:' + p.value + ';' + brd + '" title="' + p.label + '" onclick="setSectionColor(\'' + sectionKey + '\',\'' + p.value + '\',this)"></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function setSectionColor(key, value, el) {
+  SECTION_COLORS[key] = value;
+  // Unselect all swatches in same group
+  el.closest('.color-picker-row').querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
 // ── PASSWORD ──────────────────────────────────────
 const HASH = '9e930104ae3310baf5493c4540c5e3af4e753cc5dcf0c9468af7d17d004247e3';
 
@@ -567,6 +627,11 @@ function switchTab(lang, btn) {
 function initApp() {
   renderAll('fr');
   loadEditionsList();
+  // Init color pickers
+  Object.keys(SECTION_COLORS).forEach(key => {
+    const el = document.getElementById('cpicker_' + key);
+    if (el) el.innerHTML = colorPicker(key);
+  });
 }
 document.addEventListener('DOMContentLoaded', () => {
   if (sessionStorage.getItem('acl_auth') === '1') initApp();
@@ -747,6 +812,10 @@ function openPreview(lang) {
   w.document.write(html); w.document.close();
 }
 
+function getBg(lang, key) {
+  return SECTION_COLORS[lang + '_' + key] || SECTION_COLORS['fr_' + key] || '#FFFFFF';
+}
+
 function buildHTML(lang) {
   const p = lang+'_';
   const uu = (url) => { if(!url) return '#'; const s=url.includes('?')?'&':'?'; return url+s+'utm_source=brevo&utm_medium=email&utm_campaign='+encodeURIComponent(v(p+'utm')||'ACL Newsletter'); };
@@ -902,7 +971,7 @@ ${introParas}
 </td></tr>
 
 <!-- À LA UNE -->
-<tr><td style="background-color:#FFFFFF;padding:28px 28px 28px;">
+<tr><td style="background-color:${getBg(lang,'une')};padding:28px 28px 28px;">
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
     <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">À la une</td>
     <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
@@ -918,7 +987,7 @@ ${introParas}
 </td></tr>
 
 <!-- ACTUALITÉS -->
-<tr><td style="background-color:#EFF4EF;padding:28px 28px 28px;">
+<tr><td style="background-color:${getBg(lang,'actu')};padding:28px 28px 28px;">
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
     <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">Actualités</td>
     <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
@@ -927,7 +996,7 @@ ${introParas}
 </td></tr>
 
 <!-- EN BREF -->
-<tr><td style="background-color:#FAF5EC;padding:28px 28px 28px;">
+<tr><td style="background-color:${getBg(lang,'bref')};padding:28px 28px 28px;">
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
     <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">En bref</td>
     <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
@@ -939,7 +1008,7 @@ ${introParas}
 <tr><td style="background-color:#EFEFEF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub2H}</td></tr>
 
 <!-- BANC D'ESSAI -->
-<tr><td style="background-color:#FDF6EE;padding:28px 28px 28px;">
+<tr><td style="background-color:${getBg(lang,'banc')};padding:28px 28px 28px;">
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
     <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">Au banc d'essai</td>
     <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
@@ -948,7 +1017,7 @@ ${introParas}
 </td></tr>
 
 <!-- NOS VOYAGES -->
-<tr><td style="background-color:#FFFFFF;padding:28px 28px 28px;">
+<tr><td style="background-color:${getBg(lang,'voy')};padding:28px 28px 28px;">
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
     <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">Nos Voyages</td>
     <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
@@ -965,7 +1034,7 @@ ${introParas}
 </td></tr>
 
 <!-- AGENDA -->
-<tr><td style="background-color:#E8EEF5;padding:28px 28px 28px;">
+<tr><td style="background-color:${getBg(lang,'agenda')};padding:28px 28px 28px;">
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:6px;"><tr>
     <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">L'Agenda</td>
     <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
