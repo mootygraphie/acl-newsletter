@@ -110,6 +110,8 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 .btn-o:hover { border-color: var(--black); }
 .btn-topbar { display: inline-flex; align-items: center; gap: 8px; background: none; color: #fff; font-family: var(--font); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; border: 1.5px solid #555; border-radius: 22px; padding: 9px 16px; cursor: pointer; transition: border-color 0.15s; }
 .btn-topbar:hover { border-color: #fff; }
+.btn-fetch { background: var(--grey); color: var(--black); border: 1px solid var(--border); border-radius: 6px; padding: 6px 11px; font-family: var(--font); font-size: 11px; font-weight: 700; letter-spacing: 0.04em; cursor: pointer; flex-shrink: 0; white-space: nowrap; transition: background 0.15s; }
+.btn-fetch:hover { background: var(--yellow); border-color: var(--yellow); }
 .btn-copy-lang { display: inline-flex; align-items: center; gap: 5px; background: none; color: var(--black); font-family: var(--font); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border: 1.5px solid var(--border); border-radius: 22px; padding: 8px 14px; cursor: pointer; transition: opacity 0.15s, border-color 0.15s; }
 .btn-copy-lang:not(:disabled):hover { border-color: var(--black); }
 .btn-copy-lang:disabled { opacity: 0.3; cursor: default; }
@@ -235,6 +237,7 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
     <div class="form-section-header"><span class="form-section-icon">🗞</span><span class="form-section-title">À la une</span></div>
     <div class="form-section-body">
       <div id="cpicker_fr_une"></div>
+      <div class="field" style="margin-bottom:14px;"><label>🔗 URL article (auto-fill)</label><div style="display:flex;gap:6px;"><input type="url" id="fr_une_url_fetch" placeholder="https://www.acl.lu/fr/..." style="flex:1;" /><button class="btn-fetch" onclick="fillFixedFromOG('fr','une')">Auto-fill</button></div></div>
       <div class="g2">
       <div>
         <div class="field"><label>Image (640×300)</label><input type="url" id="fr_une_img" value="https://img.mailinblue.com/4363334/images/content_library/original/6a2fbe4b4c87acf1b003cc4d.png" oninput="previewImg(this,'ppu')" /><img id="ppu" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/6a2fbe4b4c87acf1b003cc4d.png" /></div>
@@ -284,6 +287,7 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
     <div class="form-section-body">
       <div class="cg" style="margin-bottom:14px;">
         <div class="cg-label" style="margin-bottom:10px;">Article principal (pleine largeur)</div>
+        <div class="field" style="margin-bottom:10px;"><label>🔗 URL article (auto-fill)</label><div style="display:flex;gap:6px;"><input type="url" id="fr_vm_url_fetch" placeholder="https://www.acl.lu/fr/..." style="flex:1;" /><button class="btn-fetch" onclick="fillFixedFromOG('fr','vm')">Auto-fill</button></div></div>
         <div class="g2">
           <div class="field"><label>Image</label><input type="url" id="fr_vm_img" value="https://img.mailinblue.com/4363334/images/content_library/original/6a2fcda487ff7b8ea43e0df0.png" oninput="previewImg(this,'ppvm')" /><img id="ppvm" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/6a2fcda487ff7b8ea43e0df0.png" /></div>
           <div>
@@ -538,9 +542,9 @@ function renderActu(lang) {
   const data = D[lang].actu;
   c.innerHTML = data.map((d,i) => `
     <div class="cg"><div class="cg-header"><span class="cg-label">Vignette ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','actu',${i})">×</button></div>
+    <div class="field"><label>🔗 URL article</label><div style="display:flex;gap:6px;"><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].actu[${i}].url=this.value" style="flex:1;" /><button class="btn-fetch" onclick="fillFromOG('${lang}','actu',${i})">Auto-fill</button></div></div>
     <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].actu[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /></div>
     <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].actu[${i}].title=this.value" /></div>
-    <div class="field"><label>Lien</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].actu[${i}].url=this.value" /></div>
     </div>`).join('');
 }
 
@@ -562,11 +566,11 @@ function renderBanc(lang) {
   const data = D[lang].banc;
   c.innerHTML = data.map((d,i) => `
     <div class="dyn-item"><button class="btn-rm" onclick="rm('${lang}','banc',${i})">×</button>
+    <div class="field" style="margin-bottom:10px;"><label>🔗 URL article</label><div style="display:flex;gap:6px;"><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].banc[${i}].url=this.value" style="flex:1;" /><button class="btn-fetch" onclick="fillFromOG('${lang}','banc',${i})">Auto-fill</button></div></div>
     <div class="g2" style="gap:10px;">
       <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].banc[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /></div>
       <div>
         <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].banc[${i}].title=this.value" /></div>
-        <div class="field"><label>Lien</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].banc[${i}].url=this.value" /></div>
         <div class="field"><label><input type="checkbox" ${d.luxgear?'checked':''} onchange="D['${lang}'].banc[${i}].luxgear=this.checked" /> Bouton LuxGear</label></div>
       </div>
     </div></div>`).join('');
@@ -577,11 +581,11 @@ function renderVoy(lang) {
   const data = D[lang].voy;
   c.innerHTML = data.map((d,i) => `
     <div class="cg"><div class="cg-header"><span class="cg-label">Carte ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','voy',${i})">×</button></div>
+    <div class="field"><label>🔗 URL article</label><div style="display:flex;gap:6px;"><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].voy[${i}].url=this.value" style="flex:1;" /><button class="btn-fetch" onclick="fillFromOG('${lang}','voy',${i})">Auto-fill</button></div></div>
     <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].voy[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /></div>
     <div class="field"><label>Badge</label><input type="text" value="${esc(d.badge||'')}" oninput="D['${lang}'].voy[${i}].badge=this.value" /></div>
     <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].voy[${i}].title=this.value" /></div>
     <div class="field"><label>Texte</label><textarea oninput="D['${lang}'].voy[${i}].text=this.value">${esc(d.text||'')}</textarea></div>
-    <div class="field"><label>Lien</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].voy[${i}].url=this.value" /></div>
     </div>`).join('');
 }
 
@@ -616,7 +620,65 @@ function renderJobs(lang) {
 }
 
 function rm(lang, key, i) { D[lang][key].splice(i,1); ({ actu:renderActu, bref:renderBref, banc:renderBanc, voy:renderVoy, agenda:renderAgenda, jobs:renderJobs })[key](lang); }
-function addActu(l)  { D[l].actu.push({img:'',title:'',url:''}); renderActu(l); }
+function addActu(l)  { D[l].actu.push({img:'',title:'',url:'',url_en:'',url_de:''}); renderActu(l); }
+
+// ── OG FETCH ─────────────────────────────────────
+async function fetchOG(url) {
+  const res = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(url));
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const html = await res.text();
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const attr = (sel, a='content') => { const el = doc.querySelector(sel); return el ? (el.getAttribute(a)||'') : ''; };
+  const clean = s => s.replace(/\s*[-–|]\s*ACL\s*$/i,'').trim();
+  return {
+    title: clean(attr('meta[property="og:title"]') || doc.title),
+    image: attr('meta[property="og:image"]'),
+    url:   attr('meta[property="og:url"]') || url,
+    fr: attr('link[hreflang="fr"]','href') || attr('link[hreflang="fr-fr"]','href') || attr('link[hreflang="fr-lu"]','href'),
+    en: attr('link[hreflang="en"]','href') || attr('link[hreflang="en-gb"]','href') || attr('link[hreflang="en-lu"]','href'),
+    de: attr('link[hreflang="de"]','href') || attr('link[hreflang="de-de"]','href') || attr('link[hreflang="de-lu"]','href') || attr('link[hreflang="de-at"]','href'),
+  };
+}
+
+async function fillFromOG(lang, section, idx) {
+  const item = D[lang][section][idx];
+  if (!item.url) { toast('Collez d\'abord une URL', 'red'); return; }
+  toast('⏳ Récupération...');
+  try {
+    const og = await fetchOG(item.url);
+    if (og.title) item.title = og.title;
+    if (og.image) item.img = og.image;
+    if (og.en)  item.url_en = og.en;
+    if (og.de)  item.url_de = og.de;
+    ({ actu:renderActu, banc:renderBanc, voy:renderVoy })[section](lang);
+    const extra = og.en ? ' · URLs EN+DE récupérées' : '';
+    toast('✓ Auto-fill OK' + extra, 'green');
+  } catch(e) { toast('Erreur : ' + e.message, 'red'); }
+}
+
+async function fillFixedFromOG(lang, section) {
+  const fetchInput = document.getElementById(lang+'_'+section+'_url_fetch');
+  const url = fetchInput ? fetchInput.value.trim() : '';
+  if (!url) { toast('Collez d\'abord une URL', 'red'); return; }
+  toast('⏳ Récupération...');
+  try {
+    const og = await fetchOG(url);
+    const ids = {
+      une: { title: lang+'_une_title', img: lang+'_une_img', url: lang+'_une_url', prev: lang==='fr'?'ppu':null },
+      vm:  { title: lang+'_vm_title',  img: lang+'_vm_img',  url: lang+'_vm_url',  prev: lang==='fr'?'ppvm':null },
+    };
+    const f = ids[section]; if (!f) return;
+    if (og.title) { const el = document.getElementById(f.title); if(el) el.value = og.title; }
+    if (og.image) {
+      const el = document.getElementById(f.img); if(el) el.value = og.image;
+      const pr = document.getElementById(f.prev); if(pr) pr.src = og.image;
+    }
+    if (og.url || url) { const el = document.getElementById(f.url); if(el && !el.value) el.value = og.url || url; }
+    toast('✓ Auto-fill OK', 'green');
+  } catch(e) { toast('Erreur : ' + e.message, 'red'); }
+}
+
+// ─────────────────────────────────────────────────
 function addBref(l)  { D[l].bref.push({cat:'',title:'',url:''}); renderBref(l); }
 function addBanc(l)  { D[l].banc.push({img:'',title:'',url:'',luxgear:false}); renderBanc(l); }
 function addVoy(l)   { D[l].voy.push({img:'',badge:'',title:'',text:'',url:''}); renderVoy(l); }
@@ -858,6 +920,7 @@ function getBg(lang, key) {
 function buildHTML(lang) {
   const p = lang+'_';
   const uu = (url) => { if(!url) return '#'; const s=url.includes('?')?'&':'?'; return url+s+'utm_source=brevo&utm_medium=email&utm_campaign='+encodeURIComponent(v(p+'utm')||'ACL Newsletter'); };
+  const lurl = (d) => lang==='en' ? (d.url_en||d.url) : lang==='de' ? (d.url_de||d.url) : d.url;
 
   const salut = lang === 'de'
     ? '{% if contact.CIVILITE == "Frau" %}Liebes{% else %}Liebes{% endif %} {% if contact.PRENOM %}{{ contact.PRENOM }}{% else %}Mitglied{% endif %}'
@@ -903,7 +966,7 @@ function buildHTML(lang) {
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
       <tr>${D[lang].actu.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/n)}%" valign="top" style="padding:0 ${i<n-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.35;color:#1A1A1A;margin:13px 0 0 0;">${esc(d.title)}</p></td>`).join('')}</tr>
       <tr>${D[lang].actu.map((_,i) => `${i?'<td width="2%" style="font-size:0;">&nbsp;</td>':''}<td style="border-top:1px solid #E8E8E8;padding-top:14px;font-size:0;line-height:0;padding-right:${i<n-1?'12px':'0'};padding-left:${i>0?'12px':'0'};">&nbsp;</td>`).join('')}</tr>
-      <tr>${D[lang].actu.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/n)}%" valign="top" style="padding:0 ${i<n-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;padding-top:14px;display:block;">En savoir plus →</a></td>`).join('')}</tr>
+      <tr>${D[lang].actu.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/n)}%" valign="top" style="padding:0 ${i<n-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><a target="_blank" href="${uu(lurl(d))}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;padding-top:14px;display:block;">En savoir plus →</a></td>`).join('')}</tr>
     </table>`;
 
   const brefH = D[lang].bref.map((d,i,a) => `
@@ -920,7 +983,7 @@ function buildHTML(lang) {
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="${i>0?'margin-top:12px;':''}background-color:#FFFFFF;border-radius:6px;">
       <tr>
         <td width="180" style="padding:0;vertical-align:top;line-height:0;font-size:0;"><img src="${esc(d.img)}" width="180" alt="${esc(d.title)}" style="display:block;width:180px;height:130px;object-fit:cover;border-radius:6px 0 0 6px;" /></td>
-        <td style="padding:16px 16px 16px 18px;vertical-align:middle;"><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.35;color:#1A1A1A;margin:0 0 10px 0;">${esc(d.title)}</p><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:block;">${d.luxgear?'À regarder sur LuxGear →':'En savoir plus →'}</a></td>
+        <td style="padding:16px 16px 16px 18px;vertical-align:middle;"><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.35;color:#1A1A1A;margin:0 0 10px 0;">${esc(d.title)}</p><a target="_blank" href="${uu(lurl(d))}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:block;">${d.luxgear?'À regarder sur LuxGear →':'En savoir plus →'}</a></td>
       </tr>
     </table>`).join('');
 
@@ -929,7 +992,7 @@ function buildHTML(lang) {
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
       <tr>${D[lang].voy.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/nv)}%" valign="top" style="padding:0 ${i<nv-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" />${d.badge?`<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:11px 0 8px;"><tr><td style="background-color:#EEEEEE;padding:4px 10px;border-radius:10px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#666666;">${esc(d.badge)}</td></tr></table>`:''}<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:13px;line-height:1.3;color:#1A1A1A;margin:0 0 6px 0;">${esc(d.title)}</p><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.55;color:#666666;margin:0;">${esc(d.text||'')}</p></td>`).join('')}</tr>
       <tr>${D[lang].voy.map((_,i) => `${i?'<td width="2%" style="font-size:0;">&nbsp;</td>':''}<td style="border-top:1px solid #F0F0F0;padding-top:14px;font-size:0;line-height:0;">&nbsp;</td>`).join('')}</tr>
-      <tr>${D[lang].voy.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/nv)}%" valign="top" style="padding:0 ${i<nv-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;padding-top:14px;display:block;">En savoir plus →</a></td>`).join('')}</tr>
+      <tr>${D[lang].voy.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/nv)}%" valign="top" style="padding:0 ${i<nv-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><a target="_blank" href="${uu(lurl(d))}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;padding-top:14px;display:block;">En savoir plus →</a></td>`).join('')}</tr>
     </table>`;
 
   const pub1 = v(p+'pub1_img')||'https://img.mailinblue.com/4363334/images/content_library/original/6a300abac8e9e1c3ee19ff90.jpg';
@@ -970,6 +1033,7 @@ body{background-color:#EFEFEF;font-family:'Albert Sans',Helvetica,Arial,sans-ser
   .col2{display:block!important;width:100%!important;padding:0 20px 22px!important;}
   .col2-divider{display:none!important;}
   .footer-col{display:block!important;width:100%!important;padding:0 0 16px!important;}
+  .hide-mobile{display:none!important;max-height:0!important;overflow:hidden!important;font-size:0!important;line-height:0!important;}
 }
 </style>
 </head>
@@ -1009,7 +1073,8 @@ body{background-color:#EFEFEF;font-family:'Albert Sans',Helvetica,Arial,sans-ser
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-top:4px;"><tr><td style="border-radius:6px;padding:0;line-height:0;font-size:0;text-align:center;">${pub1H}</td></tr></table>
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-top:20px;"><tr><td style="border-top:1px solid #EEEEEE;font-size:0;line-height:0;">&nbsp;</td></tr></table>
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.5;color:#1A1A1A;margin:18px 0 14px 0;">${salut},</p>
-${introParas}
+<!--[if !mso]><!--><div class="hide-mobile">${introParas}</div><!--<![endif]-->
+<!--[if mso]>${introParas}<![endif]-->
 </td></tr>
 
 <!-- À LA UNE -->
