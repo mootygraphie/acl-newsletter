@@ -168,6 +168,17 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 .modal-box { background: #fff; border-radius: 12px; padding: 28px 32px; width: 400px; max-width: 90vw; }
 .modal-box h3 { font-size: 13px; font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: 0.08em; color: var(--black); margin-bottom: 12px; }
 .modal-box p { font-size: 12px; color: #666; margin-bottom: 16px; line-height: 1.6; }
+
+/* ── ARTICLE BROWSER ── */
+.ab-lang-btn { background: var(--grey); border: 1.5px solid var(--border); border-radius: 6px; padding: 5px 10px; font-size: 15px; cursor: pointer; transition: border-color 0.15s, opacity 0.15s; line-height: 1; }
+.ab-lang-btn.active { border-color: var(--black); }
+.ab-lang-btn:not(.active) { opacity: 0.3; }
+.ab-item { padding: 10px 14px; border-bottom: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.1s; }
+.ab-item:last-child { border-bottom: none; }
+.ab-item:hover { background: #F5F5F5; }
+.ab-item-flag { font-size: 15px; flex-shrink: 0; }
+.ab-item-title { font-size: 12px; font-weight: 600; color: var(--black); flex: 1; line-height: 1.4; }
+.ab-item-meta { font-size: 10px; color: var(--mid); text-align: right; flex-shrink: 0; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -448,6 +459,30 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
   </div>
 </div>
 
+<!-- ARTICLE BROWSER MODAL -->
+<div id="articleBrowserModal" class="modal-overlay" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal-box" style="width:660px;max-width:96vw;max-height:82vh;display:flex;flex-direction:column;padding:22px 24px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <h3 style="margin:0;">📰 Parcourir les articles</h3>
+      <button onclick="document.getElementById('articleBrowserModal').style.display='none'" style="background:none;border:none;font-size:20px;cursor:pointer;color:#AAA;line-height:1;padding:0;">✕</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
+      <select id="ab-site" onchange="abSiteChange()" style="padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-family:var(--font);font-size:12px;font-weight:700;color:var(--black);background:#FAFAFA;">
+        <option value="https://www.acl.lu">ACL.lu</option>
+        <option value="https://autotouring.acl.lu">AutoTouring</option>
+      </select>
+      <div style="display:flex;gap:4px;">
+        <button class="ab-lang-btn active" id="ab-lang-fr" onclick="abToggleLang('fr')">🇫🇷</button>
+        <button class="ab-lang-btn active" id="ab-lang-en" onclick="abToggleLang('en')">🇬🇧</button>
+        <button class="ab-lang-btn active" id="ab-lang-de" onclick="abToggleLang('de')">🇩🇪</button>
+      </div>
+      <input id="ab-search" type="text" placeholder="🔍 Rechercher par mot-clé..." oninput="abFilter()" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-family:var(--font);font-size:12px;min-width:160px;" />
+    </div>
+    <div id="ab-list" style="flex:1;overflow-y:auto;border:1px solid var(--border);border-radius:8px;min-height:220px;"></div>
+    <div style="font-size:10px;color:var(--mid);margin-top:8px;">Cliquez sur un article pour remplir automatiquement le champ URL + titre + image.</div>
+  </div>
+</div>
+
 </div><!-- /app -->
 
 <!-- ══════════════════════════════════
@@ -613,7 +648,7 @@ function renderActu(lang) {
   const data = D[lang].actu;
   c.innerHTML = data.map((d,i) => `
     <div class="cg"><div class="cg-header"><span class="cg-label">Vignette ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','actu',${i})">×</button></div>
-    <div class="field"><label>🔗 URL article</label><div style="display:flex;gap:6px;"><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].actu[${i}].url=this.value" style="flex:1;" /><button class="btn-fetch" onclick="fillFromOG('${lang}','actu',${i})">Auto-fill</button></div></div>
+    <div class="field"><label>🔗 URL article</label><div style="display:flex;gap:6px;"><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].actu[${i}].url=this.value" style="flex:1;" /><button class="btn-fetch" onclick="openArticleBrowser('${lang}','actu',${i})" title="Parcourir les articles">📰</button><button class="btn-fetch" onclick="fillFromOG('${lang}','actu',${i})">Auto-fill</button></div></div>
     <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].actu[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /></div>
     <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].actu[${i}].title=this.value" /></div>
     </div>`).join('');
@@ -628,7 +663,7 @@ function renderBref(lang) {
       <div class="field"><label>Catégorie</label><input type="text" value="${esc(d.cat||'')}" oninput="D['${lang}'].bref[${i}].cat=this.value" /></div>
       <div class="field" style="grid-column:span 2"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].bref[${i}].title=this.value" /></div>
     </div>
-    <div class="field"><label>Lien</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].bref[${i}].url=this.value" /></div>
+    <div class="field"><label>Lien</label><div style="display:flex;gap:6px;"><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].bref[${i}].url=this.value" style="flex:1;" /><button class="btn-fetch" onclick="openArticleBrowser('${lang}','bref',${i})" title="Parcourir les articles">📰</button></div></div>
     </div>`).join('');
 }
 
@@ -637,7 +672,7 @@ function renderBanc(lang) {
   const data = D[lang].banc;
   c.innerHTML = data.map((d,i) => `
     <div class="dyn-item"><button class="btn-rm" onclick="rm('${lang}','banc',${i})">×</button>
-    <div class="field" style="margin-bottom:10px;"><label>🔗 URL article</label><div style="display:flex;gap:6px;"><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].banc[${i}].url=this.value" style="flex:1;" /><button class="btn-fetch" onclick="fillFromOG('${lang}','banc',${i})">Auto-fill</button></div></div>
+    <div class="field" style="margin-bottom:10px;"><label>🔗 URL article</label><div style="display:flex;gap:6px;"><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].banc[${i}].url=this.value" style="flex:1;" /><button class="btn-fetch" onclick="openArticleBrowser('${lang}','banc',${i})" title="Parcourir les articles">📰</button><button class="btn-fetch" onclick="fillFromOG('${lang}','banc',${i})">Auto-fill</button></div></div>
     <div class="g2" style="gap:10px;">
       <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].banc[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /></div>
       <div>
@@ -652,7 +687,7 @@ function renderVoy(lang) {
   const data = D[lang].voy;
   c.innerHTML = data.map((d,i) => `
     <div class="cg"><div class="cg-header"><span class="cg-label">Carte ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','voy',${i})">×</button></div>
-    <div class="field"><label>🔗 URL article</label><div style="display:flex;gap:6px;"><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].voy[${i}].url=this.value" style="flex:1;" /><button class="btn-fetch" onclick="fillFromOG('${lang}','voy',${i})">Auto-fill</button></div></div>
+    <div class="field"><label>🔗 URL article</label><div style="display:flex;gap:6px;"><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].voy[${i}].url=this.value" style="flex:1;" /><button class="btn-fetch" onclick="openArticleBrowser('${lang}','voy',${i})" title="Parcourir les articles">📰</button><button class="btn-fetch" onclick="fillFromOG('${lang}','voy',${i})">Auto-fill</button></div></div>
     <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].voy[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /></div>
     <div class="field"><label>Badge</label><input type="text" value="${esc(d.badge||'')}" oninput="D['${lang}'].voy[${i}].badge=this.value" /></div>
     <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].voy[${i}].title=this.value" /></div>
@@ -721,10 +756,109 @@ async function fillFromOG(lang, section, idx) {
     if (og.image) item.img = og.image;
     if (og.en)  item.url_en = og.en;
     if (og.de)  item.url_de = og.de;
-    ({ actu:renderActu, banc:renderBanc, voy:renderVoy })[section](lang);
+    const renderFns = { actu:renderActu, banc:renderBanc, voy:renderVoy, bref:renderBref };
+    if (renderFns[section]) renderFns[section](lang);
     const extra = og.en ? ' · URLs EN+DE récupérées' : '';
     toast('✓ Auto-fill OK' + extra, 'green');
   } catch(e) { toast('Erreur : ' + e.message, 'red'); }
+}
+
+// ── ARTICLE BROWSER ──────────────────────────────
+let abTarget = null;
+let abCurrentArticles = [];
+const abCache = {};
+const abActiveLangs = { fr: true, en: true, de: true };
+const AB_LANGS = [
+  { code: 'fr', flag: '🇫🇷', feed: '/fr/feed/' },
+  { code: 'en', flag: '🇬🇧', feed: '/en/feed/' },
+  { code: 'de', flag: '🇩🇪', feed: '/de/feed/' }
+];
+
+function openArticleBrowser(lang, section, index) {
+  abTarget = { lang, section, index };
+  document.getElementById('articleBrowserModal').style.display = 'flex';
+  abLoadSite(document.getElementById('ab-site').value);
+}
+
+async function abLoadSite(siteBase) {
+  const list = document.getElementById('ab-list');
+  const toFetch = AB_LANGS.filter(l => !(siteBase + '|' + l.code in abCache));
+  if (toFetch.length > 0) {
+    list.innerHTML = '<div style="padding:32px;text-align:center;color:var(--mid);font-size:12px;">⏳ Chargement des articles...</div>';
+    await Promise.all(toFetch.map(async l => {
+      try {
+        const feedUrl = siteBase + l.feed + '?posts_per_page=50';
+        const res = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(feedUrl));
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const text = await res.text();
+        const xml = new DOMParser().parseFromString(text, 'text/xml');
+        abCache[siteBase + '|' + l.code] = [...xml.querySelectorAll('item')].map(item => {
+          const title = item.querySelector('title')?.textContent?.trim() || '';
+          let url = '';
+          for (const node of item.childNodes) {
+            if (node.nodeName === 'link') { url = node.textContent?.trim() || ''; break; }
+          }
+          if (!url) url = item.querySelector('guid')?.textContent?.trim() || '';
+          const pubDate = item.querySelector('pubDate')?.textContent?.trim() || '';
+          return { title, url, date: pubDate, lang: l.code, flag: l.flag };
+        }).filter(a => a.url && a.title);
+      } catch(e) {
+        abCache[siteBase + '|' + l.code] = [];
+      }
+    }));
+  }
+  abFilter();
+}
+
+function abSiteChange() {
+  document.getElementById('ab-search').value = '';
+  abLoadSite(document.getElementById('ab-site').value);
+}
+
+function abToggleLang(lang) {
+  abActiveLangs[lang] = !abActiveLangs[lang];
+  document.getElementById('ab-lang-' + lang)?.classList.toggle('active', abActiveLangs[lang]);
+  abFilter();
+}
+
+function abFilter() {
+  const siteBase = document.getElementById('ab-site').value;
+  const search = document.getElementById('ab-search').value.toLowerCase().trim();
+  const list = document.getElementById('ab-list');
+  const isLoading = AB_LANGS.some(l => !(siteBase + '|' + l.code in abCache));
+  if (isLoading) return;
+  let articles = [];
+  for (const l of AB_LANGS) {
+    if (!abActiveLangs[l.code]) continue;
+    articles.push(...(abCache[siteBase + '|' + l.code] || []));
+  }
+  articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+  if (search) articles = articles.filter(a => a.title.toLowerCase().includes(search));
+  abCurrentArticles = articles;
+  if (articles.length === 0) {
+    list.innerHTML = '<div style="padding:32px;text-align:center;color:var(--mid);font-size:12px;">Aucun article trouvé</div>';
+    return;
+  }
+  list.innerHTML = articles.map((a, i) => {
+    const d = new Date(a.date);
+    const dateStr = isNaN(d.getTime()) ? '' : d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+    return `<div class="ab-item" onclick="abSelect(${i})">
+      <span class="ab-item-flag">${a.flag}</span>
+      <span class="ab-item-title">${esc(a.title)}</span>
+      <span class="ab-item-meta">${dateStr}</span>
+    </div>`;
+  }).join('');
+}
+
+async function abSelect(idx) {
+  const article = abCurrentArticles[idx];
+  if (!article || !abTarget) return;
+  document.getElementById('articleBrowserModal').style.display = 'none';
+  const { lang, section, index } = abTarget;
+  D[lang][section][index].url = article.url;
+  if (article.title) D[lang][section][index].title = article.title;
+  renderAll(lang);
+  await fillFromOG(lang, section, index);
 }
 
 async function fillFixedFromOG(lang, section) {
