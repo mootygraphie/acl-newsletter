@@ -780,31 +780,85 @@ function openArticleBrowser(lang, section, index) {
   abLoadSite(document.getElementById('ab-site').value);
 }
 
+async function abFetchOneLang(siteBase, langObj) {
+  const { code: lang, flag } = langObj;
+  const proxy = url => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+  const parseRSS = text => {
+    const xml = new DOMParser().parseFromString(text, 'text/xml');
+    return [...xml.querySelectorAll('item')].map(item => {
+      const title = item.querySelector('title')?.textContent?.trim() || '';
+      let url = '';
+      for (const node of item.childNodes) {
+        if (node.nodeName === 'link') { url = node.textContent?.trim() || ''; break; }
+      }
+      if (!url) url = item.querySelector('guid:not([isPermaLink="false"])')?.textContent?.trim()
+                    || item.querySelector('guid')?.textContent?.trim() || '';
+      const pubDate = item.querySelector('pubDate')?.textContent?.trim() || '';
+      return { title, url, date: pubDate, lang, flag };
+    }).filter(a => a.url && a.title && a.url.startsWith('http'));
+  };
+
+  // ① WP REST API avec Polylang (?lang=fr)
+  try {
+    const apiUrl = `${siteBase}/wp-json/wp/v2/posts?per_page=50&lang=${lang}&_fields=id,title,link,date`;
+    const r = await fetch(proxy(apiUrl));
+    if (r.ok) {
+      const data = await r.json();
+      if (Array.isArray(data) && data.length > 0) {
+        return data.map(p => ({
+          title: (p.title?.rendered || '').replace(/<[^>]+>/g,''),
+          url: p.link || '',
+          date: p.date || '',
+          lang, flag
+        })).filter(a => a.url && a.title);
+      }
+    }
+  } catch(e) {}
+
+  // ② WP REST API sans filtre langue (fallback — on récupère tout)
+  try {
+    const apiUrl = `${siteBase}/wp-json/wp/v2/posts?per_page=50&_fields=id,title,link,date`;
+    const r = await fetch(proxy(apiUrl));
+    if (r.ok) {
+      const data = await r.json();
+      if (Array.isArray(data) && data.length > 0) {
+        return data.map(p => ({
+          title: (p.title?.rendered || '').replace(/<[^>]+>/g,''),
+          url: p.link || '',
+          date: p.date || '',
+          lang, flag
+        })).filter(a => a.url && a.title);
+      }
+    }
+  } catch(e) {}
+
+  // ③ RSS Polylang — variantes d'URL
+  const rssVariants = [
+    `${siteBase}/${lang}/feed/`,
+    `${siteBase}/?feed=rss2&lang=${lang}`,
+    `${siteBase}/feed/?lang=${lang}`,
+    `${siteBase}/${lang}/feed/rss/`,
+  ];
+  for (const feedUrl of rssVariants) {
+    try {
+      const r = await fetch(proxy(feedUrl + (feedUrl.includes('?') ? '&' : '?') + 'posts_per_page=50'));
+      if (!r.ok) continue;
+      const text = await r.text();
+      const items = parseRSS(text);
+      if (items.length > 0) return items;
+    } catch(e) {}
+  }
+
+  return [];
+}
+
 async function abLoadSite(siteBase) {
   const list = document.getElementById('ab-list');
   const toFetch = AB_LANGS.filter(l => !(siteBase + '|' + l.code in abCache));
   if (toFetch.length > 0) {
     list.innerHTML = '<div style="padding:32px;text-align:center;color:var(--mid);font-size:12px;">⏳ Chargement des articles...</div>';
     await Promise.all(toFetch.map(async l => {
-      try {
-        const feedUrl = siteBase + l.feed + '?posts_per_page=50';
-        const res = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(feedUrl));
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const text = await res.text();
-        const xml = new DOMParser().parseFromString(text, 'text/xml');
-        abCache[siteBase + '|' + l.code] = [...xml.querySelectorAll('item')].map(item => {
-          const title = item.querySelector('title')?.textContent?.trim() || '';
-          let url = '';
-          for (const node of item.childNodes) {
-            if (node.nodeName === 'link') { url = node.textContent?.trim() || ''; break; }
-          }
-          if (!url) url = item.querySelector('guid')?.textContent?.trim() || '';
-          const pubDate = item.querySelector('pubDate')?.textContent?.trim() || '';
-          return { title, url, date: pubDate, lang: l.code, flag: l.flag };
-        }).filter(a => a.url && a.title);
-      } catch(e) {
-        abCache[siteBase + '|' + l.code] = [];
-      }
+      abCache[siteBase + '|' + l.code] = await abFetchOneLang(siteBase, l);
     }));
   }
   abFilter();
@@ -812,7 +866,13 @@ async function abLoadSite(siteBase) {
 
 function abSiteChange() {
   document.getElementById('ab-search').value = '';
-  abLoadSite(document.getElementById('ab-site').value);
+  const siteBase = document.getElementById('ab-site').value;
+  // Vide le cache pour ce site si déjà chargé avec 0 résultats (retry avec nouvelle stratégie)
+  AB_LANGS.forEach(l => {
+    const key = siteBase + '|' + l.code;
+    if (abCache[key] && abCache[key].length === 0) delete abCache[key];
+  });
+  abLoadSite(siteBase);
 }
 
 function abToggleLang(lang) {
@@ -836,7 +896,11 @@ function abFilter() {
   if (search) articles = articles.filter(a => a.title.toLowerCase().includes(search));
   abCurrentArticles = articles;
   if (articles.length === 0) {
-    list.innerHTML = '<div style="padding:32px;text-align:center;color:var(--mid);font-size:12px;">Aucun article trouvé</div>';
+    const hasAny = AB_LANGS.some(l => (abCache[siteBase + '|' + l.code] || []).length > 0);
+    const msg = hasAny
+      ? 'Aucun article correspondant à cette recherche'
+      : 'Impossible de récupérer les articles pour ce site.<br>L\'API REST et les flux RSS ne sont pas accessibles.<br><span style="font-weight:600;">Collez l\'URL directement dans le champ et utilisez Auto-fill.</span>';
+    list.innerHTML = `<div style="padding:32px;text-align:center;color:var(--mid);font-size:12px;line-height:1.8;">${msg}</div>`;
     return;
   }
   list.innerHTML = articles.map((a, i) => {
