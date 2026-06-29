@@ -933,23 +933,43 @@ function saveApiKey() {
 }
 
 // ── ANTHROPIC API ─────────────────────────────────
-async function callClaude(prompt, maxTokens=2000) {
+async function callClaude(prompt, maxTokens=2000, attempt=1) {
   const key = localStorage.getItem('acl_apikey') || '';
-  if (!key) { toast('⚠️ Clé API manquante — cliquez sur 🔑 en haut à droite', 'red'); throw new Error('Clé API manquante'); }
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-allow-browser': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6', max_tokens: maxTokens,
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
-  if (!res.ok) { let e; try { e = await res.json(); } catch{} throw new Error((e?.error?.message)||'Erreur API '+res.status); }
+  if (!key) { toast('⚠️ Clé API manquante — cliquez sur 🔑', 'red'); throw new Error('Clé API manquante'); }
+  let res;
+  try {
+    res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-allow-browser': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6', max_tokens: maxTokens,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+  } catch(networkErr) {
+    if (attempt < 3) {
+      toast(`⏳ Connexion instable, nouvelle tentative (${attempt}/2)...`);
+      await new Promise(r => setTimeout(r, 1500 * attempt));
+      return callClaude(prompt, maxTokens, attempt + 1);
+    }
+    throw networkErr;
+  }
+  if (!res.ok) {
+    let e; try { e = await res.json(); } catch{}
+    const msg = e?.error?.message || 'Erreur API ' + res.status;
+    // Retry on stalled/overloaded errors
+    if (attempt < 3 && (res.status === 529 || res.status === 503 || msg.toLowerCase().includes('stall') || msg.toLowerCase().includes('overload'))) {
+      toast(`⏳ API surchargée, nouvelle tentative (${attempt}/2)...`);
+      await new Promise(r => setTimeout(r, 2000 * attempt));
+      return callClaude(prompt, maxTokens, attempt + 1);
+    }
+    throw new Error(msg);
+  }
   const data = await res.json();
   const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
   const clean = text.replace(/```json[\s\S]*?```|```/g,'').trim();
