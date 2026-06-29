@@ -134,6 +134,12 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 /* ── TRANSLATED NOTICE ── */
 .tl-notice { background: #FFFBEB; border: 1px solid var(--yellow); border-radius: 8px; padding: 12px 16px; margin-bottom: 18px; font-size: 12px; color: #7A6200; display: flex; align-items: center; gap: 12px; }
 .tl-notice span { flex: 1; }
+
+/* ── API KEY MODAL ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 600; display: flex; align-items: center; justify-content: center; }
+.modal-box { background: #fff; border-radius: 12px; padding: 28px 32px; width: 400px; max-width: 90vw; }
+.modal-box h3 { font-size: 13px; font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: 0.08em; color: var(--black); margin-bottom: 12px; }
+.modal-box p { font-size: 12px; color: #666; margin-bottom: 16px; line-height: 1.6; }
 </style>
 </head>
 <body>
@@ -164,6 +170,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       <div class="ed-menu" id="edMenu"></div>
     </div>
     <button class="btn-topbar" onclick="saveEdition()">💾 Sauvegarder</button>
+    <button class="btn-topbar" onclick="showApiModal()" id="btnApiKey">🔑 Clé API</button>
   </div>
 </div>
 
@@ -349,14 +356,14 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
 <!-- ══ TABS EN & DE — remplis dynamiquement ══ -->
 <div class="tab-pane" id="pane-en">
   <div class="content">
-    <div class="tl-notice"><span>🤖 <strong>Onglet traduit automatiquement depuis le FR.</strong> Modifiez les champs si nécessaire avant de générer.</span><button class="btn-ai" onclick="translateTab('en')">↻ Re-traduire</button></div>
+    <div class="tl-notice"><span>Tous les champs sont éditables. Cliquez sur <strong>🌐 Traduire EN + DE</strong> pour remplir automatiquement depuis le FR, ou modifiez directement.</span><button class="btn-ai" onclick="translateTab('en')">↻ Traduire depuis FR</button></div>
     <div id="en_fields"></div>
   </div>
 </div>
 
 <div class="tab-pane" id="pane-de">
   <div class="content">
-    <div class="tl-notice"><span>🤖 <strong>Onglet traduit automatiquement depuis le FR.</strong> Modifiez les champs si nécessaire avant de générer.</span><button class="btn-ai" onclick="translateTab('de')">↻ Re-traduire</button></div>
+    <div class="tl-notice"><span>Tous les champs sont éditables. Cliquez sur <strong>🌐 Traduire EN + DE</strong> pour remplir automatiquement depuis le FR, ou modifiez directement.</span><button class="btn-ai" onclick="translateTab('de')">↻ Traduire depuis FR</button></div>
     <div id="de_fields"></div>
   </div>
 </div>
@@ -375,6 +382,19 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
     <button class="btn-copy-lang" id="btnCopyDE" onclick="copyLang('de')" disabled>📋 DE</button>
   </div>
   <span class="info" id="charsInfo"></span>
+</div>
+
+<!-- MODAL CLÉ API -->
+<div id="apiModal" class="modal-overlay" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal-box">
+    <h3>🔑 Clé API Anthropic</h3>
+    <p>Nécessaire pour la génération IA et la traduction automatique. Stockée uniquement dans votre navigateur (localStorage), jamais envoyée ailleurs.</p>
+    <div class="field"><label>Clé API (commence par sk-ant-...)</label><input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." style="width:100%;" /></div>
+    <div style="display:flex;gap:10px;margin-top:18px;">
+      <button class="btn-p" onclick="saveApiKey()" style="flex:1;">Enregistrer</button>
+      <button class="btn-o" onclick="document.getElementById('apiModal').style.display='none'">Annuler</button>
+    </div>
+  </div>
 </div>
 
 </div><!-- /app -->
@@ -698,26 +718,53 @@ function switchTab(lang, btn) {
 function initApp() {
   renderAll('fr');
   loadEditionsList();
-  // Init color pickers
   Object.keys(SECTION_COLORS).forEach(key => {
     const el = document.getElementById('cpicker_' + key);
     if (el) el.innerHTML = colorPicker(key);
   });
+  // Initialise les onglets EN/DE avec des formulaires vides éditables
+  ['en', 'de'].forEach(lang => {
+    const el = document.getElementById(lang+'_fields');
+    if (el) { el.innerHTML = buildTranslatedFields(lang, {}); renderAll(lang); }
+  });
+  // Avertissement clé API
+  if (!localStorage.getItem('acl_apikey')) {
+    setTimeout(() => toast('⚠️ Clé API Anthropic non configurée — cliquez sur 🔑', 'red'), 1200);
+  }
 }
 document.addEventListener('DOMContentLoaded', () => {
   if (sessionStorage.getItem('acl_auth') === '1') initApp();
 });
 
+// ── API KEY ───────────────────────────────────────
+function showApiModal() {
+  document.getElementById('apiKeyInput').value = localStorage.getItem('acl_apikey') || '';
+  document.getElementById('apiModal').style.display = 'flex';
+}
+function saveApiKey() {
+  const k = document.getElementById('apiKeyInput').value.trim();
+  if (k) { localStorage.setItem('acl_apikey', k); toast('Clé API enregistrée ✓', 'green'); }
+  document.getElementById('apiModal').style.display = 'none';
+}
+
 // ── ANTHROPIC API ─────────────────────────────────
 async function callClaude(prompt, maxTokens=2000) {
+  const key = localStorage.getItem('acl_apikey') || '';
+  if (!key) { toast('⚠️ Clé API manquante — cliquez sur 🔑 en haut à droite', 'red'); throw new Error('Clé API manquante'); }
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-allow-browser': 'true'
+    },
     body: JSON.stringify({
       model: 'claude-sonnet-4-6', max_tokens: maxTokens,
       messages: [{ role: 'user', content: prompt }]
     })
   });
+  if (!res.ok) { let e; try { e = await res.json(); } catch{} throw new Error((e?.error?.message)||'Erreur API '+res.status); }
   const data = await res.json();
   const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
   const clean = text.replace(/```json[\s\S]*?```|```/g,'').trim();
@@ -789,17 +836,30 @@ function collectFR() {
 }
 
 function applyTranslation(lang, d) {
-  // Copy array data
-  if (d.actu) D[lang].actu = d.actu;
-  if (d.bref) D[lang].bref = d.bref;
-  if (d.banc) D[lang].banc = d.banc;
-  if (d.voy)  D[lang].voy  = d.voy;
+  if (d.actu)   D[lang].actu   = d.actu;
+  if (d.bref)   D[lang].bref   = d.bref;
+  if (d.banc)   D[lang].banc   = d.banc;
+  if (d.voy)    D[lang].voy    = d.voy;
   if (d.agenda) D[lang].agenda = d.agenda;
-  if (d.jobs) D[lang].jobs = d.jobs;
+  if (d.jobs)   D[lang].jobs   = d.jobs;
 
   const u = d.une||{}, vm = d.vm||{}, au = d.auto||{}, pa = d.parr||{};
 
-  document.getElementById(lang+'_fields').innerHTML = buildTranslatedFields(lang, d);
+  // Met à jour les champs en place (sans reconstruire le formulaire)
+  setField(lang+'_edition',   d.edition);
+  setField(lang+'_utm',       d.utm);
+  setField(lang+'_preheader', d.preheader);
+  setField(lang+'_intro',     d.intro);
+  setField(lang+'_une_img',   u.img);   setField(lang+'_une_tag',   u.tag);
+  setField(lang+'_une_title', u.title); setField(lang+'_une_text',  u.text);
+  setField(lang+'_une_cta',   u.cta);   setField(lang+'_une_url',   u.url);
+  setField(lang+'_vm_img',    vm.img);  setField(lang+'_vm_title',  vm.title);
+  setField(lang+'_vm_text',   vm.text); setField(lang+'_vm_url',    vm.url);
+  setField(lang+'_auto_img',  au.img);  setField(lang+'_auto_date', au.date);
+  setField(lang+'_auto_url',  au.url);  setField(lang+'_job_url',   d.job_url);
+  setField(lang+'_parr_img',  pa.img);  setField(lang+'_parr_text', pa.text);
+  setField(lang+'_parr_url',  pa.url);
+
   renderAll(lang);
 }
 
@@ -814,13 +874,16 @@ function buildTranslatedFields(lang, d) {
   </div><div class="field" style="margin-top:10px;"><label>Introduction</label><textarea id="${lang}_intro" rows="4">${esc(d.intro||'')}</textarea></div></div></div>
 
   <div class="form-section"><div class="form-section-header"><span class="form-section-icon">🗞</span><span class="form-section-title">À la une</span></div>
-  <div class="form-section-body g2">
+  <div class="form-section-body">
+    <div class="field" style="margin-bottom:14px;"><label>🔗 URL article (auto-fill)</label><div style="display:flex;gap:6px;"><input type="url" id="${lang}_une_url_fetch" placeholder="https://www.acl.lu/${lang}/..." style="flex:1;" /><button class="btn-fetch" onclick="fillFixedFromOG('${lang}','une')">Auto-fill</button></div></div>
+    <div class="g2">
     <div><div class="field"><label>Image</label><input type="url" id="${lang}_une_img" value="${esc(u.img||'')}" /><img class="img-prev" src="${u.img||''}" /></div>
     <div class="field"><label>Étiquette</label><input type="text" id="${lang}_une_tag" value="${esc(u.tag||'')}" /></div></div>
     <div><div class="field"><label>Titre</label><input type="text" id="${lang}_une_title" value="${esc(u.title||'')}" /></div>
     <div class="field"><label>Texte</label><textarea id="${lang}_une_text">${esc(u.text||'')}</textarea></div>
     <div class="g2"><div class="field"><label>CTA</label><input type="text" id="${lang}_une_cta" value="${esc(u.cta||'')}" /></div>
     <div class="field"><label>URL</label><input type="url" id="${lang}_une_url" value="${esc(u.url||'')}" /></div></div></div>
+    </div>
   </div></div>
 
   <div class="form-section"><div class="form-section-header"><span class="form-section-icon">📰</span><span class="form-section-title">Actualités</span></div>
@@ -835,6 +898,7 @@ function buildTranslatedFields(lang, d) {
   <div class="form-section"><div class="form-section-header"><span class="form-section-icon">✈️</span><span class="form-section-title">Voyages</span></div>
   <div class="form-section-body">
     <div class="cg" style="margin-bottom:12px;"><div class="cg-label" style="margin-bottom:8px;">Principal</div>
+    <div class="field" style="margin-bottom:10px;"><label>🔗 URL article (auto-fill)</label><div style="display:flex;gap:6px;"><input type="url" id="${lang}_vm_url_fetch" placeholder="https://www.acl.lu/${lang}/..." style="flex:1;" /><button class="btn-fetch" onclick="fillFixedFromOG('${lang}','vm')">Auto-fill</button></div></div>
     <div class="g2"><div class="field"><label>Image</label><input type="url" id="${lang}_vm_img" value="${esc(vm.img||'')}" /><img class="img-prev" src="${vm.img||''}" /></div>
     <div><div class="field"><label>Titre</label><input type="text" id="${lang}_vm_title" value="${esc(vm.title||'')}" /></div>
     <div class="field"><label>Texte</label><textarea id="${lang}_vm_text">${esc(vm.text||'')}</textarea></div>
