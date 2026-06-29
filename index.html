@@ -37,16 +37,16 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 .topbar-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
 /* ── TABS ── */
-.tabs-bar { background: #fff; border-bottom: 2px solid var(--border); padding: 0 32px; display: flex; position: sticky; top: 56px; z-index: 190; }
+.tabs-bar { background: #fff; border-bottom: 2px solid var(--border); padding: 0 32px 0 242px; display: flex; position: sticky; top: 56px; z-index: 190; }
 .tab-btn { padding: 14px 22px; font-family: var(--font); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mid); background: none; border: none; border-bottom: 3px solid transparent; margin-bottom: -2px; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
 .tab-btn.active { color: var(--black); border-bottom-color: var(--yellow); }
 .tab-badge { display: inline-block; font-size: 9px; background: var(--grey); border-radius: 8px; padding: 2px 7px; margin-left: 6px; color: var(--mid); vertical-align: middle; }
 .tab-btn.active .tab-badge { background: var(--yellow); color: var(--black); }
-.tab-pane { display: none; }
+.tab-pane { display: none; margin-left: 210px; }
 .tab-pane.active { display: block; }
 
 /* ── CONTENT ── */
-.content { padding: 28px 32px 160px; max-width: 1280px; margin: 0 auto; }
+.content { padding: 28px 32px 40px; max-width: 1280px; margin: 0 auto; }
 
 /* ── AI BANNER ── */
 .ai-banner { background: var(--black); border-radius: var(--radius); padding: 18px 22px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
@@ -91,7 +91,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 
 /* ── EDITIONS ── */
 .ed-dropdown { position: relative; }
-.ed-menu { position: absolute; top: 44px; right: 0; left: auto; background: #fff; border: 1px solid var(--border); border-radius: 8px; min-width: 230px; box-shadow: 0 4px 20px rgba(0,0,0,.15); z-index: 300; max-height: 300px; overflow-y: auto; display: none; }
+.ed-menu { position: fixed; background: #fff; border: 1px solid var(--border); border-radius: 8px; min-width: 230px; box-shadow: 0 4px 20px rgba(0,0,0,.15); z-index: 400; max-height: 300px; overflow-y: auto; display: none; }
 .ed-item { padding: 11px 16px; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px; border-bottom: 1px solid var(--border); }
 .ed-item:last-child { border-bottom: none; }
 .ed-item:hover { background: var(--grey); }
@@ -118,8 +118,34 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 .btn-green { background: #16A34A !important; color: #fff !important; }
 .info { font-size: 11px; color: var(--mid); margin-left: auto; }
 
+/* ── SIDEBAR WORKFLOW ── */
+.sidebar { position: fixed; left: 0; top: 52px; bottom: 0; width: 210px; background: #fff; border-right: 1px solid var(--border); z-index: 195; display: flex; flex-direction: column; }
+.sw-inner { flex: 1; overflow-y: auto; padding-bottom: 8px; }
+.sw-header { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--mid); padding: 16px 16px 10px; }
+.sw-step { padding: 10px 14px 10px 12px; border-left: 3px solid transparent; }
+.sw-step.sw-active { border-left-color: var(--yellow); background: #FFFDE7; }
+.sw-step.sw-done { opacity: 0.65; }
+.sw-step-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.sw-num { width: 18px; height: 18px; border-radius: 50%; background: var(--grey); border: 2px solid var(--border); font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--mid); }
+.sw-step.sw-active .sw-num { background: var(--yellow); border-color: var(--yellow); color: var(--black); }
+.sw-step.sw-done .sw-num { background: #16A34A; border-color: #16A34A; color: #fff; font-size: 11px; }
+.sw-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--black); }
+.sw-desc { font-size: 10px; color: var(--mid); line-height: 1.5; margin-bottom: 6px; }
+.sw-btn { display: block; width: 100%; text-align: left; background: var(--black); color: #fff; font-family: var(--font); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border: none; border-radius: 6px; padding: 8px 10px; cursor: pointer; margin-bottom: 4px; transition: opacity 0.15s; }
+.sw-btn:last-child { margin-bottom: 0; }
+.sw-btn:hover:not(:disabled) { opacity: 0.82; }
+.sw-btn:disabled { opacity: 0.3; cursor: default; }
+.sw-btn-primary { background: var(--yellow); color: var(--black); }
+.sw-btn-outline { background: none; color: var(--black); border: 1.5px solid var(--border); }
+.sw-btn-outline:hover:not(:disabled) { border-color: var(--black); opacity: 1; }
+.sw-info { font-size: 10px; color: var(--mid); margin-top: 5px; line-height: 1.4; }
+.sw-divider { height: 1px; background: var(--border); margin: 6px 0; }
+.sw-utils { padding: 6px 14px 14px; }
+.sw-util { display: block; width: 100%; text-align: left; background: none; color: var(--black); font-family: var(--font); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; border: none; padding: 7px 0; cursor: pointer; opacity: 0.55; line-height: 1; }
+.sw-util:hover { opacity: 1; }
+
 /* ── TOAST ── */
-.toast { position: fixed; bottom: 72px; right: 28px; background: var(--black); color: #fff; padding: 11px 18px; border-radius: 8px; font-size: 12px; font-weight: 600; z-index: 999; opacity: 0; transform: translateY(8px); transition: opacity 0.2s, transform 0.2s; pointer-events: none; }
+.toast { position: fixed; bottom: 24px; right: 28px; background: var(--black); color: #fff; padding: 11px 18px; border-radius: 8px; font-size: 12px; font-weight: 600; z-index: 999; opacity: 0; transform: translateY(8px); transition: opacity 0.2s, transform 0.2s; pointer-events: none; }
 .toast.show { opacity: 1; transform: translateY(0); }
 .toast.green { background: #16A34A; }
 .toast.red { background: #DC2626; }
@@ -164,15 +190,54 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
     <img src="https://img.mailinblue.com/4363334/images/content_library/original/69e0e48670b2c00d2a044283.png" alt="ACL" class="topbar-logo" />
     <span class="topbar-title">Générateur de Newsletter</span>
   </div>
-  <div class="topbar-actions">
-    <div class="ed-dropdown" id="edDropdown">
-      <button class="btn-topbar" onclick="toggleEdMenu()">📂 Éditions</button>
-      <div class="ed-menu" id="edMenu"></div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sw-inner">
+    <div class="sw-header">Workflow</div>
+
+    <div class="sw-step sw-active" id="sw-step-1">
+      <div class="sw-step-head"><div class="sw-num">1</div><div class="sw-title">Rédiger en FR</div></div>
+      <div class="sw-desc">Remplissez les sections dans l'onglet Français</div>
     </div>
-    <button class="btn-topbar" onclick="saveEdition()">💾 Sauvegarder</button>
-    <button class="btn-topbar" onclick="showApiModal()" id="btnApiKey">🔑 Clé API</button>
+
+    <div class="sw-step" id="sw-step-2">
+      <div class="sw-step-head"><div class="sw-num">2</div><div class="sw-title">Générer</div></div>
+      <button class="sw-btn sw-btn-primary" id="btnGC" onclick="generateAndCopy('fr')">→ Générer les 3 langues</button>
+      <div class="sw-info" id="charsInfo"></div>
+    </div>
+
+    <div class="sw-step" id="sw-step-3">
+      <div class="sw-step-head"><div class="sw-num">3</div><div class="sw-title">Réviser EN / DE</div></div>
+      <div class="sw-desc">Vérifiez et modifiez les traductions</div>
+      <button class="sw-btn sw-btn-outline" onclick="switchTabFn('en')">🇬🇧 Onglet Anglais</button>
+      <button class="sw-btn sw-btn-outline" onclick="switchTabFn('de')" style="margin-top:4px;">🇩🇪 Onglet Allemand</button>
+      <button class="sw-btn" id="btnTranslate" onclick="translateAll()" style="margin-top:6px;">🌐 Re-traduire EN + DE</button>
+    </div>
+
+    <div class="sw-step" id="sw-step-4">
+      <div class="sw-step-head"><div class="sw-num">4</div><div class="sw-title">Copier le HTML</div></div>
+      <button class="sw-btn" id="btnCopyFR" onclick="copyLang('fr')" disabled>📋 Copier FR</button>
+      <button class="sw-btn" id="btnCopyEN" onclick="copyLang('en')" disabled>📋 Copier EN</button>
+      <button class="sw-btn" id="btnCopyDE" onclick="copyLang('de')" disabled>📋 Copier DE</button>
+    </div>
+
+    <div class="sw-divider"></div>
+
+    <div class="sw-utils">
+      <button class="sw-util" onclick="openPreview(currentLang)">👁 Aperçu</button>
+      <button class="sw-util" onclick="saveEdition()">💾 Sauvegarder</button>
+      <div id="edDropdown" style="position:relative;">
+        <button class="sw-util" onclick="toggleEdMenu()">📂 Éditions</button>
+      </div>
+      <button class="sw-util" onclick="showApiModal()">🔑 Clé API</button>
+    </div>
   </div>
 </div>
+
+<!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
+<div class="ed-menu" id="edMenu" style="position:fixed;"></div>
 
 <!-- TABS -->
 <div class="tabs-bar">
@@ -356,33 +421,18 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
 <!-- ══ TABS EN & DE — remplis dynamiquement ══ -->
 <div class="tab-pane" id="pane-en">
   <div class="content">
-    <div class="tl-notice"><span>Tous les champs sont éditables. Cliquez sur <strong>🌐 Traduire EN + DE</strong> pour remplir automatiquement depuis le FR, ou modifiez directement.</span><button class="btn-ai" onclick="translateTab('en')">↻ Traduire depuis FR</button></div>
+    <div class="tl-notice"><span>Tous les champs sont éditables. Utilisez <strong>🌐 Re-traduire</strong> dans le panneau gauche pour recharger depuis le FR.</span><button class="btn-ai" onclick="translateTab('en')">↻ Traduire depuis FR</button></div>
     <div id="en_fields"></div>
   </div>
 </div>
 
 <div class="tab-pane" id="pane-de">
   <div class="content">
-    <div class="tl-notice"><span>Tous les champs sont éditables. Cliquez sur <strong>🌐 Traduire EN + DE</strong> pour remplir automatiquement depuis le FR, ou modifiez directement.</span><button class="btn-ai" onclick="translateTab('de')">↻ Traduire depuis FR</button></div>
+    <div class="tl-notice"><span>Tous les champs sont éditables. Utilisez <strong>🌐 Re-traduire</strong> dans le panneau gauche pour recharger depuis le FR.</span><button class="btn-ai" onclick="translateTab('de')">↻ Traduire depuis FR</button></div>
     <div id="de_fields"></div>
   </div>
 </div>
 
-<!-- BOTTOM BAR -->
-<div class="bottom-bar">
-  <button class="btn-p" id="btnGC" onclick="generateAndCopy(currentLang)">
-    <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 3l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    Générer &amp; Copier
-  </button>
-  <button class="btn-s" onclick="openPreview(currentLang)">👁 Aperçu</button>
-  <button class="btn-ai" id="btnTranslate" onclick="translateAll()">🌐 Traduire EN + DE</button>
-  <div style="display:flex;gap:6px;align-items:center;">
-    <button class="btn-copy-lang" id="btnCopyFR" onclick="copyLang('fr')" disabled>📋 FR</button>
-    <button class="btn-copy-lang" id="btnCopyEN" onclick="copyLang('en')" disabled>📋 EN</button>
-    <button class="btn-copy-lang" id="btnCopyDE" onclick="copyLang('de')" disabled>📋 DE</button>
-  </div>
-  <span class="info" id="charsInfo"></span>
-</div>
 
 <!-- MODAL CLÉ API -->
 <div id="apiModal" class="modal-overlay" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
@@ -945,11 +995,12 @@ async function generateAndCopy(lang) {
     generatedHTML.de = buildHTML('de');
     ['FR','EN','DE'].forEach(l => { const b = document.getElementById('btnCopy'+l); if(b) b.disabled = false; });
     await navigator.clipboard.writeText(generatedHTML.fr).catch(() => {});
-    document.getElementById('charsInfo').textContent = generatedHTML.fr.length.toLocaleString('fr-FR') + ' car. · Copier chaque langue ci-dessus';
+    document.getElementById('charsInfo').textContent = generatedHTML.fr.length.toLocaleString('fr-FR') + ' car.';
     btn.disabled = false;
     btn.classList.add('btn-green');
     btn.innerHTML = orig;
     setTimeout(() => btn.classList.remove('btn-green'), 3000);
+    updateWorkflowStep(4);
     toast('3 langues générées · FR copié ✓', 'green');
   } else {
     btn.textContent = '⏳ Génération...';
@@ -967,7 +1018,7 @@ async function generateAndCopy(lang) {
 }
 
 function copyLang(lang) {
-  if (!generatedHTML[lang]) { toast('Cliquez d\'abord sur Générer & Copier', 'red'); return; }
+  if (!generatedHTML[lang]) { toast('Cliquez d\'abord sur → Générer les 3 langues', 'red'); return; }
   navigator.clipboard.writeText(generatedHTML[lang]).then(() => toast('HTML ' + lang.toUpperCase() + ' copié ✓', 'green')).catch(() => toast('Erreur clipboard', 'red'));
 }
 
@@ -1414,15 +1465,41 @@ async function deleteEdition(id, e) {
   } catch(e) { toast('Erreur suppression : '+e.message, 'red'); }
 }
 
+function switchTabFn(lang) {
+  const btn = document.querySelector(`.tab-btn[onclick*="'${lang}'"]`);
+  if (btn) switchTab(lang, btn);
+}
+
+function updateWorkflowStep(step) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('sw-step-' + i);
+    if (!el) continue;
+    el.classList.remove('sw-active', 'sw-done');
+    if (i < step) { el.classList.add('sw-done'); const n = el.querySelector('.sw-num'); if(n) n.textContent = '✓'; }
+    else if (i === step) el.classList.add('sw-active');
+  }
+}
+
 function toggleEdMenu() {
   const menu = document.getElementById('edMenu');
-  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-  if (menu.style.display === 'block') loadEditionsList();
+  const isOpen = menu.style.display === 'block';
+  if (isOpen) { menu.style.display = 'none'; return; }
+  const btn = document.querySelector('#edDropdown button');
+  if (btn) {
+    const r = btn.getBoundingClientRect();
+    menu.style.left = (r.right + 6) + 'px';
+    menu.style.top = r.top + 'px';
+    menu.style.right = 'auto';
+    menu.style.bottom = 'auto';
+  }
+  menu.style.display = 'block';
+  loadEditionsList();
 }
 
 document.addEventListener('click', e => {
   const dd = document.getElementById('edDropdown');
-  if (dd && !dd.contains(e.target)) document.getElementById('edMenu').style.display = 'none';
+  const menu = document.getElementById('edMenu');
+  if (dd && menu && !dd.contains(e.target) && !menu.contains(e.target)) menu.style.display = 'none';
 });
 
 document.addEventListener('firebase-ready', () => { if(sessionStorage.getItem('acl_auth')==='1') loadEditionsList(); });
