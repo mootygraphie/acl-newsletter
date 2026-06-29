@@ -877,10 +877,13 @@ function buildHTML(lang) {
       </td></tr>`).join('');
 
   const nb = D[lang].banc.length;
-  const bancH = nb === 0 ? '' : `
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
-      <tr>${D[lang].banc.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/nb)}%" valign="top" style="padding:0 ${i<nb-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#FFFFFF;border-radius:6px;"><tr><td width="180" style="padding:0;vertical-align:top;line-height:0;font-size:0;"><img src="${esc(d.img)}" width="180" alt="${esc(d.title)}" style="display:block;width:180px;height:130px;object-fit:cover;border-radius:6px 0 0 6px;" /></td><td style="padding:16px 16px 16px 18px;vertical-align:middle;"><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.35;color:#1A1A1A;margin:0 0 10px 0;">${esc(d.title)}</p><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:block;">${d.luxgear?'À regarder sur LuxGear →':'En savoir plus →'}</a></td></tr></table></td>`).join('')}</tr>
-    </table>`;
+  const bancH = nb === 0 ? '' : D[lang].banc.map((d,i) => `
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="${i>0?'margin-top:12px;':''}background-color:#FFFFFF;border-radius:6px;">
+      <tr>
+        <td width="180" style="padding:0;vertical-align:top;line-height:0;font-size:0;"><img src="${esc(d.img)}" width="180" alt="${esc(d.title)}" style="display:block;width:180px;height:130px;object-fit:cover;border-radius:6px 0 0 6px;" /></td>
+        <td style="padding:16px 16px 16px 18px;vertical-align:middle;"><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.35;color:#1A1A1A;margin:0 0 10px 0;">${esc(d.title)}</p><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:block;">${d.luxgear?'À regarder sur LuxGear →':'En savoir plus →'}</a></td>
+      </tr>
+    </table>`).join('');
 
   const nv = D[lang].voy.length;
   const voyH = nv === 0 ? '' : `
