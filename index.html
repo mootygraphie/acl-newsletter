@@ -145,7 +145,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 .sw-util:hover { opacity: 1; }
 .sw-util-btn { display: block; width: 100%; text-align: left; background: var(--grey); color: var(--black); font-family: var(--font); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; cursor: pointer; margin-bottom: 5px; transition: border-color 0.15s, background 0.15s; }
 .sw-util-btn:hover { border-color: var(--black); background: #EDEDED; }
-.build-stamp { position: fixed; bottom: 7px; right: 12px; font-size: 9px; color: rgba(0,0,0,0.2); font-family: var(--font); letter-spacing: 0.05em; z-index: 100; pointer-events: none; user-select: none; }
+.build-stamp { padding: 8px 14px 10px; font-size: 9px; color: rgba(0,0,0,0.25); font-family: var(--font); letter-spacing: 0.05em; border-top: 1px solid var(--border); user-select: none; }
 
 /* ── TOAST ── */
 .toast { position: fixed; bottom: 24px; right: 28px; background: var(--black); color: #fff; padding: 11px 18px; border-radius: 8px; font-size: 12px; font-weight: 600; z-index: 999; opacity: 0; transform: translateY(8px); transition: opacity 0.2s, transform 0.2s; pointer-events: none; }
@@ -247,6 +247,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       <button class="sw-util" onclick="showApiModal()">🔑 Clé API</button>
     </div>
   </div>
+  <div class="build-stamp">06/07/2026 15:46</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -484,7 +485,6 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
   </div>
 </div>
 
-<div class="build-stamp">06/07/2026 15:38</div>
 </div><!-- /app -->
 
 <!-- ══════════════════════════════════
