@@ -247,7 +247,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       <button class="sw-util" onclick="showApiModal()">🔑 Clé API</button>
     </div>
   </div>
-  <div class="build-stamp">06/07/2026 16:12</div>
+  <div class="build-stamp">06/07/2026 17:02</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -813,8 +813,30 @@ function abParseRSS(text, lang, flag) {
   }).filter(a => a.url && a.title && a.url.startsWith('http'));
 }
 
+const AB_CACHE_TTL = 3600000; // 1 heure
+
+function abReadCache(key) {
+  try {
+    const raw = sessionStorage.getItem('ab_' + key);
+    if (!raw) return null;
+    const { ts, items } = JSON.parse(raw);
+    if (Date.now() - ts > AB_CACHE_TTL) { sessionStorage.removeItem('ab_' + key); return null; }
+    return items;
+  } catch { return null; }
+}
+
+function abWriteCache(key, items) {
+  try { sessionStorage.setItem('ab_' + key, JSON.stringify({ ts: Date.now(), items })); } catch {}
+}
+
 async function abFetchOneLang(siteBase, langObj) {
   const { code: lang, flag } = langObj;
+  const key = siteBase + '|' + lang;
+
+  // sessionStorage (survit aux rechargements, TTL 1h)
+  const cached = abReadCache(key);
+  if (cached) return cached;
+
   const proxy = url => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
 
   // ① URLs RSS confirmées (sans paramètre superflu)
@@ -824,7 +846,7 @@ async function abFetchOneLang(siteBase, langObj) {
       const r = await fetch(proxy(knownFeed));
       if (r.ok) {
         const items = abParseRSS(await r.text(), lang, flag);
-        if (items.length > 0) return items;
+        if (items.length > 0) { abWriteCache(key, items); return items; }
       }
     } catch(e) {}
   }
@@ -834,8 +856,10 @@ async function abFetchOneLang(siteBase, langObj) {
     const r = await fetch(proxy(`${siteBase}/wp-json/wp/v2/posts?per_page=50&lang=${lang}&_fields=id,title,link,date`));
     if (r.ok) {
       const data = await r.json();
-      if (Array.isArray(data) && data.length > 0)
-        return data.map(p => ({ title: (p.title?.rendered||'').replace(/<[^>]+>/g,''), url: p.link||'', date: p.date||'', lang, flag })).filter(a=>a.url&&a.title);
+      if (Array.isArray(data) && data.length > 0) {
+        const items = data.map(p => ({ title: (p.title?.rendered||'').replace(/<[^>]+>/g,''), url: p.link||'', date: p.date||'', lang, flag })).filter(a=>a.url&&a.title);
+        if (items.length > 0) { abWriteCache(key, items); return items; }
+      }
     }
   } catch(e) {}
 
@@ -844,18 +868,20 @@ async function abFetchOneLang(siteBase, langObj) {
     const r = await fetch(proxy(`${siteBase}/wp-json/wp/v2/posts?per_page=50&_fields=id,title,link,date`));
     if (r.ok) {
       const data = await r.json();
-      if (Array.isArray(data) && data.length > 0)
-        return data.map(p => ({ title: (p.title?.rendered||'').replace(/<[^>]+>/g,''), url: p.link||'', date: p.date||'', lang, flag })).filter(a=>a.url&&a.title);
+      if (Array.isArray(data) && data.length > 0) {
+        const items = data.map(p => ({ title: (p.title?.rendered||'').replace(/<[^>]+>/g,''), url: p.link||'', date: p.date||'', lang, flag })).filter(a=>a.url&&a.title);
+        if (items.length > 0) { abWriteCache(key, items); return items; }
+      }
     }
   } catch(e) {}
 
-  // ④ RSS — variantes d'URL (sans paramètre posts_per_page qui peut casser le feed)
+  // ④ RSS — variantes d'URL
   for (const feedUrl of [`${siteBase}/${lang}/feed/`, `${siteBase}/?feed=rss2&lang=${lang}`, `${siteBase}/feed/?lang=${lang}`]) {
     try {
       const r = await fetch(proxy(feedUrl));
       if (!r.ok) continue;
       const items = abParseRSS(await r.text(), lang, flag);
-      if (items.length > 0) return items;
+      if (items.length > 0) { abWriteCache(key, items); return items; }
     } catch(e) {}
   }
 
@@ -864,6 +890,11 @@ async function abFetchOneLang(siteBase, langObj) {
 
 async function abLoadSite(siteBase) {
   const list = document.getElementById('ab-list');
+  // Charge depuis sessionStorage si disponible (évite l'écran de chargement)
+  AB_LANGS.forEach(l => {
+    const key = siteBase + '|' + l.code;
+    if (!(key in abCache)) { const c = abReadCache(key); if (c) abCache[key] = c; }
+  });
   const toFetch = AB_LANGS.filter(l => !(siteBase + '|' + l.code in abCache));
   if (toFetch.length > 0) {
     list.innerHTML = '<div style="padding:32px;text-align:center;color:var(--mid);font-size:12px;">⏳ Chargement des articles...</div>';
@@ -990,6 +1021,15 @@ function initApp() {
   if (!localStorage.getItem('acl_apikey')) {
     setTimeout(() => toast('⚠️ Clé API Anthropic non configurée — cliquez sur 🔑', 'red'), 1200);
   }
+  // Pré-chargement RSS en arrière-plan (2s de délai pour ne pas concurrencer le rendu initial)
+  setTimeout(() => {
+    Object.keys(AB_KNOWN_FEEDS).forEach(siteBase => {
+      AB_LANGS.forEach(l => {
+        const key = siteBase + '|' + l.code;
+        if (!(key in abCache)) abFetchOneLang(siteBase, l).then(items => { abCache[key] = items; });
+      });
+    });
+  }, 2000);
 }
 document.addEventListener('DOMContentLoaded', () => {
   if (sessionStorage.getItem('acl_auth') === '1') initApp();
