@@ -780,71 +780,79 @@ function openArticleBrowser(lang, section, index) {
   abLoadSite(document.getElementById('ab-site').value);
 }
 
+// URLs RSS confirmées par site (priorité absolue)
+const AB_KNOWN_FEEDS = {
+  'https://autotouring.acl.lu': {
+    fr: 'https://autotouring.acl.lu/fr/feed/',
+    en: 'https://autotouring.acl.lu/en/feed/',
+    de: 'https://autotouring.acl.lu/de/feed/',
+  }
+};
+
+function abParseRSS(text, lang, flag) {
+  const xml = new DOMParser().parseFromString(text, 'text/xml');
+  if (xml.querySelector('parsererror')) return [];
+  return [...xml.querySelectorAll('item')].map(item => {
+    const title = item.querySelector('title')?.textContent?.trim() || '';
+    // Méthode 1 : <link>url</link> en RSS 2.0 (itération des childNodes car querySelector('link') est peu fiable en XML)
+    let url = '';
+    for (const node of item.childNodes) {
+      if (node.nodeName.toLowerCase() === 'link') { url = node.textContent?.trim() || ''; if (url) break; }
+    }
+    // Méthode 2 : <link href="url" /> style Atom
+    if (!url) url = item.querySelector('link[href]')?.getAttribute('href') || '';
+    // Méthode 3 : <guid> en fallback
+    if (!url) {
+      const guid = item.querySelector('guid');
+      if (guid && guid.getAttribute('isPermaLink') !== 'false') url = guid.textContent?.trim() || '';
+    }
+    const pubDate = item.querySelector('pubDate')?.textContent?.trim() || '';
+    return { title, url, date: pubDate, lang, flag };
+  }).filter(a => a.url && a.title && a.url.startsWith('http'));
+}
+
 async function abFetchOneLang(siteBase, langObj) {
   const { code: lang, flag } = langObj;
   const proxy = url => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
-  const parseRSS = text => {
-    const xml = new DOMParser().parseFromString(text, 'text/xml');
-    return [...xml.querySelectorAll('item')].map(item => {
-      const title = item.querySelector('title')?.textContent?.trim() || '';
-      let url = '';
-      for (const node of item.childNodes) {
-        if (node.nodeName === 'link') { url = node.textContent?.trim() || ''; break; }
-      }
-      if (!url) url = item.querySelector('guid:not([isPermaLink="false"])')?.textContent?.trim()
-                    || item.querySelector('guid')?.textContent?.trim() || '';
-      const pubDate = item.querySelector('pubDate')?.textContent?.trim() || '';
-      return { title, url, date: pubDate, lang, flag };
-    }).filter(a => a.url && a.title && a.url.startsWith('http'));
-  };
 
-  // ① WP REST API avec Polylang (?lang=fr)
-  try {
-    const apiUrl = `${siteBase}/wp-json/wp/v2/posts?per_page=50&lang=${lang}&_fields=id,title,link,date`;
-    const r = await fetch(proxy(apiUrl));
-    if (r.ok) {
-      const data = await r.json();
-      if (Array.isArray(data) && data.length > 0) {
-        return data.map(p => ({
-          title: (p.title?.rendered || '').replace(/<[^>]+>/g,''),
-          url: p.link || '',
-          date: p.date || '',
-          lang, flag
-        })).filter(a => a.url && a.title);
-      }
-    }
-  } catch(e) {}
-
-  // ② WP REST API sans filtre langue (fallback — on récupère tout)
-  try {
-    const apiUrl = `${siteBase}/wp-json/wp/v2/posts?per_page=50&_fields=id,title,link,date`;
-    const r = await fetch(proxy(apiUrl));
-    if (r.ok) {
-      const data = await r.json();
-      if (Array.isArray(data) && data.length > 0) {
-        return data.map(p => ({
-          title: (p.title?.rendered || '').replace(/<[^>]+>/g,''),
-          url: p.link || '',
-          date: p.date || '',
-          lang, flag
-        })).filter(a => a.url && a.title);
-      }
-    }
-  } catch(e) {}
-
-  // ③ RSS Polylang — variantes d'URL
-  const rssVariants = [
-    `${siteBase}/${lang}/feed/`,
-    `${siteBase}/?feed=rss2&lang=${lang}`,
-    `${siteBase}/feed/?lang=${lang}`,
-    `${siteBase}/${lang}/feed/rss/`,
-  ];
-  for (const feedUrl of rssVariants) {
+  // ① URLs RSS confirmées (sans paramètre superflu)
+  const knownFeed = AB_KNOWN_FEEDS[siteBase]?.[lang];
+  if (knownFeed) {
     try {
-      const r = await fetch(proxy(feedUrl + (feedUrl.includes('?') ? '&' : '?') + 'posts_per_page=50'));
+      const r = await fetch(proxy(knownFeed));
+      if (r.ok) {
+        const items = abParseRSS(await r.text(), lang, flag);
+        if (items.length > 0) return items;
+      }
+    } catch(e) {}
+  }
+
+  // ② WP REST API avec Polylang (?lang=fr)
+  try {
+    const r = await fetch(proxy(`${siteBase}/wp-json/wp/v2/posts?per_page=50&lang=${lang}&_fields=id,title,link,date`));
+    if (r.ok) {
+      const data = await r.json();
+      if (Array.isArray(data) && data.length > 0)
+        return data.map(p => ({ title: (p.title?.rendered||'').replace(/<[^>]+>/g,''), url: p.link||'', date: p.date||'', lang, flag })).filter(a=>a.url&&a.title);
+    }
+  } catch(e) {}
+
+  // ③ WP REST API sans filtre langue
+  try {
+    const r = await fetch(proxy(`${siteBase}/wp-json/wp/v2/posts?per_page=50&_fields=id,title,link,date`));
+    if (r.ok) {
+      const data = await r.json();
+      if (Array.isArray(data) && data.length > 0)
+        return data.map(p => ({ title: (p.title?.rendered||'').replace(/<[^>]+>/g,''), url: p.link||'', date: p.date||'', lang, flag })).filter(a=>a.url&&a.title);
+    }
+  } catch(e) {}
+
+  // ④ RSS — variantes d'URL (sans paramètre posts_per_page qui peut casser le feed)
+  for (const feedUrl of [`${siteBase}/${lang}/feed/`, `${siteBase}/?feed=rss2&lang=${lang}`, `${siteBase}/feed/?lang=${lang}`]) {
+    try {
+      const r = await fetch(proxy(feedUrl));
       if (!r.ok) continue;
-      const text = await r.text();
-      const items = parseRSS(text);
+      const items = abParseRSS(await r.text(), lang, flag);
       if (items.length > 0) return items;
     } catch(e) {}
   }
