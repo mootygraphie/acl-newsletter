@@ -247,7 +247,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       <button class="sw-util" onclick="showApiModal()">🔑 Clé API</button>
     </div>
   </div>
-  <div class="build-stamp">06/07/2026 17:02</div>
+  <div class="build-stamp">07/07/2026 16:46</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -1022,11 +1022,12 @@ function initApp() {
     setTimeout(() => toast('⚠️ Clé API Anthropic non configurée — cliquez sur 🔑', 'red'), 1200);
   }
   // Pré-chargement RSS en arrière-plan (2s de délai pour ne pas concurrencer le rendu initial)
+  // On ne stocke que les résultats non-vides — les échecs seront retentés à l'ouverture de la modal
   setTimeout(() => {
     Object.keys(AB_KNOWN_FEEDS).forEach(siteBase => {
       AB_LANGS.forEach(l => {
         const key = siteBase + '|' + l.code;
-        if (!(key in abCache)) abFetchOneLang(siteBase, l).then(items => { abCache[key] = items; });
+        if (!(key in abCache)) abFetchOneLang(siteBase, l).then(items => { if (items.length > 0) abCache[key] = items; });
       });
     });
   }, 2000);
