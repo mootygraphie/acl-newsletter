@@ -48,14 +48,6 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 /* ── CONTENT ── */
 .content { padding: 28px 32px 40px; max-width: 1280px; margin: 0 auto; }
 
-/* ── AI BANNER ── */
-.ai-banner { background: var(--black); border-radius: var(--radius); padding: 18px 22px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.ai-banner-text { font-size: 13px; color: #AAA; flex: 1; line-height: 1.5; }
-.ai-banner-text strong { color: #fff; }
-.btn-ai { flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px; background: var(--yellow); color: var(--black); font-family: var(--font); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; border: none; border-radius: 20px; padding: 10px 20px; cursor: pointer; transition: opacity 0.15s; }
-.btn-ai:hover { opacity: 0.85; }
-.btn-ai:disabled { opacity: 0.4; pointer-events: none; }
-
 /* ── FORM SECTIONS ── */
 .form-section { background: #fff; border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; border: 1px solid var(--border); }
 .form-section-header { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--border); background: #FAFAFA; }
@@ -238,10 +230,9 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       <div id="edDropdown" style="position:relative;margin-top:4px;">
         <button class="sw-util" onclick="toggleEdMenu()">📂 Éditions</button>
       </div>
-      <button class="sw-util" onclick="showApiModal()">🔑 Clé API</button>
     </div>
   </div>
-  <div class="build-stamp">13/08/2026 12:36</div>
+  <div class="build-stamp">13/08/2026 12:44</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -261,45 +252,11 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 <div class="tab-pane active" id="pane-fr">
 <div class="content">
 
-  <!-- AI Banner -->
-  <div class="ai-banner">
-    <div class="ai-banner-text"><strong>✨ Génération automatique</strong> — Remplissez les sections, puis générez l'intro, l'objet et le preheader en 1 clic.</div>
-    <button class="btn-ai" id="btnAI" onclick="generateAIContent()">Générer intro &amp; objet</button>
-  </div>
-
-  <!-- AI OUTPUT -->
-  <div id="aiOutput" style="display:none;" class="form-section">
-    <div class="form-section-header"><span class="form-section-icon">✨</span><span class="form-section-title">Contenu généré par IA</span></div>
-    <div class="form-section-body">
-      <div class="g3">
-        <div class="field"><label>Objet email</label><input type="text" id="ai_subject" /></div>
-        <div class="field"><label>Preheader</label><input type="text" id="ai_preheader" /></div>
-        <div style="display:flex;align-items:flex-end;gap:8px;">
-          <button class="btn-ai" style="margin-bottom:0;" onclick="applyAIToForm()">Appliquer au formulaire</button>
-        </div>
-      </div>
-      <div class="field" style="margin-top:10px;"><label>Texte d'introduction</label><textarea id="ai_intro" rows="4"></textarea></div>
-    </div>
-  </div>
-
   <!-- PARAMÈTRES -->
   <div class="form-section">
     <div class="form-section-header"><span class="form-section-icon">⚙️</span><span class="form-section-title">Paramètres généraux</span></div>
     <div class="form-section-body">
-      <div class="g3">
-        <div class="field"><label>Édition</label><input type="text" id="fr_edition" value="Juin 2026" /></div>
-        <div class="field"><label>UTM campaign</label><input type="text" id="fr_utm" value="ACL Newsletter FR JUIN 2026" /></div>
-        <div class="field"><label>Preheader</label><input type="text" id="fr_preheader" value="Rapport annuel 2025 · Test vacances · Rallye Lëtzebuerg · Croisière Yangtze" /></div>
-      </div>
-      <div class="field" style="margin-top:10px;"><label>Texte d'introduction</label>
-        <textarea id="fr_intro" rows="4">L'été approche, et votre Club est là pour vous aider à en profiter pleinement.
-
-Ce mois-ci, nous avons réuni tout ce qu'il vous faut avant les grands départs : comment préparer votre véhicule, les meilleurs bons plans loisirs, et nos derniers essais auto.
-
-Nous sommes aussi fiers de partager les résultats de notre Rapport annuel 2025 — une année de croissance qui reflète votre confiance.
-
-Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine, séjours linguistiques pour vos enfants, et tous nos événements de la saison. Bonne lecture !</textarea>
-      </div>
+      <div class="field"><label>Édition</label><input type="text" id="fr_edition" value="Juin 2026" /></div>
     </div>
   </div>
 
@@ -477,20 +434,6 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
   </div>
 </div>
 
-
-<!-- MODAL CLÉ API -->
-<div id="apiModal" class="modal-overlay" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
-  <div class="modal-box">
-    <h3>🔑 Clé API Anthropic</h3>
-    <p>Nécessaire pour la génération IA (intro &amp; objet). Stockée uniquement dans votre navigateur (localStorage), jamais envoyée ailleurs.</p>
-    <div class="field"><label>Clé API (commence par sk-ant-...)</label><input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." style="width:100%;" /></div>
-    <div style="display:flex;gap:10px;margin-top:18px;">
-      <button class="btn-p" onclick="saveApiKey()" style="flex:1;">Enregistrer</button>
-      <button class="btn-o" onclick="document.getElementById('apiModal').style.display='none'">Annuler</button>
-    </div>
-  </div>
-</div>
-
 </div><!-- /app -->
 
 <!-- ══════════════════════════════════
@@ -638,12 +581,6 @@ function toast(msg, type='') {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-function utm(url, lang) {
-  const c = encodeURIComponent(v(lang+'_utm') || 'ACL Newsletter');
-  if (!url) return '#';
-  return url + (url.includes('?')? '&':'?') + 'utm_source=brevo&utm_medium=email&utm_campaign='+c;
-}
-
 // ── RENDER DYNAMIC SECTIONS ───────────────────────
 function renderAll(lang) {
   renderActu(lang); renderBref(lang); renderBanc(lang);
@@ -765,106 +702,16 @@ function initApp() {
     const el = document.getElementById(lang+'_fields');
     if (el) { el.innerHTML = buildTranslatedFields(lang, {}); renderAll(lang); }
   });
-  // Avertissement clé API
-  if (!localStorage.getItem('acl_apikey')) {
-    setTimeout(() => toast('⚠️ Clé API Anthropic non configurée — cliquez sur 🔑', 'red'), 1200);
-  }
 }
 document.addEventListener('DOMContentLoaded', () => {
   if (sessionStorage.getItem('acl_auth') === '1') initApp();
 });
 
-// ── API KEY ───────────────────────────────────────
-function showApiModal() {
-  document.getElementById('apiKeyInput').value = localStorage.getItem('acl_apikey') || '';
-  document.getElementById('apiModal').style.display = 'flex';
-}
-function saveApiKey() {
-  const k = document.getElementById('apiKeyInput').value.trim();
-  if (k) { localStorage.setItem('acl_apikey', k); toast('Clé API enregistrée ✓', 'green'); }
-  document.getElementById('apiModal').style.display = 'none';
-}
-
-// ── ANTHROPIC API ─────────────────────────────────
-async function callClaude(prompt, maxTokens=2000, attempt=1) {
-  const key = localStorage.getItem('acl_apikey') || '';
-  if (!key) { toast('⚠️ Clé API manquante — cliquez sur 🔑', 'red'); throw new Error('Clé API manquante'); }
-  let res;
-  try {
-    res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-allow-browser': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6', max_tokens: maxTokens,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-  } catch(networkErr) {
-    if (attempt < 3) {
-      toast(`⏳ Connexion instable, nouvelle tentative (${attempt}/2)...`);
-      await new Promise(r => setTimeout(r, 1500 * attempt));
-      return callClaude(prompt, maxTokens, attempt + 1);
-    }
-    throw networkErr;
-  }
-  if (!res.ok) {
-    let e; try { e = await res.json(); } catch{}
-    const msg = e?.error?.message || 'Erreur API ' + res.status;
-    // Retry on stalled/overloaded errors
-    if (attempt < 3 && (res.status === 529 || res.status === 503 || msg.toLowerCase().includes('stall') || msg.toLowerCase().includes('overload'))) {
-      toast(`⏳ API surchargée, nouvelle tentative (${attempt}/2)...`);
-      await new Promise(r => setTimeout(r, 2000 * attempt));
-      return callClaude(prompt, maxTokens, attempt + 1);
-    }
-    throw new Error(msg);
-  }
-  const data = await res.json();
-  const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
-  const clean = text.replace(/```json[\s\S]*?```|```/g,'').trim();
-  try { return JSON.parse(clean); } catch { return text; }
-}
-
-// ── AI GENERATE ───────────────────────────────────
-async function generateAIContent() {
-  const btn = document.getElementById('btnAI');
-  btn.disabled = true; btn.textContent = '⏳ Génération...';
-  const titles = [v('fr_une_title'), ...D.fr.actu.map(c=>c.title), ...D.fr.bref.map(c=>c.title), ...D.fr.banc.map(c=>c.title), v('fr_vm_title'), ...D.fr.voy.map(c=>c.title), ...D.fr.agenda.map(c=>c.title)].filter(Boolean);
-  const prompt = `Tu rédiges pour la newsletter de l'ACL (Automobile Club du Luxembourg). Ton : chaleureux, proche, "votre Club", "nous", jamais corporate. Édition : ${v('fr_edition')}.
-
-Articles : ${titles.map((t,i)=>`${i+1}. ${t}`).join('\n')}
-
-Génère en JSON strict (sans markdown) :
-{"subject":"Objet email court et accrocheur (max 60 car.)","preheader":"Aperçu boite mail, 1 phrase max 110 car.","intro":"Introduction en 3-4 paragraphes courts séparés par \\n\\n, ton proche"}`;
-  try {
-    const r = await callClaude(prompt, 800);
-    document.getElementById('aiOutput').style.display = 'block';
-    if (typeof r === 'object') {
-      document.getElementById('ai_subject').value = r.subject||'';
-      document.getElementById('ai_preheader').value = r.preheader||'';
-      document.getElementById('ai_intro').value = r.intro||'';
-    }
-    toast('Contenu généré ✓', 'green');
-  } catch(e) { toast('Erreur API : '+e.message, 'red'); }
-  btn.disabled = false; btn.textContent = '↻ Regénérer';
-}
-
-function applyAIToForm() {
-  const s = v('ai_subject'), p = v('ai_preheader'), i = v('ai_intro');
-  if (p) document.getElementById('fr_preheader').value = p;
-  if (i) document.getElementById('fr_intro').value = i;
-  toast('Appliqué au formulaire ✓', 'green');
-}
-
 // ── COPIE FR → EN/DE ──────────────────────────────
 function collectLangData(lang) {
   const p = lang + '_';
   return {
-    edition: v(p+'edition'), utm: v(p+'utm'), preheader: v(p+'preheader'), intro: v(p+'intro'),
+    edition: v(p+'edition'),
     pub1_link: v(p+'pub1_link'), pub1_img: v(p+'pub1_img'),
     pub2_link: v(p+'pub2_link'), pub2_img: v(p+'pub2_img'),
     titles: {
@@ -897,9 +744,6 @@ function applyFrDataToLang(lang, d) {
   const u = d.une||{}, vm = d.vm||{}, au = d.auto||{}, pa = d.parr||{}, t = d.titles||{}, e1 = d.extra1||{}, e2 = d.extra2||{};
 
   setField(lang+'_edition',   d.edition);
-  setField(lang+'_utm',       d.utm);
-  setField(lang+'_preheader', d.preheader);
-  setField(lang+'_intro',     d.intro);
   setField(lang+'_pub1_img',  d.pub1_img); setField(lang+'_pub1_link', d.pub1_link);
   setField(lang+'_pub2_img',  d.pub2_img); setField(lang+'_pub2_link', d.pub2_link);
   setField(lang+'_title_une', t.une);       setField(lang+'_title_actu', t.actu);
@@ -946,11 +790,9 @@ function buildTranslatedFields(lang, d) {
   const u = d.une||{}, vm = d.vm||{}, au = d.auto||{}, pa = d.parr||{}, e1 = d.extra1||{}, e2 = d.extra2||{};
   return `
   <div class="form-section"><div class="form-section-header"><span class="form-section-icon">⚙️</span><span class="form-section-title">Paramètres généraux</span></div>
-  <div class="form-section-body"><div class="g3">
+  <div class="form-section-body">
     <div class="field"><label>Édition</label><input type="text" id="${lang}_edition" value="${esc(d.edition||'')}" /></div>
-    <div class="field"><label>UTM</label><input type="text" id="${lang}_utm" value="${esc(d.utm||'')}" /></div>
-    <div class="field"><label>Preheader</label><input type="text" id="${lang}_preheader" value="${esc(d.preheader||'')}" /></div>
-  </div><div class="field" style="margin-top:10px;"><label>Introduction</label><textarea id="${lang}_intro" rows="4">${esc(d.intro||'')}</textarea></div></div></div>
+  </div></div>
 
   <div class="form-section"><div class="form-section-header"><span class="form-section-icon">🗞</span><input type="text" class="form-section-title-input" id="${lang}_title_une" value="${esc((d.titles||{}).une||'')}" /></div>
   <div class="form-section-body">
@@ -1065,16 +907,13 @@ function getBg(lang, key) {
 
 function buildHTML(lang) {
   const p = lang+'_';
-  const uu = (url) => { if(!url) return '#'; const s=url.includes('?')?'&':'?'; return url+s+'utm_source=brevo&utm_medium=email&utm_campaign='+encodeURIComponent(v(p+'utm')||'ACL Newsletter'); };
+  const uu = (url) => url || '#';
 
   const salut = lang === 'de'
     ? '{% if contact.CIVILITE == "Frau" %}Liebes{% else %}Liebes{% endif %} {% if contact.PRENOM %}{{ contact.PRENOM }}{% else %}Mitglied{% endif %}'
     : lang === 'en'
     ? '{% if contact.PRENOM %}Dear {{ contact.PRENOM }}{% else %}Dear Member{% endif %}'
     : '{% if contact.CIVILITE == "Madame" %}Chère{% else %}Cher{% endif %} {% if contact.PRENOM %}{{ contact.PRENOM }}{% else %}Membre{% endif %}';
-
-  const introParas = (v(p+'intro')||'').split('\n\n').filter(Boolean)
-    .map(t => `    <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:14px;line-height:1.75;color:#555555;margin:0 0 12px 0;">${esc(t)}</p>`).join('\n');
 
   const agendaH = D[lang].agenda.map(ev => `
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:10px;background-color:#FFFFFF;border-radius:6px;">
@@ -1182,12 +1021,10 @@ body{background-color:#EFEFEF;font-family:'Albert Sans',Helvetica,Arial,sans-ser
   .col2{display:block!important;width:100%!important;padding:0 20px 22px!important;}
   .col2-divider{display:none!important;}
   .footer-col{display:block!important;width:100%!important;padding:0 0 16px!important;}
-  .hide-mobile{display:none!important;max-height:0!important;overflow:hidden!important;font-size:0!important;line-height:0!important;}
 }
 </style>
 </head>
 <body style="margin:0;padding:0;background-color:#EFEFEF;">
-<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;color:#EFEFEF;line-height:1px;">${esc(v(p+'preheader'))}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>
 <table id="bodyTable" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#EFEFEF;">
 <tr><td align="center" valign="top" style="padding:0;">
 <table class="email-wrapper" width="640" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width:640px;width:100%;">
@@ -1221,9 +1058,7 @@ body{background-color:#EFEFEF;font-family:'Albert Sans',Helvetica,Arial,sans-ser
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:4px;"><tr><td style="border-top:1px solid #EEEEEE;font-size:0;line-height:0;">&nbsp;</td></tr></table>
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-top:4px;"><tr><td style="border-radius:6px;padding:0;line-height:0;font-size:0;text-align:center;">${pub1H}</td></tr></table>
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-top:20px;"><tr><td style="border-top:1px solid #EEEEEE;font-size:0;line-height:0;">&nbsp;</td></tr></table>
-  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.5;color:#1A1A1A;margin:18px 0 14px 0;">${salut},</p>
-<!--[if !mso]><!--><div class="hide-mobile">${introParas}</div><!--<![endif]-->
-<!--[if mso]>${introParas}<![endif]-->
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.5;color:#1A1A1A;margin:18px 0 0 0;">${salut},</p>
 </td></tr>
 
 <!-- À LA UNE -->
