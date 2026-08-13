@@ -62,12 +62,20 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 /* ── SECTION CONTROLS (toggle + drag) ── */
 .section-drag-handle { cursor: grab; color: #CCC; font-size: 13px; flex-shrink: 0; user-select: none; }
 .section-drag-handle:active { cursor: grabbing; }
-.section-toggle-btn { background: none; border: none; cursor: pointer; color: var(--mid); font-size: 11px; padding: 4px; flex-shrink: 0; line-height: 1; transition: transform 0.15s ease; }
-.section-toggle-btn:hover { color: var(--black); }
+.form-section-header { cursor: pointer; }
+.section-toggle-btn { color: var(--mid); font-size: 11px; padding: 4px; flex-shrink: 0; line-height: 1; transition: transform 0.15s ease; }
 .form-section.collapsed .section-toggle-btn { transform: rotate(-90deg); }
+.section-delete-btn { background: none; border: none; cursor: pointer; color: #CCC; font-size: 14px; padding: 4px; flex-shrink: 0; line-height: 1; }
+.section-delete-btn:hover { color: #E44; }
 .form-section.dragging { opacity: 0.35; }
+.form-section.section-hidden { display: none; }
 .form-section.section-invalid { border-color: #DC2626; }
 .form-section.section-invalid .form-section-header { background: #FEF2F2; border-bottom-color: #DC2626; }
+.sub-divider { height: 1px; background: var(--border); margin: 20px 0 16px; }
+.add-section-row { margin-top: 4px; margin-bottom: 16px; }
+.add-section-select { width: 100%; padding: 10px 14px; border: 1.5px dashed var(--border); border-radius: 8px; font-family: var(--font); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mid); background: #fff; cursor: pointer; }
+.add-section-select:hover:not(:disabled) { border-color: var(--yellow); color: var(--black); }
+.add-section-select:disabled { opacity: 0.5; cursor: default; }
 .form-section.section-invalid .form-section-title { color: #DC2626; }
 .required-star { color: #DC2626; font-weight: 700; }
 
@@ -245,7 +253,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">13/08/2026 13:03</div>
+  <div class="build-stamp">13/08/2026 13:22</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -267,7 +275,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 
   <!-- PARAMÈTRES -->
   <div class="form-section" data-section="params">
-    <div class="form-section-header"><span class="form-section-icon">⚙️</span><span class="form-section-title">Paramètres généraux</span><button type="button" class="section-toggle-btn" onclick="toggleSection(this)" title="Ouvrir/fermer">▾</button></div>
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">⚙️</span><span class="form-section-title">Paramètres généraux</span><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="field"><label>Édition <span class="required-star">*</span></label><input type="text" id="fr_edition" value="" oninput="updateEditionValidity()" /></div>
     </div>
@@ -275,18 +283,20 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 
   <!-- PUB 1 -->
   <div class="form-section" data-section="pub1" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
-    <div class="form-section-header"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 1</span><button type="button" class="section-toggle-btn" onclick="toggleSection(this)" title="Ouvrir/fermer">▾</button></div>
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 1</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body g2">
       <div class="field"><label>URL image</label><input type="url" id="fr_pub1_img" value="https://img.mailinblue.com/4363334/images/content_library/original/6a300abac8e9e1c3ee19ff90.jpg" oninput="previewImg(this,'pp1')" /><img id="pp1" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/6a300abac8e9e1c3ee19ff90.jpg" /></div>
       <div class="field"><label>Lien cliquable (opt.)</label><input type="url" id="fr_pub1_link" placeholder="https://..." /></div>
     </div>
   </div>
 
-  <!-- À LA UNE -->
-  <div class="form-section" data-section="une" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
-    <div class="form-section-header"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🗞</span><input type="text" class="form-section-title-input" id="fr_title_une" value="À la une" /><button type="button" class="section-toggle-btn" onclick="toggleSection(this)" title="Ouvrir/fermer">▾</button></div>
+  <!-- À LA UNE / ACTUALITÉS / EN BREF -->
+  <div class="form-section" data-section="unebref" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🗞</span><span class="form-section-title">À la Une / Actualités / En Bref</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
+      <div class="cg-label" style="margin-bottom:10px;">À la une</div>
       <div id="cpicker_fr_une"></div>
+      <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="fr_title_une" value="À la une" /></div>
       <div class="g2">
       <div>
         <div class="field"><label>Image (640×300)</label><input type="url" id="fr_une_img" value="https://img.mailinblue.com/4363334/images/content_library/original/6a2fbe4b4c87acf1b003cc4d.png" oninput="previewImg(this,'ppu')" /><img id="ppu" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/6a2fbe4b4c87acf1b003cc4d.png" /></div>
@@ -297,26 +307,25 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
         <div class="field"><label>Texte</label><textarea id="fr_une_text">Près de 196 000 appels traités, 85 % de pannes résolues sur place, 98 % de membres satisfaits et plus de 10 000 nouveaux adhérents : 2025 confirme l'ACL dans son rôle de partenaire de mobilité au quotidien.</textarea></div>
         <div class="g2"><div class="field"><label>CTA texte</label><input type="text" id="fr_une_cta" value="En savoir plus" /></div><div class="field"><label>CTA lien</label><input type="url" id="fr_une_url" value="https://www.acl.lu/fr/magazine/communique-de-presse/ag2026/" /></div></div>
       </div>
+      </div>
+
+      <div class="sub-divider"></div>
+      <div class="cg-label" style="margin-bottom:10px;">Actualités</div>
+      <div id="cpicker_fr_actu"></div>
+      <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="fr_title_actu" value="Actualités" /></div>
+      <div id="fr_actu_c" class="g2"></div><button class="btn-add" onclick="addActu('fr')">+ Ajouter une vignette</button>
+
+      <div class="sub-divider"></div>
+      <div class="cg-label" style="margin-bottom:10px;">En bref</div>
+      <div id="cpicker_fr_bref"></div>
+      <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="fr_title_bref" value="En bref" /></div>
+      <div id="fr_bref_c"></div><button class="btn-add" onclick="addBref('fr')">+ Ajouter un item</button>
     </div>
-  </div>
-
-  <!-- ACTUALITÉS -->
-  <div class="form-section" data-section="actu" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
-    <div class="form-section-header"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📰</span><input type="text" class="form-section-title-input" id="fr_title_actu" value="Actualités" /><button type="button" class="section-toggle-btn" onclick="toggleSection(this)" title="Ouvrir/fermer">▾</button></div>
-    <div class="form-section-body"><div id="cpicker_fr_actu"></div>
-      <div id="fr_actu_c" class="g2"></div><button class="btn-add" onclick="addActu('fr')">+ Ajouter une vignette</button></div>
-  </div>
-
-  <!-- EN BREF -->
-  <div class="form-section" data-section="bref" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
-    <div class="form-section-header"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">⚡</span><input type="text" class="form-section-title-input" id="fr_title_bref" value="En bref" /><button type="button" class="section-toggle-btn" onclick="toggleSection(this)" title="Ouvrir/fermer">▾</button></div>
-    <div class="form-section-body"><div id="cpicker_fr_bref"></div>
-      <div id="fr_bref_c"></div><button class="btn-add" onclick="addBref('fr')">+ Ajouter un item</button></div>
   </div>
 
   <!-- PUB 2 -->
   <div class="form-section" data-section="pub2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
-    <div class="form-section-header"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 2</span><button type="button" class="section-toggle-btn" onclick="toggleSection(this)" title="Ouvrir/fermer">▾</button></div>
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 2</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body g2">
       <div class="field"><label>URL image</label><input type="url" id="fr_pub2_img" value="https://img.mailinblue.com/4363334/images/content_library/original/69675df04a53a52a8e9e9f56.jpg" oninput="previewImg(this,'pp2')" /><img id="pp2" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/69675df04a53a52a8e9e9f56.jpg" /></div>
       <div class="field"><label>Lien cliquable (opt.)</label><input type="url" id="fr_pub2_link" placeholder="https://..." /></div>
@@ -325,14 +334,14 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 
   <!-- BANC D'ESSAI -->
   <div class="form-section" data-section="banc" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
-    <div class="form-section-header"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🚗</span><input type="text" class="form-section-title-input" id="fr_title_banc" value="Au banc d'essai" /><button type="button" class="section-toggle-btn" onclick="toggleSection(this)" title="Ouvrir/fermer">▾</button></div>
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🚗</span><input type="text" class="form-section-title-input" id="fr_title_banc" value="Au banc d'essai" /><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body"><div id="cpicker_fr_banc"></div>
       <div id="fr_banc_c"></div><button class="btn-add" onclick="addBanc('fr')">+ Ajouter un essai</button></div>
   </div>
 
   <!-- VOYAGES -->
   <div class="form-section" data-section="voy" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
-    <div class="form-section-header"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">✈️</span><input type="text" class="form-section-title-input" id="fr_title_voy" value="Nos Voyages" /><button type="button" class="section-toggle-btn" onclick="toggleSection(this)" title="Ouvrir/fermer">▾</button></div>
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">✈️</span><input type="text" class="form-section-title-input" id="fr_title_voy" value="Nos Voyages" /><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="cg" style="margin-bottom:14px;">
         <div class="cg-label" style="margin-bottom:10px;">Article principal (pleine largeur)</div>
@@ -353,7 +362,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 
   <!-- AGENDA -->
   <div class="form-section" data-section="agenda" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
-    <div class="form-section-header"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📅</span><input type="text" class="form-section-title-input" id="fr_title_agenda" value="L'Agenda" /><button type="button" class="section-toggle-btn" onclick="toggleSection(this)" title="Ouvrir/fermer">▾</button></div>
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📅</span><input type="text" class="form-section-title-input" id="fr_title_agenda" value="L'Agenda" /><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body"><div id="cpicker_fr_agenda"></div>
       <div class="field" style="margin-bottom:14px;"><label>Sous-titre</label><input type="text" id="fr_title_agenda_kicker" value="Formations &amp; événements" /></div>
       <div id="fr_agenda_c"></div><button class="btn-add" onclick="addAgenda('fr')">+ Ajouter un événement</button></div>
@@ -361,7 +370,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 
   <!-- AUTOTOURING -->
   <div class="form-section" data-section="autotouring" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
-    <div class="form-section-header"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📖</span><span class="form-section-title">Autotouring</span><button type="button" class="section-toggle-btn" onclick="toggleSection(this)" title="Ouvrir/fermer">▾</button></div>
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📖</span><span class="form-section-title">Autotouring</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="g2" style="margin-bottom:14px;">
         <div class="field"><label>Sous-titre (kicker)</label><input type="text" id="fr_title_auto_kicker" value="Magazine" /></div>
@@ -379,7 +388,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 
   <!-- RECRUTEMENT -->
   <div class="form-section" data-section="recrutement" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
-    <div class="form-section-header"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">💼</span><span class="form-section-title">Recrutement</span><button type="button" class="section-toggle-btn" onclick="toggleSection(this)" title="Ouvrir/fermer">▾</button></div>
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">💼</span><span class="form-section-title">Recrutement</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="g2" style="margin-bottom:14px;">
         <div class="field"><label>Sous-titre (kicker)</label><input type="text" id="fr_title_job_kicker" value="On recrute" /></div>
@@ -393,7 +402,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 
   <!-- PARRAINAGE -->
   <div class="form-section" data-section="parrainage" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
-    <div class="form-section-header"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🎁</span><span class="form-section-title">Parrainage</span><button type="button" class="section-toggle-btn" onclick="toggleSection(this)" title="Ouvrir/fermer">▾</button></div>
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🎁</span><span class="form-section-title">Parrainage</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="g2" style="margin-bottom:14px;">
         <div class="field"><label>Sous-titre (kicker)</label><input type="text" id="fr_title_parr_kicker" value="Programme membres" /></div>
@@ -409,25 +418,30 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
     </div>
   </div>
 
-  <!-- CARTES ADDITIONNELLES (format Autotouring) -->
-  <div class="form-section" data-section="extras" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
-    <div class="form-section-header"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🗂</span><span class="form-section-title">Cartes additionnelles</span><button type="button" class="section-toggle-btn" onclick="toggleSection(this)" title="Ouvrir/fermer">▾</button></div>
-    <div class="form-section-body g2">
-      <div class="cg">
-        <div class="cg-label" style="margin-bottom:10px;">Carte 1</div>
-        <div class="field"><label>Image</label><input type="url" id="fr_extra1_img" placeholder="https://..." oninput="previewImg(this,'ppe1')" /><img id="ppe1" class="img-prev" src="" /></div>
-        <div class="field"><label>Titre</label><input type="text" id="fr_extra1_title" placeholder="Titre de la carte" /></div>
-        <div class="field"><label>Texte</label><textarea id="fr_extra1_text" placeholder="Texte de la carte"></textarea></div>
-        <div class="g2"><div class="field"><label>CTA texte</label><input type="text" id="fr_extra1_cta" placeholder="En savoir plus" /></div><div class="field"><label>CTA lien</label><input type="url" id="fr_extra1_url" placeholder="https://..." /></div></div>
-      </div>
-      <div class="cg">
-        <div class="cg-label" style="margin-bottom:10px;">Carte 2</div>
-        <div class="field"><label>Image</label><input type="url" id="fr_extra2_img" placeholder="https://..." oninput="previewImg(this,'ppe2')" /><img id="ppe2" class="img-prev" src="" /></div>
-        <div class="field"><label>Titre</label><input type="text" id="fr_extra2_title" placeholder="Titre de la carte" /></div>
-        <div class="field"><label>Texte</label><textarea id="fr_extra2_text" placeholder="Texte de la carte"></textarea></div>
-        <div class="g2"><div class="field"><label>CTA texte</label><input type="text" id="fr_extra2_cta" placeholder="En savoir plus" /></div><div class="field"><label>CTA lien</label><input type="url" id="fr_extra2_url" placeholder="https://..." /></div></div>
-      </div>
+  <!-- CARTE ADDITIONNELLE 1 -->
+  <div class="form-section" data-section="extra1" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🗂</span><span class="form-section-title">Carte additionnelle 1</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
+    <div class="form-section-body">
+      <div class="field"><label>Image</label><input type="url" id="fr_extra1_img" placeholder="https://..." oninput="previewImg(this,'ppe1')" /><img id="ppe1" class="img-prev" src="" /></div>
+      <div class="field"><label>Titre</label><input type="text" id="fr_extra1_title" placeholder="Titre de la carte" /></div>
+      <div class="field"><label>Texte</label><textarea id="fr_extra1_text" placeholder="Texte de la carte"></textarea></div>
+      <div class="g2"><div class="field"><label>CTA texte</label><input type="text" id="fr_extra1_cta" placeholder="En savoir plus" /></div><div class="field"><label>CTA lien</label><input type="url" id="fr_extra1_url" placeholder="https://..." /></div></div>
     </div>
+  </div>
+
+  <!-- CARTE ADDITIONNELLE 2 -->
+  <div class="form-section" data-section="extra2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🗂</span><span class="form-section-title">Carte additionnelle 2</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
+    <div class="form-section-body">
+      <div class="field"><label>Image</label><input type="url" id="fr_extra2_img" placeholder="https://..." oninput="previewImg(this,'ppe2')" /><img id="ppe2" class="img-prev" src="" /></div>
+      <div class="field"><label>Titre</label><input type="text" id="fr_extra2_title" placeholder="Titre de la carte" /></div>
+      <div class="field"><label>Texte</label><textarea id="fr_extra2_text" placeholder="Texte de la carte"></textarea></div>
+      <div class="g2"><div class="field"><label>CTA texte</label><input type="text" id="fr_extra2_cta" placeholder="En savoir plus" /></div><div class="field"><label>CTA lien</label><input type="url" id="fr_extra2_url" placeholder="https://..." /></div></div>
+    </div>
+  </div>
+
+  <div class="add-section-row">
+    <select id="addSectionSelect" class="add-section-select" onchange="addSectionFromSelect(this)"></select>
   </div>
 
 </div></div><!-- /pane FR -->
@@ -703,8 +717,11 @@ function switchTab(lang, btn) {
 }
 
 // ── SECTIONS : TOGGLE / DRAG & DROP / ORDRE ───────
-function toggleSection(btn) {
-  const section = btn.closest('.form-section');
+function handleSectionHeaderClick(e) {
+  if (e.target.closest('.section-drag-handle')) return;
+  if (e.target.tagName === 'INPUT') return;
+  if (e.target.closest('button')) return;
+  const section = e.currentTarget.closest('.form-section');
   if (section) section.classList.toggle('collapsed');
 }
 
@@ -735,10 +752,24 @@ function sectionDragEnd() {
   dragSectionEl = null;
 }
 
-const DEFAULT_SECTION_ORDER = ['pub1','une','actu','bref','pub2','banc','voy','agenda','autotouring','recrutement','parrainage','extras'];
+const DEFAULT_SECTION_ORDER = ['pub1','unebref','pub2','banc','voy','agenda','autotouring','recrutement','parrainage','extra1','extra2'];
+
+const SECTION_LABELS = {
+  pub1: 'Bandeau pub 1',
+  unebref: 'À la Une / Actualités / En Bref',
+  pub2: 'Bandeau pub 2',
+  banc: "Au banc d'essai",
+  voy: 'Nos Voyages',
+  agenda: "L'Agenda",
+  autotouring: 'Autotouring',
+  recrutement: 'Recrutement',
+  parrainage: 'Parrainage',
+  extra1: 'Carte additionnelle 1',
+  extra2: 'Carte additionnelle 2'
+};
 
 function getSectionOrder() {
-  const els = document.querySelectorAll('#pane-fr .content > .form-section[data-section]');
+  const els = document.querySelectorAll('#pane-fr .content > .form-section[data-section]:not(.section-hidden)');
   if (!els.length) return DEFAULT_SECTION_ORDER.slice();
   return Array.from(els).map(el => el.dataset.section).filter(k => k && k !== 'params');
 }
@@ -750,6 +781,44 @@ function applySectionOrder(order) {
     const el = container.querySelector(`.form-section[data-section="${key}"]`);
     if (el) container.appendChild(el);
   });
+}
+
+// ── SECTIONS : SUPPRIMER / AJOUTER ────────────────
+function deleteSection(btn) {
+  const section = btn.closest('.form-section');
+  const key = section && section.dataset.section;
+  if (!key) return;
+  const label = SECTION_LABELS[key] || 'cette section';
+  if (!confirm(`Supprimer "${label}" de la newsletter ?\nVous pourrez la rajouter via "+ Ajouter une section".`)) return;
+  document.querySelectorAll(`.form-section[data-section="${key}"]`).forEach(el => el.classList.add('section-hidden'));
+  refreshAddSectionSelect();
+}
+
+function showSection(key) {
+  const els = document.querySelectorAll(`.form-section[data-section="${key}"]`);
+  if (!els.length) return;
+  els.forEach(el => { el.classList.remove('section-hidden'); el.classList.remove('collapsed'); });
+  const frEl = document.querySelector(`#pane-fr .form-section[data-section="${key}"]`);
+  if (frEl) frEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  refreshAddSectionSelect();
+}
+
+function addSectionFromSelect(sel) {
+  const key = sel.value;
+  if (!key) return;
+  showSection(key);
+  sel.value = '';
+}
+
+function refreshAddSectionSelect() {
+  const sel = document.getElementById('addSectionSelect');
+  if (!sel) return;
+  const hidden = Object.keys(SECTION_LABELS).filter(key => {
+    const el = document.querySelector(`#pane-fr .form-section[data-section="${key}"]`);
+    return el && el.classList.contains('section-hidden');
+  });
+  sel.innerHTML = '<option value="">+ Ajouter une section…</option>' + hidden.map(k => `<option value="${k}">${esc(SECTION_LABELS[k])}</option>`).join('');
+  sel.disabled = hidden.length === 0;
 }
 
 // ── VALIDATION : ÉDITION OBLIGATOIRE ──────────────
@@ -779,6 +848,7 @@ function initApp() {
   // Seule "Paramètres généraux" est ouverte à l'origine
   collapseAllExceptParams(document);
   updateEditionValidity();
+  refreshAddSectionSelect();
 }
 document.addEventListener('DOMContentLoaded', () => {
   if (sessionStorage.getItem('acl_auth') === '1') initApp();
@@ -866,21 +936,23 @@ function createEnDe() {
 
 function buildTranslatedFields(lang, d) {
   const u = d.une||{}, vm = d.vm||{}, au = d.auto||{}, pa = d.parr||{}, e1 = d.extra1||{}, e2 = d.extra2||{};
-  const tgl = `<button type="button" class="section-toggle-btn" onclick="toggleSection(this)" title="Ouvrir/fermer">▾</button>`;
+  const tgl = `<span class="section-toggle-btn" title="Ouvrir/fermer">▾</span>`;
   return `
-  <div class="form-section" data-section="params"><div class="form-section-header"><span class="form-section-icon">⚙️</span><span class="form-section-title">Paramètres généraux</span>${tgl}</div>
+  <div class="form-section" data-section="params"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">⚙️</span><span class="form-section-title">Paramètres généraux</span>${tgl}</div>
   <div class="form-section-body">
     <div class="field"><label>Édition</label><input type="text" id="${lang}_edition" value="${esc(d.edition||'')}" /></div>
   </div></div>
 
-  <div class="form-section" data-section="pub1"><div class="form-section-header"><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 1</span>${tgl}</div>
+  <div class="form-section" data-section="pub1"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 1</span>${tgl}</div>
   <div class="form-section-body g2">
     <div class="field"><label>URL image</label><input type="url" id="${lang}_pub1_img" value="${esc(d.pub1_img||'')}" /><img class="img-prev" src="${d.pub1_img||''}" /></div>
     <div class="field"><label>Lien cliquable (opt.)</label><input type="url" id="${lang}_pub1_link" value="${esc(d.pub1_link||'')}" /></div>
   </div></div>
 
-  <div class="form-section" data-section="une"><div class="form-section-header"><span class="form-section-icon">🗞</span><input type="text" class="form-section-title-input" id="${lang}_title_une" value="${esc((d.titles||{}).une||'')}" />${tgl}</div>
+  <div class="form-section" data-section="unebref"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">🗞</span><span class="form-section-title">À la Une / Actualités / En Bref</span>${tgl}</div>
   <div class="form-section-body">
+    <div class="cg-label" style="margin-bottom:10px;">À la une</div>
+    <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="${lang}_title_une" value="${esc((d.titles||{}).une||'')}" /></div>
     <div class="g2">
     <div><div class="field"><label>Image</label><input type="url" id="${lang}_une_img" value="${esc(u.img||'')}" /><img class="img-prev" src="${u.img||''}" /></div>
     <div class="field"><label>Étiquette</label><input type="text" id="${lang}_une_tag" value="${esc(u.tag||'')}" /></div></div>
@@ -889,27 +961,29 @@ function buildTranslatedFields(lang, d) {
     <div class="g2"><div class="field"><label>CTA</label><input type="text" id="${lang}_une_cta" value="${esc(u.cta||'')}" /></div>
     <div class="field"><label>URL</label><input type="url" id="${lang}_une_url" value="${esc(u.url||'')}" /></div></div></div>
     </div>
+
+    <div class="sub-divider"></div>
+    <div class="cg-label" style="margin-bottom:10px;">Actualités</div>
+    <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="${lang}_title_actu" value="${esc((d.titles||{}).actu||'')}" /></div>
+    <div id="${lang}_actu_c" class="g2"></div><button class="btn-add" onclick="addActu('${lang}')">+ Ajouter</button>
+
+    <div class="sub-divider"></div>
+    <div class="cg-label" style="margin-bottom:10px;">En bref</div>
+    <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="${lang}_title_bref" value="${esc((d.titles||{}).bref||'')}" /></div>
+    <div id="${lang}_bref_c"></div><button class="btn-add" onclick="addBref('${lang}')">+ Ajouter</button>
   </div></div>
 
-  <div class="form-section" data-section="actu"><div class="form-section-header"><span class="form-section-icon">📰</span><input type="text" class="form-section-title-input" id="${lang}_title_actu" value="${esc((d.titles||{}).actu||'')}" />${tgl}</div>
-  <div class="form-section-body">
-    <div id="${lang}_actu_c" class="g2"></div><button class="btn-add" onclick="addActu('${lang}')">+ Ajouter</button></div></div>
-
-  <div class="form-section" data-section="bref"><div class="form-section-header"><span class="form-section-icon">⚡</span><input type="text" class="form-section-title-input" id="${lang}_title_bref" value="${esc((d.titles||{}).bref||'')}" />${tgl}</div>
-  <div class="form-section-body">
-    <div id="${lang}_bref_c"></div><button class="btn-add" onclick="addBref('${lang}')">+ Ajouter</button></div></div>
-
-  <div class="form-section" data-section="pub2"><div class="form-section-header"><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 2</span>${tgl}</div>
+  <div class="form-section" data-section="pub2"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 2</span>${tgl}</div>
   <div class="form-section-body g2">
     <div class="field"><label>URL image</label><input type="url" id="${lang}_pub2_img" value="${esc(d.pub2_img||'')}" /><img class="img-prev" src="${d.pub2_img||''}" /></div>
     <div class="field"><label>Lien cliquable (opt.)</label><input type="url" id="${lang}_pub2_link" value="${esc(d.pub2_link||'')}" /></div>
   </div></div>
 
-  <div class="form-section" data-section="banc"><div class="form-section-header"><span class="form-section-icon">🚗</span><input type="text" class="form-section-title-input" id="${lang}_title_banc" value="${esc((d.titles||{}).banc||'')}" />${tgl}</div>
+  <div class="form-section" data-section="banc"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">🚗</span><input type="text" class="form-section-title-input" id="${lang}_title_banc" value="${esc((d.titles||{}).banc||'')}" />${tgl}</div>
   <div class="form-section-body">
     <div id="${lang}_banc_c"></div><button class="btn-add" onclick="addBanc('${lang}')">+ Ajouter</button></div></div>
 
-  <div class="form-section" data-section="voy"><div class="form-section-header"><span class="form-section-icon">✈️</span><input type="text" class="form-section-title-input" id="${lang}_title_voy" value="${esc((d.titles||{}).voy||'')}" />${tgl}</div>
+  <div class="form-section" data-section="voy"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">✈️</span><input type="text" class="form-section-title-input" id="${lang}_title_voy" value="${esc((d.titles||{}).voy||'')}" />${tgl}</div>
   <div class="form-section-body">
     <div class="cg" style="margin-bottom:12px;"><div class="cg-label" style="margin-bottom:8px;">Principal</div>
     <div class="g2"><div class="field"><label>Image</label><input type="url" id="${lang}_vm_img" value="${esc(vm.img||'')}" /><img class="img-prev" src="${vm.img||''}" /></div>
@@ -919,12 +993,12 @@ function buildTranslatedFields(lang, d) {
     <div id="${lang}_voy_c" class="g2"></div><button class="btn-add" onclick="addVoy('${lang}')">+ Ajouter</button>
   </div></div>
 
-  <div class="form-section" data-section="agenda"><div class="form-section-header"><span class="form-section-icon">📅</span><input type="text" class="form-section-title-input" id="${lang}_title_agenda" value="${esc((d.titles||{}).agenda||'')}" />${tgl}</div>
+  <div class="form-section" data-section="agenda"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">📅</span><input type="text" class="form-section-title-input" id="${lang}_title_agenda" value="${esc((d.titles||{}).agenda||'')}" />${tgl}</div>
   <div class="form-section-body">
     <div class="field" style="margin-bottom:14px;"><label>Sous-titre</label><input type="text" id="${lang}_title_agenda_kicker" value="${esc((d.titles||{}).agenda_kicker||'')}" /></div>
     <div id="${lang}_agenda_c"></div><button class="btn-add" onclick="addAgenda('${lang}')">+ Ajouter</button></div></div>
 
-  <div class="form-section" data-section="autotouring"><div class="form-section-header"><span class="form-section-icon">📖</span><span class="form-section-title">Autotouring</span>${tgl}</div>
+  <div class="form-section" data-section="autotouring"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">📖</span><span class="form-section-title">Autotouring</span>${tgl}</div>
   <div class="form-section-body">
     <div class="g2" style="margin-bottom:14px;">
       <div class="field"><label>Sous-titre (kicker)</label><input type="text" id="${lang}_title_auto_kicker" value="${esc((d.titles||{}).auto_kicker||'')}" /></div>
@@ -937,7 +1011,7 @@ function buildTranslatedFields(lang, d) {
     </div>
   </div></div>
 
-  <div class="form-section" data-section="recrutement"><div class="form-section-header"><span class="form-section-icon">💼</span><span class="form-section-title">Recrutement</span>${tgl}</div>
+  <div class="form-section" data-section="recrutement"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">💼</span><span class="form-section-title">Recrutement</span>${tgl}</div>
   <div class="form-section-body">
     <div class="g2" style="margin-bottom:14px;">
       <div class="field"><label>Sous-titre (kicker)</label><input type="text" id="${lang}_title_job_kicker" value="${esc((d.titles||{}).job_kicker||'')}" /></div>
@@ -946,7 +1020,7 @@ function buildTranslatedFields(lang, d) {
     <div class="field" style="margin-bottom:10px;"><label>URL offres</label><input type="url" id="${lang}_job_url" value="${esc(d.job_url||'')}" /></div>
   <div id="${lang}_jobs_c"></div><button class="btn-add" onclick="addJob('${lang}')">+ Ajouter</button></div></div>
 
-  <div class="form-section" data-section="parrainage"><div class="form-section-header"><span class="form-section-icon">🎁</span><span class="form-section-title">Parrainage</span>${tgl}</div>
+  <div class="form-section" data-section="parrainage"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">🎁</span><span class="form-section-title">Parrainage</span>${tgl}</div>
   <div class="form-section-body">
     <div class="g2" style="margin-bottom:14px;">
       <div class="field"><label>Sous-titre (kicker)</label><input type="text" id="${lang}_title_parr_kicker" value="${esc((d.titles||{}).parr_kicker||'')}" /></div>
@@ -959,22 +1033,20 @@ function buildTranslatedFields(lang, d) {
     </div>
   </div></div>
 
-  <div class="form-section" data-section="extras"><div class="form-section-header"><span class="form-section-icon">🗂</span><span class="form-section-title">Cartes additionnelles</span>${tgl}</div>
-  <div class="form-section-body g2">
-    <div class="cg">
-      <div class="cg-label" style="margin-bottom:10px;">Carte 1</div>
-      <div class="field"><label>Image</label><input type="url" id="${lang}_extra1_img" value="${esc(e1.img||'')}" /><img class="img-prev" src="${e1.img||''}" /></div>
-      <div class="field"><label>Titre</label><input type="text" id="${lang}_extra1_title" value="${esc(e1.title||'')}" /></div>
-      <div class="field"><label>Texte</label><textarea id="${lang}_extra1_text">${esc(e1.text||'')}</textarea></div>
-      <div class="g2"><div class="field"><label>CTA texte</label><input type="text" id="${lang}_extra1_cta" value="${esc(e1.cta||'')}" /></div><div class="field"><label>CTA lien</label><input type="url" id="${lang}_extra1_url" value="${esc(e1.url||'')}" /></div></div>
-    </div>
-    <div class="cg">
-      <div class="cg-label" style="margin-bottom:10px;">Carte 2</div>
-      <div class="field"><label>Image</label><input type="url" id="${lang}_extra2_img" value="${esc(e2.img||'')}" /><img class="img-prev" src="${e2.img||''}" /></div>
-      <div class="field"><label>Titre</label><input type="text" id="${lang}_extra2_title" value="${esc(e2.title||'')}" /></div>
-      <div class="field"><label>Texte</label><textarea id="${lang}_extra2_text">${esc(e2.text||'')}</textarea></div>
-      <div class="g2"><div class="field"><label>CTA texte</label><input type="text" id="${lang}_extra2_cta" value="${esc(e2.cta||'')}" /></div><div class="field"><label>CTA lien</label><input type="url" id="${lang}_extra2_url" value="${esc(e2.url||'')}" /></div></div>
-    </div>
+  <div class="form-section" data-section="extra1"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">🗂</span><span class="form-section-title">Carte additionnelle 1</span>${tgl}</div>
+  <div class="form-section-body">
+    <div class="field"><label>Image</label><input type="url" id="${lang}_extra1_img" value="${esc(e1.img||'')}" /><img class="img-prev" src="${e1.img||''}" /></div>
+    <div class="field"><label>Titre</label><input type="text" id="${lang}_extra1_title" value="${esc(e1.title||'')}" /></div>
+    <div class="field"><label>Texte</label><textarea id="${lang}_extra1_text">${esc(e1.text||'')}</textarea></div>
+    <div class="g2"><div class="field"><label>CTA texte</label><input type="text" id="${lang}_extra1_cta" value="${esc(e1.cta||'')}" /></div><div class="field"><label>CTA lien</label><input type="url" id="${lang}_extra1_url" value="${esc(e1.url||'')}" /></div></div>
+  </div></div>
+
+  <div class="form-section" data-section="extra2"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">🗂</span><span class="form-section-title">Carte additionnelle 2</span>${tgl}</div>
+  <div class="form-section-body">
+    <div class="field"><label>Image</label><input type="url" id="${lang}_extra2_img" value="${esc(e2.img||'')}" /><img class="img-prev" src="${e2.img||''}" /></div>
+    <div class="field"><label>Titre</label><input type="text" id="${lang}_extra2_title" value="${esc(e2.title||'')}" /></div>
+    <div class="field"><label>Texte</label><textarea id="${lang}_extra2_text">${esc(e2.text||'')}</textarea></div>
+    <div class="g2"><div class="field"><label>CTA texte</label><input type="text" id="${lang}_extra2_cta" value="${esc(e2.cta||'')}" /></div><div class="field"><label>CTA lien</label><input type="url" id="${lang}_extra2_url" value="${esc(e2.url||'')}" /></div></div>
   </div></div>`;
 }
 
@@ -1095,7 +1167,7 @@ function buildHTML(lang) {
 
   blocks.pub1 = `<tr><td style="background-color:#EFEFEF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub1H}</td></tr>`;
 
-  blocks.une = `<!-- À LA UNE -->
+  blocks.unebref = `<!-- À LA UNE -->
 <tr><td style="background-color:${getBg(lang,'une')};padding:28px 28px 28px;">
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
     <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">${esc(v(p+'title_une'))}</td>
@@ -1109,18 +1181,16 @@ function buildHTML(lang) {
     <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${uu(v(p+'une_url'))}" style="height:40px;v-text-anchor:middle;width:162px;" arcsize="20%" fillcolor="#FCD900" stroke="f"><w:anchorlock/><center style="color:#1A1A1A;font-family:Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">${esc(v(p+'une_cta')).toUpperCase()}</center></v:roundrect><![endif]-->
     <!--[if !mso]><!--><a target="_blank" href="${uu(v(p+'une_url'))}" style="display:inline-block;background-color:#FCD900;color:#1A1A1A!important;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none!important;padding:11px 22px;border-radius:20px;">${esc(v(p+'une_cta'))}</a><!--<![endif]-->
   </div>
-</td></tr>`;
-
-  blocks.actu = `<!-- ACTUALITÉS -->
+</td></tr>
+<!-- ACTUALITÉS -->
 <tr><td style="background-color:${getBg(lang,'actu')};padding:28px 28px 28px;">
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
     <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">${esc(v(p+'title_actu'))}</td>
     <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
   </tr></table>
   ${actuH}
-</td></tr>`;
-
-  blocks.bref = `<!-- EN BREF -->
+</td></tr>
+<!-- EN BREF -->
 <tr><td style="background-color:${getBg(lang,'bref')};padding:28px 28px 28px;">
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
     <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">${esc(v(p+'title_bref'))}</td>
@@ -1211,28 +1281,27 @@ function buildHTML(lang) {
   </table>
 </td></tr>`;
 
-  blocks.extras = `<!-- CARTES ADDITIONNELLES -->
+  blocks.extra1 = `<!-- CARTE ADDITIONNELLE 1 -->
 <tr><td style="background-color:#FFFFFF;padding:20px 28px;">
-  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
-    <tr>
-      <td width="49%" valign="top" style="background-color:#F5F5F5;border-radius:10px;">
-        <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="padding:22px 22px 22px;">
-          ${extra1Img}
-          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:14px 0 8px 0;">${esc(v(p+'extra1_title'))}</p>
-          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0 0 14px 0;">${esc(v(p+'extra1_text'))}</p>
-          <a target="_blank" href="${uu(v(p+'extra1_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'extra1_cta')||'En savoir plus')} →</a>
-        </td></tr></table>
-      </td>
-      <td width="2%" style="font-size:0;">&nbsp;</td>
-      <td width="49%" valign="top" style="background-color:#F5F5F5;border-radius:10px;">
-        <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="padding:22px 22px 22px;">
-          ${extra2Img}
-          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:14px 0 8px 0;">${esc(v(p+'extra2_title'))}</p>
-          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0 0 14px 0;">${esc(v(p+'extra2_text'))}</p>
-          <a target="_blank" href="${uu(v(p+'extra2_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'extra2_cta')||'En savoir plus')} →</a>
-        </td></tr></table>
-      </td>
-    </tr>
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#F5F5F5;border-radius:10px;">
+    <tr><td style="padding:22px 22px;">
+      ${extra1Img}
+      <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:14px 0 8px 0;">${esc(v(p+'extra1_title'))}</p>
+      <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0 0 14px 0;">${esc(v(p+'extra1_text'))}</p>
+      <a target="_blank" href="${uu(v(p+'extra1_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'extra1_cta')||'En savoir plus')} →</a>
+    </td></tr>
+  </table>
+</td></tr>`;
+
+  blocks.extra2 = `<!-- CARTE ADDITIONNELLE 2 -->
+<tr><td style="background-color:#FFFFFF;padding:20px 28px;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#F5F5F5;border-radius:10px;">
+    <tr><td style="padding:22px 22px;">
+      ${extra2Img}
+      <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:14px 0 8px 0;">${esc(v(p+'extra2_title'))}</p>
+      <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0 0 14px 0;">${esc(v(p+'extra2_text'))}</p>
+      <a target="_blank" href="${uu(v(p+'extra2_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'extra2_cta')||'En savoir plus')} →</a>
+    </td></tr>
   </table>
 </td></tr>`;
 
@@ -1333,11 +1402,29 @@ ${orderedSectionsHTML}
 }
 
 // ── FIREBASE — SAUVEGARDE & CHARGEMENT ──────────────
+function getHiddenSections() {
+  return Object.keys(SECTION_LABELS).filter(key => {
+    const el = document.querySelector(`#pane-fr .form-section[data-section="${key}"]`);
+    return el && el.classList.contains('section-hidden');
+  });
+}
+
+function applyHiddenSections(hidden) {
+  const list = Array.isArray(hidden) ? hidden : [];
+  Object.keys(SECTION_LABELS).forEach(key => {
+    document.querySelectorAll(`.form-section[data-section="${key}"]`).forEach(el => {
+      el.classList.toggle('section-hidden', list.includes(key));
+    });
+  });
+  refreshAddSectionSelect();
+}
+
 function collectAllData() {
   return {
     savedAt: new Date().toISOString(),
     name: v('fr_edition') || 'Sans titre',
     order: getSectionOrder(),
+    hidden: getHiddenSections(),
     fr: collectLangData('fr'),
     en: collectLangData('en'),
     de: collectLangData('de')
@@ -1348,6 +1435,7 @@ function setField(id, val) { const el = document.getElementById(id); if(el && va
 
 function loadAllData(data) {
   if (!data || !data.fr) return;
+  applyHiddenSections(data.hidden);
   if (data.order) applySectionOrder(data.order);
   applyFrDataToLang('fr', data.fr);
   if (data.en) { applyFrDataToLang('en', data.en); document.getElementById('badge-en').textContent = data.en.actu?.length ? '✓ Copié' : '—'; }
