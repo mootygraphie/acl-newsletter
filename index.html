@@ -95,13 +95,17 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 
 /* ── CARD GROUP ── */
 .cg { background: var(--grey); border-radius: 8px; padding: 12px; position: relative; }
-.cg-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.cg-header { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
 .cg-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mid); }
 
 /* ── DYNAMIC ITEMS ── */
 .dyn-item { background: #fff; border: 1px solid var(--border); border-radius: 7px; padding: 12px; margin-bottom: 8px; position: relative; }
 .btn-rm { background: none; border: none; cursor: pointer; color: #CCC; font-size: 18px; position: absolute; top: 8px; right: 10px; line-height: 1; }
 .btn-rm:hover { color: #E44; }
+.item-drag-handle { cursor: grab; color: #CCC; font-size: 13px; line-height: 1; user-select: none; flex-shrink: 0; }
+.item-drag-handle:active { cursor: grabbing; }
+.dyn-item > .item-drag-handle { position: absolute; top: 9px; right: 32px; }
+.cg.item-dragging, .dyn-item.item-dragging { opacity: 0.35; }
 .btn-add { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mid); background: none; border: 1.5px dashed var(--border); border-radius: 6px; padding: 7px 14px; cursor: pointer; margin-top: 6px; transition: border-color 0.15s; }
 .btn-add:hover { border-color: var(--yellow); color: var(--black); }
 
@@ -115,6 +119,9 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 .ed-item .ed-date { font-size: 10px; color: var(--mid); }
 .ed-item .ed-del { color: #CCC; }
 .ed-item .ed-del:hover { color: #E44; }
+.ed-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.ed-dup { background: none; border: none; cursor: pointer; font-size: 13px; color: #CCC; padding: 2px 4px; line-height: 1; }
+.ed-dup:hover { color: var(--black); }
 .ed-empty { padding: 14px; text-align: center; font-size: 12px; color: var(--mid); }
 
 /* ── BOTTOM BAR ── */
@@ -253,7 +260,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">13/08/2026 13:22</div>
+  <div class="build-stamp">13/08/2026 17:02</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -468,7 +475,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 ══════════════════════════════════ -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const app = initializeApp({
   apiKey: "AIzaSyAxHoNVE8SRT_w7c7W4-kM1jwVFwsZvzjI",
@@ -481,7 +488,7 @@ const app = initializeApp({
 
 const db = getFirestore(app);
 window._db = db;
-window._fs = { collection, doc, setDoc, getDocs, deleteDoc, query, orderBy };
+window._fs = { collection, doc, setDoc, getDoc, getDocs, deleteDoc, query, orderBy };
 document.dispatchEvent(new Event('firebase-ready'));
 </script>
 
@@ -618,7 +625,7 @@ function renderActu(lang) {
   const c = document.getElementById(lang+'_actu_c'); if(!c) return;
   const data = D[lang].actu;
   c.innerHTML = data.map((d,i) => `
-    <div class="cg"><div class="cg-header"><span class="cg-label">Vignette ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','actu',${i})">×</button></div>
+    <div class="cg" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','actu')"><div class="cg-header"><span class="item-drag-handle" title="Déplacer">⠿</span><span class="cg-label">Vignette ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','actu',${i})">×</button></div>
     <div class="field"><label>🔗 URL article</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].actu[${i}].url=this.value" /></div>
     <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].actu[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /></div>
     <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].actu[${i}].title=this.value" /></div>
@@ -630,7 +637,7 @@ function renderBref(lang) {
   const c = document.getElementById(lang+'_bref_c'); if(!c) return;
   const data = D[lang].bref;
   c.innerHTML = data.map((d,i) => `
-    <div class="dyn-item"><button class="btn-rm" onclick="rm('${lang}','bref',${i})">×</button>
+    <div class="dyn-item" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','bref')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','bref',${i})">×</button>
     <div class="g3" style="gap:8px;">
       <div class="field"><label>Catégorie</label><input type="text" value="${esc(d.cat||'')}" oninput="D['${lang}'].bref[${i}].cat=this.value" /></div>
       <div class="field" style="grid-column:span 2"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].bref[${i}].title=this.value" /></div>
@@ -643,7 +650,7 @@ function renderBanc(lang) {
   const c = document.getElementById(lang+'_banc_c'); if(!c) return;
   const data = D[lang].banc;
   c.innerHTML = data.map((d,i) => `
-    <div class="dyn-item"><button class="btn-rm" onclick="rm('${lang}','banc',${i})">×</button>
+    <div class="dyn-item" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','banc')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','banc',${i})">×</button>
     <div class="field" style="margin-bottom:10px;"><label>🔗 URL article</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].banc[${i}].url=this.value" /></div>
     <div class="g2" style="gap:10px;">
       <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].banc[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /></div>
@@ -658,7 +665,7 @@ function renderVoy(lang) {
   const c = document.getElementById(lang+'_voy_c'); if(!c) return;
   const data = D[lang].voy;
   c.innerHTML = data.map((d,i) => `
-    <div class="cg"><div class="cg-header"><span class="cg-label">Carte ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','voy',${i})">×</button></div>
+    <div class="cg" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','voy')"><div class="cg-header"><span class="item-drag-handle" title="Déplacer">⠿</span><span class="cg-label">Carte ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','voy',${i})">×</button></div>
     <div class="field"><label>🔗 URL article</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].voy[${i}].url=this.value" /></div>
     <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].voy[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /></div>
     <div class="field"><label>Badge</label><input type="text" value="${esc(d.badge||'')}" oninput="D['${lang}'].voy[${i}].badge=this.value" /></div>
@@ -671,7 +678,7 @@ function renderAgenda(lang) {
   const c = document.getElementById(lang+'_agenda_c'); if(!c) return;
   const data = D[lang].agenda;
   c.innerHTML = data.map((d,i) => `
-    <div class="dyn-item"><button class="btn-rm" onclick="rm('${lang}','agenda',${i})">×</button>
+    <div class="dyn-item" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','agenda')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','agenda',${i})">×</button>
     <div class="g4" style="gap:8px;margin-bottom:8px;">
       <div class="field"><label>Jour</label><input type="text" value="${esc(d.jour||'')}" placeholder="SAM" oninput="D['${lang}'].agenda[${i}].jour=this.value" /></div>
       <div class="field"><label>Num</label><input type="text" value="${esc(d.num||'')}" placeholder="28" oninput="D['${lang}'].agenda[${i}].num=this.value" /></div>
@@ -688,7 +695,7 @@ function renderJobs(lang) {
   const c = document.getElementById(lang+'_jobs_c'); if(!c) return;
   const data = D[lang].jobs;
   c.innerHTML = data.map((d,i) => `
-    <div class="dyn-item"><button class="btn-rm" onclick="rm('${lang}','jobs',${i})">×</button>
+    <div class="dyn-item" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','jobs')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','jobs',${i})">×</button>
     <div class="g3" style="gap:8px;">
       <div class="field" style="grid-column:span 2"><label>Intitulé</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].jobs[${i}].title=this.value" /></div>
       <div class="field"><label>Détails</label><input type="text" value="${esc(d.detail||'')}" oninput="D['${lang}'].jobs[${i}].detail=this.value" /></div>
@@ -697,7 +704,37 @@ function renderJobs(lang) {
     </div>`).join('');
 }
 
-function rm(lang, key, i) { D[lang][key].splice(i,1); ({ actu:renderActu, bref:renderBref, banc:renderBanc, voy:renderVoy, agenda:renderAgenda, jobs:renderJobs })[key](lang); }
+const ITEM_RENDER_FNS = { actu:renderActu, bref:renderBref, banc:renderBanc, voy:renderVoy, agenda:renderAgenda, jobs:renderJobs };
+function rm(lang, key, i) { D[lang][key].splice(i,1); ITEM_RENDER_FNS[key](lang); }
+
+// ── VIGNETTES/ITEMS : DRAG & DROP ─────────────────
+let dragItemEl = null;
+function itemDragStart(e) {
+  dragItemEl = e.currentTarget;
+  dragItemEl.classList.add('item-dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+function itemDragOver(e) {
+  if (!dragItemEl) return;
+  const target = e.currentTarget;
+  if (target === dragItemEl || target.parentNode !== dragItemEl.parentNode) return;
+  e.preventDefault();
+  const rect = target.getBoundingClientRect();
+  const before = (e.clientY - rect.top) < rect.height / 2;
+  target.parentNode.insertBefore(dragItemEl, before ? target : target.nextSibling);
+}
+function itemDragEnd(e, lang, key) {
+  if (dragItemEl) dragItemEl.classList.remove('item-dragging');
+  dragItemEl = null;
+  const container = document.getElementById(lang + '_' + key + '_c');
+  if (!container) return;
+  const order = Array.from(container.children).map(el => parseInt(el.dataset.index, 10)).filter(n => !isNaN(n));
+  if (!order.length) return;
+  const arr = D[lang][key];
+  D[lang][key] = order.map(i => arr[i]);
+  ITEM_RENDER_FNS[key](lang);
+}
+
 function addActu(l)  { D[l].actu.push({img:'',title:'',url:'',cta:'En savoir plus'}); renderActu(l); }
 
 // ─────────────────────────────────────────────────
@@ -1475,7 +1512,10 @@ async function loadEditionsList() {
           <div class="ed-name">${esc(data.name||'Sans titre')}</div>
           <div class="ed-date">${date}</div>
         </div>
-        <button class="ed-del" onclick="deleteEdition('${d.id}',event)" title="Supprimer">×</button>
+        <div class="ed-actions">
+          <button class="ed-dup" onclick="duplicateEdition('${d.id}',event)" title="Dupliquer">⧉</button>
+          <button class="ed-del" onclick="deleteEdition('${d.id}',event)" title="Supprimer">×</button>
+        </div>
       </div>`;
     }).join('');
   } catch(e) { menu.innerHTML = '<div class="ed-empty">Erreur chargement</div>'; }
@@ -1488,6 +1528,22 @@ async function loadEdition(id) {
     const snap = await getDoc(doc(window._db, 'editions', id));
     if (snap.exists()) { loadAllData(snap.data()); toast('Édition chargée ✓', 'green'); toggleEdMenu(); }
   } catch(e) { toast('Erreur chargement : '+e.message, 'red'); }
+}
+
+async function duplicateEdition(id, e) {
+  e.stopPropagation();
+  if (!window._db) return;
+  const { doc, getDoc, setDoc } = window._fs;
+  try {
+    const snap = await getDoc(doc(window._db, 'editions', id));
+    if (!snap.exists()) return;
+    const data = snap.data();
+    const newId = 'edition_' + Date.now();
+    const newData = Object.assign({}, data, { savedAt: new Date().toISOString(), name: (data.name || 'Sans titre') + ' (copie)' });
+    await setDoc(doc(window._db, 'editions', newId), newData);
+    toast('Édition dupliquée ✓', 'green');
+    loadEditionsList();
+  } catch(e) { toast('Erreur duplication : '+e.message, 'red'); }
 }
 
 async function deleteEdition(id, e) {
