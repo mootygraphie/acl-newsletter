@@ -61,6 +61,9 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 .form-section-header { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--border); background: #FAFAFA; }
 .form-section-icon { font-size: 15px; }
 .form-section-title { font-size: 12px; font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: 0.08em; }
+.form-section-title-input { flex: 1; min-width: 0; font-size: 12px; font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--font); color: var(--black); background: none; border: none; padding: 3px 5px; margin: -3px -5px; border-radius: 4px; }
+.form-section-title-input:hover { background: rgba(0,0,0,0.05); }
+.form-section-title-input:focus { outline: none; background: #fff; box-shadow: 0 0 0 1.5px var(--yellow); }
 .form-section-body { padding: 16px 20px; }
 
 /* ── GRIDS ── */
@@ -238,7 +241,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       <button class="sw-util" onclick="showApiModal()">🔑 Clé API</button>
     </div>
   </div>
-  <div class="build-stamp">13/08/2026 12:27</div>
+  <div class="build-stamp">13/08/2026 12:36</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -311,10 +314,9 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
 
   <!-- À LA UNE -->
   <div class="form-section">
-    <div class="form-section-header"><span class="form-section-icon">🗞</span><span class="form-section-title">À la une</span></div>
+    <div class="form-section-header"><span class="form-section-icon">🗞</span><input type="text" class="form-section-title-input" id="fr_title_une" value="À la une" /></div>
     <div class="form-section-body">
       <div id="cpicker_fr_une"></div>
-      <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="fr_title_une" value="À la une" /></div>
       <div class="g2">
       <div>
         <div class="field"><label>Image (640×300)</label><input type="url" id="fr_une_img" value="https://img.mailinblue.com/4363334/images/content_library/original/6a2fbe4b4c87acf1b003cc4d.png" oninput="previewImg(this,'ppu')" /><img id="ppu" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/6a2fbe4b4c87acf1b003cc4d.png" /></div>
@@ -330,17 +332,15 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
 
   <!-- ACTUALITÉS -->
   <div class="form-section">
-    <div class="form-section-header"><span class="form-section-icon">📰</span><span class="form-section-title">Actualités — vignettes</span></div>
+    <div class="form-section-header"><span class="form-section-icon">📰</span><input type="text" class="form-section-title-input" id="fr_title_actu" value="Actualités" /></div>
     <div class="form-section-body"><div id="cpicker_fr_actu"></div>
-      <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="fr_title_actu" value="Actualités" /></div>
       <div id="fr_actu_c" class="g2"></div><button class="btn-add" onclick="addActu('fr')">+ Ajouter une vignette</button></div>
   </div>
 
   <!-- EN BREF -->
   <div class="form-section">
-    <div class="form-section-header"><span class="form-section-icon">⚡</span><span class="form-section-title">En bref</span></div>
+    <div class="form-section-header"><span class="form-section-icon">⚡</span><input type="text" class="form-section-title-input" id="fr_title_bref" value="En bref" /></div>
     <div class="form-section-body"><div id="cpicker_fr_bref"></div>
-      <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="fr_title_bref" value="En bref" /></div>
       <div id="fr_bref_c"></div><button class="btn-add" onclick="addBref('fr')">+ Ajouter un item</button></div>
   </div>
 
@@ -355,17 +355,15 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
 
   <!-- BANC D'ESSAI -->
   <div class="form-section">
-    <div class="form-section-header"><span class="form-section-icon">🚗</span><span class="form-section-title">Au banc d'essai</span></div>
+    <div class="form-section-header"><span class="form-section-icon">🚗</span><input type="text" class="form-section-title-input" id="fr_title_banc" value="Au banc d'essai" /></div>
     <div class="form-section-body"><div id="cpicker_fr_banc"></div>
-      <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="fr_title_banc" value="Au banc d'essai" /></div>
       <div id="fr_banc_c"></div><button class="btn-add" onclick="addBanc('fr')">+ Ajouter un essai</button></div>
   </div>
 
   <!-- VOYAGES -->
   <div class="form-section">
-    <div class="form-section-header"><span class="form-section-icon">✈️</span><span class="form-section-title">Nos Voyages</span></div>
+    <div class="form-section-header"><span class="form-section-icon">✈️</span><input type="text" class="form-section-title-input" id="fr_title_voy" value="Nos Voyages" /></div>
     <div class="form-section-body">
-      <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="fr_title_voy" value="Nos Voyages" /></div>
       <div class="cg" style="margin-bottom:14px;">
         <div class="cg-label" style="margin-bottom:10px;">Article principal (pleine largeur)</div>
         <div class="g2">
@@ -385,12 +383,9 @@ Et parce que l'été rime aussi avec découverte, retrouvez nos voyages en Chine
 
   <!-- AGENDA -->
   <div class="form-section">
-    <div class="form-section-header"><span class="form-section-icon">📅</span><span class="form-section-title">L'Agenda</span></div>
+    <div class="form-section-header"><span class="form-section-icon">📅</span><input type="text" class="form-section-title-input" id="fr_title_agenda" value="L'Agenda" /></div>
     <div class="form-section-body"><div id="cpicker_fr_agenda"></div>
-      <div class="g2" style="margin-bottom:14px;">
-        <div class="field"><label>Titre de la rubrique</label><input type="text" id="fr_title_agenda" value="L'Agenda" /></div>
-        <div class="field"><label>Sous-titre</label><input type="text" id="fr_title_agenda_kicker" value="Formations &amp; événements" /></div>
-      </div>
+      <div class="field" style="margin-bottom:14px;"><label>Sous-titre</label><input type="text" id="fr_title_agenda_kicker" value="Formations &amp; événements" /></div>
       <div id="fr_agenda_c"></div><button class="btn-add" onclick="addAgenda('fr')">+ Ajouter un événement</button></div>
   </div>
 
@@ -957,9 +952,8 @@ function buildTranslatedFields(lang, d) {
     <div class="field"><label>Preheader</label><input type="text" id="${lang}_preheader" value="${esc(d.preheader||'')}" /></div>
   </div><div class="field" style="margin-top:10px;"><label>Introduction</label><textarea id="${lang}_intro" rows="4">${esc(d.intro||'')}</textarea></div></div></div>
 
-  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">🗞</span><span class="form-section-title">À la une</span></div>
+  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">🗞</span><input type="text" class="form-section-title-input" id="${lang}_title_une" value="${esc((d.titles||{}).une||'')}" /></div>
   <div class="form-section-body">
-    <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="${lang}_title_une" value="${esc((d.titles||{}).une||'')}" /></div>
     <div class="g2">
     <div><div class="field"><label>Image</label><input type="url" id="${lang}_une_img" value="${esc(u.img||'')}" /><img class="img-prev" src="${u.img||''}" /></div>
     <div class="field"><label>Étiquette</label><input type="text" id="${lang}_une_tag" value="${esc(u.tag||'')}" /></div></div>
@@ -970,24 +964,20 @@ function buildTranslatedFields(lang, d) {
     </div>
   </div></div>
 
-  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">📰</span><span class="form-section-title">Actualités</span></div>
+  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">📰</span><input type="text" class="form-section-title-input" id="${lang}_title_actu" value="${esc((d.titles||{}).actu||'')}" /></div>
   <div class="form-section-body">
-    <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="${lang}_title_actu" value="${esc((d.titles||{}).actu||'')}" /></div>
     <div id="${lang}_actu_c" class="g2"></div><button class="btn-add" onclick="addActu('${lang}')">+ Ajouter</button></div></div>
 
-  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">⚡</span><span class="form-section-title">En bref</span></div>
+  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">⚡</span><input type="text" class="form-section-title-input" id="${lang}_title_bref" value="${esc((d.titles||{}).bref||'')}" /></div>
   <div class="form-section-body">
-    <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="${lang}_title_bref" value="${esc((d.titles||{}).bref||'')}" /></div>
     <div id="${lang}_bref_c"></div><button class="btn-add" onclick="addBref('${lang}')">+ Ajouter</button></div></div>
 
-  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">🚗</span><span class="form-section-title">Au banc d'essai</span></div>
+  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">🚗</span><input type="text" class="form-section-title-input" id="${lang}_title_banc" value="${esc((d.titles||{}).banc||'')}" /></div>
   <div class="form-section-body">
-    <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="${lang}_title_banc" value="${esc((d.titles||{}).banc||'')}" /></div>
     <div id="${lang}_banc_c"></div><button class="btn-add" onclick="addBanc('${lang}')">+ Ajouter</button></div></div>
 
-  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">✈️</span><span class="form-section-title">Voyages</span></div>
+  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">✈️</span><input type="text" class="form-section-title-input" id="${lang}_title_voy" value="${esc((d.titles||{}).voy||'')}" /></div>
   <div class="form-section-body">
-    <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="${lang}_title_voy" value="${esc((d.titles||{}).voy||'')}" /></div>
     <div class="cg" style="margin-bottom:12px;"><div class="cg-label" style="margin-bottom:8px;">Principal</div>
     <div class="g2"><div class="field"><label>Image</label><input type="url" id="${lang}_vm_img" value="${esc(vm.img||'')}" /><img class="img-prev" src="${vm.img||''}" /></div>
     <div><div class="field"><label>Titre</label><input type="text" id="${lang}_vm_title" value="${esc(vm.title||'')}" /></div>
@@ -996,12 +986,9 @@ function buildTranslatedFields(lang, d) {
     <div id="${lang}_voy_c" class="g2"></div><button class="btn-add" onclick="addVoy('${lang}')">+ Ajouter</button>
   </div></div>
 
-  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">📅</span><span class="form-section-title">Agenda</span></div>
+  <div class="form-section"><div class="form-section-header"><span class="form-section-icon">📅</span><input type="text" class="form-section-title-input" id="${lang}_title_agenda" value="${esc((d.titles||{}).agenda||'')}" /></div>
   <div class="form-section-body">
-    <div class="g2" style="margin-bottom:14px;">
-      <div class="field"><label>Titre de la rubrique</label><input type="text" id="${lang}_title_agenda" value="${esc((d.titles||{}).agenda||'')}" /></div>
-      <div class="field"><label>Sous-titre</label><input type="text" id="${lang}_title_agenda_kicker" value="${esc((d.titles||{}).agenda_kicker||'')}" /></div>
-    </div>
+    <div class="field" style="margin-bottom:14px;"><label>Sous-titre</label><input type="text" id="${lang}_title_agenda_kicker" value="${esc((d.titles||{}).agenda_kicker||'')}" /></div>
     <div id="${lang}_agenda_c"></div><button class="btn-add" onclick="addAgenda('${lang}')">+ Ajouter</button></div></div>
 
   <div class="form-section"><div class="form-section-header"><span class="form-section-icon">📖</span><span class="form-section-title">Autotouring</span></div>
