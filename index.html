@@ -265,7 +265,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">14/08/2026 16:30</div>
+  <div class="build-stamp">14/08/2026 16:35</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -634,6 +634,7 @@ const D = {
 // ── HELPERS ───────────────────────────────────────
 function v(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
 function esc(s) { return (s||'').replace(/&(?!amp;|lt;|gt;|quot;|#)/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function chunkPairs(arr) { const out = []; for (let i = 0; i < arr.length; i += 2) out.push(arr.slice(i, i+2)); return out; }
 function previewImg(el, id) { const t = document.getElementById(id); if(t) t.src = el.value; }
 function toast(msg, type='') {
   const t = document.getElementById('toast');
@@ -1173,12 +1174,26 @@ function buildHTML(lang) {
             <tr><td style="height:6px;font-size:0;line-height:0;">&nbsp;</td></tr>`).join('');
 
   const n = D[lang].actu.length;
-  const actuH = n === 0 ? '' : `
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
-      <tr>${D[lang].actu.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/n)}%" valign="top" style="padding:0 ${i<n-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.35;color:#1A1A1A;margin:13px 0 0 0;">${esc(d.title)}</p></td>`).join('')}</tr>
-      <tr>${D[lang].actu.map((_,i) => `${i?'<td width="2%" style="font-size:0;">&nbsp;</td>':''}<td style="border-top:1px solid #E8E8E8;padding-top:14px;font-size:0;line-height:0;padding-right:${i<n-1?'12px':'0'};padding-left:${i>0?'12px':'0'};">&nbsp;</td>`).join('')}</tr>
-      <tr>${D[lang].actu.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/n)}%" valign="top" style="padding:0 ${i<n-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;margin-top:14px;border:1px solid #000000;padding:3px 5px;border-radius:15px;">${esc(d.cta||'En savoir plus')} ▸</a></td>`).join('')}</tr>
-    </table>`;
+  const actuCardTop = (d) => `<img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.35;color:#1A1A1A;margin:13px 0 0 0;">${esc(d.title)}</p>`;
+  const actuCardCta = (d) => `<a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;margin-top:14px;border:1px solid #000000;padding:3px 5px;border-radius:15px;">${esc(d.cta||'En savoir plus')} ▸</a>`;
+  const actuH = n === 0 ? '' : chunkPairs(D[lang].actu).map((pair, gi) => `
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"${gi>0?' style="margin-top:22px;"':''}>
+      <tr>
+        <td class="col2" width="49%" valign="top" style="padding:0 12px 0 0;">${actuCardTop(pair[0])}</td>
+        <td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>
+        <td class="col2" width="49%" valign="top" style="padding:0 0 0 12px;">${pair[1] ? actuCardTop(pair[1]) : ''}</td>
+      </tr>
+      <tr>
+        <td style="border-top:1px solid #E8E8E8;padding-top:14px;font-size:0;line-height:0;padding-right:12px;">&nbsp;</td>
+        <td width="2%" style="font-size:0;">&nbsp;</td>
+        <td style="${pair[1]?'border-top:1px solid #E8E8E8;':''}padding-top:14px;font-size:0;line-height:0;padding-left:12px;">&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="col2" width="49%" valign="top" style="padding:0 12px 0 0;">${actuCardCta(pair[0])}</td>
+        <td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>
+        <td class="col2" width="49%" valign="top" style="padding:0 0 0 12px;">${pair[1] ? actuCardCta(pair[1]) : ''}</td>
+      </tr>
+    </table>`).join('');
 
   const brefH = D[lang].bref.map((d,i,a) => `
       <tr><td style="padding:14px 0;${i<a.length-1?'border-bottom:1px solid #F0F0F0;':''}">
@@ -1199,12 +1214,26 @@ function buildHTML(lang) {
     </table>`).join('');
 
   const nv = D[lang].voy.length;
-  const voyH = nv === 0 ? '' : `
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
-      <tr>${D[lang].voy.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/nv)}%" valign="top" style="padding:0 ${i<nv-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" />${d.badge?`<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:11px 0 8px;"><tr><td style="background-color:#EEEEEE;padding:4px 10px;border-radius:10px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#666666;">${esc(d.badge)}</td></tr></table>`:''}<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:13px;line-height:1.3;color:#1A1A1A;margin:0 0 6px 0;">${esc(d.title)}</p><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.55;color:#666666;margin:0;">${esc(d.text||'')}</p></td>`).join('')}</tr>
-      <tr>${D[lang].voy.map((_,i) => `${i?'<td width="2%" style="font-size:0;">&nbsp;</td>':''}<td style="border-top:1px solid #F0F0F0;padding-top:14px;font-size:0;line-height:0;">&nbsp;</td>`).join('')}</tr>
-      <tr>${D[lang].voy.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/nv)}%" valign="top" style="padding:0 ${i<nv-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;margin-top:14px;border:1px solid #000000;padding:3px 5px;border-radius:15px;">En savoir plus ▸</a></td>`).join('')}</tr>
-    </table>`;
+  const voyCardTop = (d) => `<img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" />${d.badge?`<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:11px 0 8px;"><tr><td style="background-color:#EEEEEE;padding:4px 10px;border-radius:10px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#666666;">${esc(d.badge)}</td></tr></table>`:''}<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:13px;line-height:1.3;color:#1A1A1A;margin:0 0 6px 0;">${esc(d.title)}</p><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.55;color:#666666;margin:0;">${esc(d.text||'')}</p>`;
+  const voyCardCta = (d) => `<a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;margin-top:14px;border:1px solid #000000;padding:3px 5px;border-radius:15px;">En savoir plus ▸</a>`;
+  const voyH = nv === 0 ? '' : chunkPairs(D[lang].voy).map((pair, gi) => `
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"${gi>0?' style="margin-top:22px;"':''}>
+      <tr>
+        <td class="col2" width="49%" valign="top" style="padding:0 12px 0 0;">${voyCardTop(pair[0])}</td>
+        <td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>
+        <td class="col2" width="49%" valign="top" style="padding:0 0 0 12px;">${pair[1] ? voyCardTop(pair[1]) : ''}</td>
+      </tr>
+      <tr>
+        <td style="border-top:1px solid #F0F0F0;padding-top:14px;font-size:0;line-height:0;padding-right:12px;">&nbsp;</td>
+        <td width="2%" style="font-size:0;">&nbsp;</td>
+        <td style="${pair[1]?'border-top:1px solid #F0F0F0;':''}padding-top:14px;font-size:0;line-height:0;padding-left:12px;">&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="col2" width="49%" valign="top" style="padding:0 12px 0 0;">${voyCardCta(pair[0])}</td>
+        <td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>
+        <td class="col2" width="49%" valign="top" style="padding:0 0 0 12px;">${pair[1] ? voyCardCta(pair[1]) : ''}</td>
+      </tr>
+    </table>`).join('');
 
   const pub1 = v(p+'pub1_img')||'https://img.mailinblue.com/4363334/images/content_library/original/6a300abac8e9e1c3ee19ff90.jpg';
   const pub2 = v(p+'pub2_img')||'https://img.mailinblue.com/4363334/images/content_library/original/69675df04a53a52a8e9e9f56.jpg';
@@ -1306,7 +1335,7 @@ function buildHTML(lang) {
 
   blocks.autotouring = `<!-- AUTOTOURING -->
 <tr><td style="background-color:#FFFFFF;padding:20px 28px;">
-  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#F5F5F5;border-radius:10px;">
+  <table width="50%" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:50%;margin:0 auto;background-color:#F5F5F5;border-radius:10px;">
     <tr><td style="padding:22px 22px;">
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">${esc(v(p+'title_auto_kicker'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:0 0 14px 0;">${esc(v(p+'title_auto_heading'))}</p>
@@ -1319,7 +1348,7 @@ function buildHTML(lang) {
 
   blocks.recrutement = `<!-- RECRUTEMENT -->
 <tr><td style="background-color:#FFFFFF;padding:20px 28px;">
-  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#F5F5F5;border-radius:10px;">
+  <table width="50%" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:50%;margin:0 auto;background-color:#F5F5F5;border-radius:10px;">
     <tr><td style="padding:22px 22px;">
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">${esc(v(p+'title_job_kicker'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:0 0 16px 0;">${esc(v(p+'title_job_heading'))}</p>
@@ -1347,7 +1376,7 @@ function buildHTML(lang) {
 
   blocks.extra1 = `<!-- CARTE ADDITIONNELLE 1 -->
 <tr><td style="background-color:#FFFFFF;padding:20px 28px;">
-  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#F5F5F5;border-radius:10px;">
+  <table width="50%" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:50%;margin:0 auto;background-color:#F5F5F5;border-radius:10px;">
     <tr><td style="padding:22px 22px;">
       ${extra1Img}
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:14px 0 8px 0;">${esc(v(p+'extra1_title'))}</p>
@@ -1359,7 +1388,7 @@ function buildHTML(lang) {
 
   blocks.extra2 = `<!-- CARTE ADDITIONNELLE 2 -->
 <tr><td style="background-color:#FFFFFF;padding:20px 28px;">
-  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#F5F5F5;border-radius:10px;">
+  <table width="50%" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:50%;margin:0 auto;background-color:#F5F5F5;border-radius:10px;">
     <tr><td style="padding:22px 22px;">
       ${extra2Img}
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:14px 0 8px 0;">${esc(v(p+'extra2_title'))}</p>
