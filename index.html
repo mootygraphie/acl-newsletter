@@ -124,6 +124,8 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 .ed-dup:hover { color: var(--black); }
 .ed-link { background: none; border: none; cursor: pointer; font-size: 12px; color: #CCC; padding: 2px 4px; line-height: 1; }
 .ed-link:hover { color: var(--black); }
+.ed-prev { background: none; border: none; cursor: pointer; font-size: 12px; color: #CCC; padding: 2px 4px; line-height: 1; }
+.ed-prev:hover { color: var(--black); }
 .ed-empty { padding: 14px; text-align: center; font-size: 12px; color: var(--mid); }
 
 /* ── BOTTOM BAR ── */
@@ -263,7 +265,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">14/08/2026 15:59</div>
+  <div class="build-stamp">14/08/2026 16:13</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -548,14 +550,36 @@ function setSectionColor(key, value, el) {
 // ── PASSWORD ──────────────────────────────────────
 const HASH = '9e930104ae3310baf5493c4540c5e3af4e753cc5dcf0c9468af7d17d004247e3';
 
+// Lien d'aperçu direct : ?preview=ID(&lang=en|de)
+let previewMode = null;
+(function() {
+  const params = new URLSearchParams(location.search);
+  const pid = params.get('preview');
+  if (pid) previewMode = { id: pid, lang: params.get('lang') || 'fr' };
+})();
+
+function revealApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  if (previewMode) {
+    if (!document.getElementById('previewLoading')) {
+      const el = document.createElement('div');
+      el.id = 'previewLoading';
+      el.style.cssText = 'position:fixed;inset:0;background:#EFEFEF;display:flex;align-items:center;justify-content:center;font-family:Arial,sans-serif;color:#888;font-size:14px;z-index:9998;';
+      el.textContent = '⏳ Chargement de l\'aperçu…';
+      document.body.appendChild(el);
+    }
+  } else {
+    document.getElementById('app').style.display = 'block';
+  }
+}
+
 async function checkPwd() {
   const val = document.getElementById('pwdInput').value;
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(val));
   const hex = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
   if (hex === HASH) {
     sessionStorage.setItem('acl_auth','1');
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
+    revealApp();
     initApp();
   } else {
     document.getElementById('loginError').textContent = 'Mot de passe incorrect';
@@ -565,8 +589,7 @@ async function checkPwd() {
 
 // Auto-login si déjà authentifié dans cette session
 if (sessionStorage.getItem('acl_auth') === '1') {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
+  revealApp();
 }
 
 // ── STATE ─────────────────────────────────────────
@@ -889,7 +912,7 @@ function initApp() {
   collapseAllExceptParams(document);
   updateEditionValidity();
   refreshAddSectionSelect();
-  if (window._db) loadEditionFromUrlIfPresent();
+  if (window._db) { loadEditionFromUrlIfPresent(); enterPreviewModeIfNeeded(); }
 }
 document.addEventListener('DOMContentLoaded', () => {
   if (sessionStorage.getItem('acl_auth') === '1') initApp();
@@ -1133,7 +1156,7 @@ function buildHTML(lang) {
           <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;color:#888888;margin:0;">${esc(ev.details)}</p>
         </td>
         <td width="44" align="center" valign="middle" style="padding-right:8px;">
-          <a target="_blank" href="${uu(ev.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:700;color:#FCD900!important;text-decoration:none;">→</a>
+          <a target="_blank" href="${uu(ev.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:700;color:#FCD900!important;text-decoration:none;">►</a>
         </td>
       </tr>
     </table>`).join('');
@@ -1143,7 +1166,7 @@ function buildHTML(lang) {
               <a target="_blank" href="${uu(j.url)}" style="display:block;background-color:#FFFFFF;padding:10px 14px;border-radius:8px;text-decoration:none;">
                 <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
                   <td style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A;line-height:1.4;">${esc(j.title)}<span style="display:block;font-weight:400;font-size:12px;color:#888888;margin-top:2px;">${esc(j.detail)}</span></td>
-                  <td width="20" align="right" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#FCD900;padding-left:8px;">→</td>
+                  <td width="20" align="right" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#FCD900;padding-left:8px;">►</td>
                 </tr></table>
               </a>
             </td></tr>
@@ -1154,7 +1177,7 @@ function buildHTML(lang) {
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
       <tr>${D[lang].actu.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/n)}%" valign="top" style="padding:0 ${i<n-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.35;color:#1A1A1A;margin:13px 0 0 0;">${esc(d.title)}</p></td>`).join('')}</tr>
       <tr>${D[lang].actu.map((_,i) => `${i?'<td width="2%" style="font-size:0;">&nbsp;</td>':''}<td style="border-top:1px solid #E8E8E8;padding-top:14px;font-size:0;line-height:0;padding-right:${i<n-1?'12px':'0'};padding-left:${i>0?'12px':'0'};">&nbsp;</td>`).join('')}</tr>
-      <tr>${D[lang].actu.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/n)}%" valign="top" style="padding:0 ${i<n-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;padding-top:14px;display:block;">${esc(d.cta||'En savoir plus')} →</a></td>`).join('')}</tr>
+      <tr>${D[lang].actu.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/n)}%" valign="top" style="padding:0 ${i<n-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;margin-top:14px;border:1px solid #000000;padding:3px 5px;border-radius:15px;">${esc(d.cta||'En savoir plus')} ►</a></td>`).join('')}</tr>
     </table>`;
 
   const brefH = D[lang].bref.map((d,i,a) => `
@@ -1162,7 +1185,7 @@ function buildHTML(lang) {
         <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
           <td width="70" style="vertical-align:middle;"><span style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FCD900;">${esc(d.cat)}</span></td>
           <td style="vertical-align:middle;"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#1A1A1A!important;text-decoration:none;line-height:1.3;">${esc(d.title)}</a></td>
-          <td width="44" align="right" style="vertical-align:middle;padding-right:8px;"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:700;color:#FCD900!important;text-decoration:none;">→</a></td>
+          <td width="44" align="right" style="vertical-align:middle;padding-right:8px;"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:700;color:#FCD900!important;text-decoration:none;">►</a></td>
         </tr></table>
       </td></tr>`).join('');
 
@@ -1171,7 +1194,7 @@ function buildHTML(lang) {
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="${i>0?'margin-top:12px;':''}background-color:#FFFFFF;border-radius:6px;">
       <tr>
         <td width="180" style="padding:0;vertical-align:top;line-height:0;font-size:0;"><img src="${esc(d.img)}" width="180" alt="${esc(d.title)}" style="display:block;width:180px;height:130px;object-fit:cover;border-radius:6px 0 0 6px;" /></td>
-        <td style="padding:16px 16px 16px 18px;vertical-align:middle;"><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.35;color:#1A1A1A;margin:0 0 10px 0;">${esc(d.title)}</p><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:block;">${d.luxgear?'À regarder sur LuxGear →':'En savoir plus →'}</a></td>
+        <td style="padding:16px 16px 16px 18px;vertical-align:middle;"><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.35;color:#1A1A1A;margin:0 0 10px 0;">${esc(d.title)}</p><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;border:1px solid #000000;padding:3px 5px;border-radius:15px;">${d.luxgear?'À regarder sur LuxGear ►':'En savoir plus ►'}</a></td>
       </tr>
     </table>`).join('');
 
@@ -1180,7 +1203,7 @@ function buildHTML(lang) {
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
       <tr>${D[lang].voy.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/nv)}%" valign="top" style="padding:0 ${i<nv-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" />${d.badge?`<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:11px 0 8px;"><tr><td style="background-color:#EEEEEE;padding:4px 10px;border-radius:10px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#666666;">${esc(d.badge)}</td></tr></table>`:''}<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:13px;line-height:1.3;color:#1A1A1A;margin:0 0 6px 0;">${esc(d.title)}</p><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.55;color:#666666;margin:0;">${esc(d.text||'')}</p></td>`).join('')}</tr>
       <tr>${D[lang].voy.map((_,i) => `${i?'<td width="2%" style="font-size:0;">&nbsp;</td>':''}<td style="border-top:1px solid #F0F0F0;padding-top:14px;font-size:0;line-height:0;">&nbsp;</td>`).join('')}</tr>
-      <tr>${D[lang].voy.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/nv)}%" valign="top" style="padding:0 ${i<nv-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;padding-top:14px;display:block;">En savoir plus →</a></td>`).join('')}</tr>
+      <tr>${D[lang].voy.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/nv)}%" valign="top" style="padding:0 ${i<nv-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;margin-top:14px;border:1px solid #000000;padding:3px 5px;border-radius:15px;">En savoir plus ►</a></td>`).join('')}</tr>
     </table>`;
 
   const pub1 = v(p+'pub1_img')||'https://img.mailinblue.com/4363334/images/content_library/original/6a300abac8e9e1c3ee19ff90.jpg';
@@ -1277,7 +1300,7 @@ function buildHTML(lang) {
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:11px;color:#888888;margin:0 0 20px 0;letter-spacing:0.04em;text-transform:uppercase;">${esc(v(p+'title_agenda_kicker'))}</p>
   ${agendaH}
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-top:16px;"><tr>
-    <td><a target="_blank" href="${uu('https://www.acl.lu/fr/agenda/')}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Voir tout l'agenda →</a></td>
+    <td><a target="_blank" href="${uu('https://www.acl.lu/fr/agenda/')}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Voir tout l'agenda ►</a></td>
   </tr></table>
 </td></tr>`;
 
@@ -1289,7 +1312,7 @@ function buildHTML(lang) {
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:0 0 14px 0;">${esc(v(p+'title_auto_heading'))}</p>
       <img src="${autoImg}" width="100%" alt="Autotouring" style="display:block;width:100%;border-radius:6px;margin-bottom:14px;" />
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0 0 14px 0;">Disponible en FR, DE et EN. Prochaine édition le <strong style="color:#1A1A1A;">${esc(v(p+'auto_date'))}</strong>.</p>
-      <a target="_blank" href="${uu(v(p+'auto_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Lire le magazine digital →</a>
+      <a target="_blank" href="${uu(v(p+'auto_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Lire le magazine digital ►</a>
     </td></tr>
   </table>
 </td></tr>`;
@@ -1301,7 +1324,7 @@ function buildHTML(lang) {
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">${esc(v(p+'title_job_kicker'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:0 0 16px 0;">${esc(v(p+'title_job_heading'))}</p>
       <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">${jobsH}</table>
-      <a target="_blank" href="${uu(v(p+'job_url'))}" style="display:block;margin-top:6px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Toutes nos offres →</a>
+      <a target="_blank" href="${uu(v(p+'job_url'))}" style="display:block;margin-top:6px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Toutes nos offres ►</a>
     </td></tr>
   </table>
 </td></tr>`;
@@ -1329,7 +1352,7 @@ function buildHTML(lang) {
       ${extra1Img}
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:14px 0 8px 0;">${esc(v(p+'extra1_title'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0 0 14px 0;">${esc(v(p+'extra1_text'))}</p>
-      <a target="_blank" href="${uu(v(p+'extra1_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'extra1_cta')||'En savoir plus')} →</a>
+      <a target="_blank" href="${uu(v(p+'extra1_url'))}" style="display:inline-block;border:1px solid #000000;padding:3px 5px;border-radius:15px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'extra1_cta')||'En savoir plus')} ►</a>
     </td></tr>
   </table>
 </td></tr>`;
@@ -1341,7 +1364,7 @@ function buildHTML(lang) {
       ${extra2Img}
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:14px 0 8px 0;">${esc(v(p+'extra2_title'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0 0 14px 0;">${esc(v(p+'extra2_text'))}</p>
-      <a target="_blank" href="${uu(v(p+'extra2_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'extra2_cta')||'En savoir plus')} →</a>
+      <a target="_blank" href="${uu(v(p+'extra2_url'))}" style="display:inline-block;border:1px solid #000000;padding:3px 5px;border-radius:15px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'extra2_cta')||'En savoir plus')} ►</a>
     </td></tr>
   </table>
 </td></tr>`;
@@ -1539,7 +1562,8 @@ async function loadEditionsList() {
           <div class="ed-date">${date}</div>
         </div>
         <div class="ed-actions">
-          <button class="ed-link" onclick="copyEditionLink('${d.id}',event)" title="Copier le lien">🔗</button>
+          <button class="ed-link" onclick="copyEditionLink('${d.id}',event)" title="Copier le lien (édition)">🔗</button>
+          <button class="ed-prev" onclick="copyEditionPreviewLink('${d.id}',event)" title="Copier le lien de l'aperçu (lecture seule)">👁</button>
           <button class="ed-dup" onclick="duplicateEdition('${d.id}',event)" title="Dupliquer">⧉</button>
           <button class="ed-del" onclick="deleteEdition('${d.id}',event)" title="Supprimer">×</button>
         </div>
@@ -1551,6 +1575,12 @@ async function loadEditionsList() {
 function copyEditionLink(id, e) {
   e.stopPropagation();
   navigator.clipboard.writeText(editionShareUrl(id)).then(() => toast('Lien copié ✓', 'green')).catch(() => toast('Erreur copie du lien', 'red'));
+}
+
+function copyEditionPreviewLink(id, e) {
+  e.stopPropagation();
+  const url = location.origin + location.pathname + '?preview=' + encodeURIComponent(id);
+  navigator.clipboard.writeText(url).then(() => toast('Lien de l\'aperçu copié ✓ (FR)', 'green')).catch(() => toast('Erreur copie du lien', 'red'));
 }
 
 async function loadEdition(id, fromMenu) {
@@ -1574,6 +1604,24 @@ async function loadEdition(id, fromMenu) {
 function loadEditionFromUrlIfPresent() {
   const id = new URLSearchParams(location.search).get('edition');
   if (id) loadEdition(id, false);
+}
+
+async function enterPreviewModeIfNeeded() {
+  if (!previewMode || !window._db || previewMode.done) return;
+  previewMode.done = true;
+  const { doc, getDoc } = window._fs;
+  try {
+    const snap = await getDoc(doc(window._db, 'editions', previewMode.id));
+    if (!snap.exists()) {
+      document.body.innerHTML = '<p style="padding:60px;text-align:center;font-family:Arial,sans-serif;color:#888;">Édition introuvable.</p>';
+      return;
+    }
+    loadAllData(snap.data());
+    const html = buildHTML(previewMode.lang);
+    document.open(); document.write(html); document.close();
+  } catch(e) {
+    document.body.innerHTML = '<p style="padding:60px;text-align:center;font-family:Arial,sans-serif;color:#888;">Erreur de chargement de l\'aperçu : '+esc(e.message)+'</p>';
+  }
 }
 
 async function duplicateEdition(id, e) {
@@ -1645,6 +1693,7 @@ document.addEventListener('firebase-ready', () => {
   if (sessionStorage.getItem('acl_auth') === '1') {
     loadEditionsList();
     loadEditionFromUrlIfPresent();
+    enterPreviewModeIfNeeded();
   }
 });
 
