@@ -265,7 +265,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">14/08/2026 16:13</div>
+  <div class="build-stamp">14/08/2026 16:27</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -1136,14 +1136,9 @@ function buildHTML(lang) {
   const p = lang+'_';
   const uu = (url) => url || '#';
 
-  const salut = lang === 'de'
-    ? '{% if contact.CIVILITE == "Frau" %}Liebes{% else %}Liebes{% endif %} {% if contact.PRENOM %}{{ contact.PRENOM }}{% else %}Mitglied{% endif %}'
-    : lang === 'en'
-    ? '{% if contact.PRENOM %}Dear {{ contact.PRENOM }}{% else %}Dear Member{% endif %}'
-    : '{% if contact.CIVILITE == "Madame" %}Chère{% else %}Cher{% endif %} {% if contact.PRENOM %}{{ contact.PRENOM }}{% else %}Membre{% endif %}';
-
   const agendaH = D[lang].agenda.map(ev => `
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:10px;background-color:#FFFFFF;border-radius:6px;">
+    <a target="_blank" href="${uu(ev.url)}" style="display:block;text-decoration:none;margin-bottom:10px;">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#FFFFFF;border-radius:6px;">
       <tr>
         <td width="68" valign="middle" align="center" style="background-color:#1A1A1A;border-radius:6px 0 0 6px;padding:14px 10px;">
           <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;color:#FCD900;margin:0;line-height:1;">${esc(ev.jour)}</p>
@@ -1156,17 +1151,18 @@ function buildHTML(lang) {
           <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;color:#888888;margin:0;">${esc(ev.details)}</p>
         </td>
         <td width="44" align="center" valign="middle" style="padding-right:8px;">
-          <a target="_blank" href="${uu(ev.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:700;color:#FCD900!important;text-decoration:none;">►</a>
+          <span style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:700;color:#FCD900;">▸</span>
         </td>
       </tr>
-    </table>`).join('');
+    </table>
+    </a>`).join('');
 
   const jobsH = D[lang].jobs.map(j => `
             <tr><td style="padding:0;">
               <a target="_blank" href="${uu(j.url)}" style="display:block;background-color:#FFFFFF;padding:10px 14px;border-radius:8px;text-decoration:none;">
                 <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
                   <td style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A;line-height:1.4;">${esc(j.title)}<span style="display:block;font-weight:400;font-size:12px;color:#888888;margin-top:2px;">${esc(j.detail)}</span></td>
-                  <td width="20" align="right" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#FCD900;padding-left:8px;">►</td>
+                  <td width="20" align="right" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#FCD900;padding-left:8px;">▸</td>
                 </tr></table>
               </a>
             </td></tr>
@@ -1177,7 +1173,7 @@ function buildHTML(lang) {
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
       <tr>${D[lang].actu.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/n)}%" valign="top" style="padding:0 ${i<n-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.35;color:#1A1A1A;margin:13px 0 0 0;">${esc(d.title)}</p></td>`).join('')}</tr>
       <tr>${D[lang].actu.map((_,i) => `${i?'<td width="2%" style="font-size:0;">&nbsp;</td>':''}<td style="border-top:1px solid #E8E8E8;padding-top:14px;font-size:0;line-height:0;padding-right:${i<n-1?'12px':'0'};padding-left:${i>0?'12px':'0'};">&nbsp;</td>`).join('')}</tr>
-      <tr>${D[lang].actu.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/n)}%" valign="top" style="padding:0 ${i<n-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;margin-top:14px;border:1px solid #000000;padding:3px 5px;border-radius:15px;">${esc(d.cta||'En savoir plus')} ►</a></td>`).join('')}</tr>
+      <tr>${D[lang].actu.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/n)}%" valign="top" style="padding:0 ${i<n-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;margin-top:14px;border:1px solid #000000;padding:3px 5px;border-radius:15px;">${esc(d.cta||'En savoir plus')} ▸</a></td>`).join('')}</tr>
     </table>`;
 
   const brefH = D[lang].bref.map((d,i,a) => `
@@ -1185,7 +1181,7 @@ function buildHTML(lang) {
         <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
           <td width="70" style="vertical-align:middle;"><span style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FCD900;">${esc(d.cat)}</span></td>
           <td style="vertical-align:middle;"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#1A1A1A!important;text-decoration:none;line-height:1.3;">${esc(d.title)}</a></td>
-          <td width="44" align="right" style="vertical-align:middle;padding-right:8px;"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:700;color:#FCD900!important;text-decoration:none;">►</a></td>
+          <td width="44" align="right" style="vertical-align:middle;padding-right:8px;"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:700;color:#FCD900!important;text-decoration:none;">▸</a></td>
         </tr></table>
       </td></tr>`).join('');
 
@@ -1194,7 +1190,7 @@ function buildHTML(lang) {
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="${i>0?'margin-top:12px;':''}background-color:#FFFFFF;border-radius:6px;">
       <tr>
         <td width="180" style="padding:0;vertical-align:top;line-height:0;font-size:0;"><img src="${esc(d.img)}" width="180" alt="${esc(d.title)}" style="display:block;width:180px;height:130px;object-fit:cover;border-radius:6px 0 0 6px;" /></td>
-        <td style="padding:16px 16px 16px 18px;vertical-align:middle;"><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.35;color:#1A1A1A;margin:0 0 10px 0;">${esc(d.title)}</p><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;border:1px solid #000000;padding:3px 5px;border-radius:15px;">${d.luxgear?'À regarder sur LuxGear ►':'En savoir plus ►'}</a></td>
+        <td style="padding:16px 16px 16px 18px;vertical-align:middle;"><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.35;color:#1A1A1A;margin:0 0 10px 0;">${esc(d.title)}</p><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;border:1px solid #000000;padding:3px 5px;border-radius:15px;">${d.luxgear?'À regarder sur LuxGear ▸':'En savoir plus ▸'}</a></td>
       </tr>
     </table>`).join('');
 
@@ -1203,7 +1199,7 @@ function buildHTML(lang) {
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
       <tr>${D[lang].voy.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/nv)}%" valign="top" style="padding:0 ${i<nv-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" />${d.badge?`<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:11px 0 8px;"><tr><td style="background-color:#EEEEEE;padding:4px 10px;border-radius:10px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#666666;">${esc(d.badge)}</td></tr></table>`:''}<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:13px;line-height:1.3;color:#1A1A1A;margin:0 0 6px 0;">${esc(d.title)}</p><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.55;color:#666666;margin:0;">${esc(d.text||'')}</p></td>`).join('')}</tr>
       <tr>${D[lang].voy.map((_,i) => `${i?'<td width="2%" style="font-size:0;">&nbsp;</td>':''}<td style="border-top:1px solid #F0F0F0;padding-top:14px;font-size:0;line-height:0;">&nbsp;</td>`).join('')}</tr>
-      <tr>${D[lang].voy.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/nv)}%" valign="top" style="padding:0 ${i<nv-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;margin-top:14px;border:1px solid #000000;padding:3px 5px;border-radius:15px;">En savoir plus ►</a></td>`).join('')}</tr>
+      <tr>${D[lang].voy.map((d,i) => `${i?'<td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>':''}<td class="col2" width="${Math.floor(98/nv)}%" valign="top" style="padding:0 ${i<nv-1?'12px':'0'} 0 ${i>0?'12px':'0'};"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;margin-top:14px;border:1px solid #000000;padding:3px 5px;border-radius:15px;">En savoir plus ▸</a></td>`).join('')}</tr>
     </table>`;
 
   const pub1 = v(p+'pub1_img')||'https://img.mailinblue.com/4363334/images/content_library/original/6a300abac8e9e1c3ee19ff90.jpg';
@@ -1300,7 +1296,7 @@ function buildHTML(lang) {
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:11px;color:#888888;margin:0 0 20px 0;letter-spacing:0.04em;text-transform:uppercase;">${esc(v(p+'title_agenda_kicker'))}</p>
   ${agendaH}
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-top:16px;"><tr>
-    <td><a target="_blank" href="${uu('https://www.acl.lu/fr/agenda/')}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Voir tout l'agenda ►</a></td>
+    <td><a target="_blank" href="${uu('https://www.acl.lu/fr/agenda/')}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Voir tout l'agenda ▸</a></td>
   </tr></table>
 </td></tr>`;
 
@@ -1312,7 +1308,7 @@ function buildHTML(lang) {
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:0 0 14px 0;">${esc(v(p+'title_auto_heading'))}</p>
       <img src="${autoImg}" width="100%" alt="Autotouring" style="display:block;width:100%;border-radius:6px;margin-bottom:14px;" />
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0 0 14px 0;">Disponible en FR, DE et EN. Prochaine édition le <strong style="color:#1A1A1A;">${esc(v(p+'auto_date'))}</strong>.</p>
-      <a target="_blank" href="${uu(v(p+'auto_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Lire le magazine digital ►</a>
+      <a target="_blank" href="${uu(v(p+'auto_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Lire le magazine digital ▸</a>
     </td></tr>
   </table>
 </td></tr>`;
@@ -1324,7 +1320,7 @@ function buildHTML(lang) {
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">${esc(v(p+'title_job_kicker'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:0 0 16px 0;">${esc(v(p+'title_job_heading'))}</p>
       <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">${jobsH}</table>
-      <a target="_blank" href="${uu(v(p+'job_url'))}" style="display:block;margin-top:6px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Toutes nos offres ►</a>
+      <a target="_blank" href="${uu(v(p+'job_url'))}" style="display:block;margin-top:6px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Toutes nos offres ▸</a>
     </td></tr>
   </table>
 </td></tr>`;
@@ -1352,7 +1348,7 @@ function buildHTML(lang) {
       ${extra1Img}
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:14px 0 8px 0;">${esc(v(p+'extra1_title'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0 0 14px 0;">${esc(v(p+'extra1_text'))}</p>
-      <a target="_blank" href="${uu(v(p+'extra1_url'))}" style="display:inline-block;border:1px solid #000000;padding:3px 5px;border-radius:15px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'extra1_cta')||'En savoir plus')} ►</a>
+      <a target="_blank" href="${uu(v(p+'extra1_url'))}" style="display:inline-block;border:1px solid #000000;padding:3px 5px;border-radius:15px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'extra1_cta')||'En savoir plus')} ▸</a>
     </td></tr>
   </table>
 </td></tr>`;
@@ -1364,7 +1360,7 @@ function buildHTML(lang) {
       ${extra2Img}
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:14px 0 8px 0;">${esc(v(p+'extra2_title'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0 0 14px 0;">${esc(v(p+'extra2_text'))}</p>
-      <a target="_blank" href="${uu(v(p+'extra2_url'))}" style="display:inline-block;border:1px solid #000000;padding:3px 5px;border-radius:15px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'extra2_cta')||'En savoir plus')} ►</a>
+      <a target="_blank" href="${uu(v(p+'extra2_url'))}" style="display:inline-block;border:1px solid #000000;padding:3px 5px;border-radius:15px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'extra2_cta')||'En savoir plus')} ▸</a>
     </td></tr>
   </table>
 </td></tr>`;
@@ -1423,12 +1419,6 @@ body{background-color:#EFEFEF;font-family:'Albert Sans',Helvetica,Arial,sans-ser
     <td valign="middle"><img src="https://img.mailinblue.com/4363334/images/content_library/original/68af64976387e2214ec15275.jpg" width="150" alt="ACL" style="display:block;max-width:150px;" /></td>
     <td valign="middle" align="right" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#888888;white-space:nowrap;">${esc(v(p+'edition'))}</td>
   </tr></table>
-</td></tr>
-
-<!-- SALUTATION -->
-<tr><td style="background-color:#FFFFFF;padding:0 24px 24px;border-bottom:1px solid #EEEEEE;">
-  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:4px;"><tr><td style="border-top:1px solid #EEEEEE;font-size:0;line-height:0;">&nbsp;</td></tr></table>
-  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.5;color:#1A1A1A;margin:18px 0 0 0;">${salut},</p>
 </td></tr>
 
 ${orderedSectionsHTML}
