@@ -122,6 +122,8 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 .ed-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
 .ed-dup { background: none; border: none; cursor: pointer; font-size: 13px; color: #CCC; padding: 2px 4px; line-height: 1; }
 .ed-dup:hover { color: var(--black); }
+.ed-link { background: none; border: none; cursor: pointer; font-size: 12px; color: #CCC; padding: 2px 4px; line-height: 1; }
+.ed-link:hover { color: var(--black); }
 .ed-empty { padding: 14px; text-align: center; font-size: 12px; color: var(--mid); }
 
 /* ── BOTTOM BAR ── */
@@ -254,13 +256,14 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 
     <div class="sw-utils">
       <button class="sw-util-btn" onclick="openPreview(currentLang)">👁 Aperçu</button>
+      <button class="sw-util-btn" onclick="newEdition()">🆕 Nouveau modèle</button>
       <button class="sw-util-btn" onclick="saveEdition()">💾 Sauvegarder</button>
       <div id="edDropdown" style="position:relative;margin-top:4px;">
         <button class="sw-util" onclick="toggleEdMenu()">📂 Éditions</button>
       </div>
     </div>
   </div>
-  <div class="build-stamp">13/08/2026 17:02</div>
+  <div class="build-stamp">14/08/2026 15:59</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -886,6 +889,7 @@ function initApp() {
   collapseAllExceptParams(document);
   updateEditionValidity();
   refreshAddSectionSelect();
+  if (window._db) loadEditionFromUrlIfPresent();
 }
 document.addEventListener('DOMContentLoaded', () => {
   if (sessionStorage.getItem('acl_auth') === '1') initApp();
@@ -1485,14 +1489,36 @@ function loadAllData(data) {
   });
 }
 
+let currentEditionId = null;
+
+function editionShareUrl(id) {
+  return location.origin + location.pathname + '?edition=' + encodeURIComponent(id);
+}
+
+function setUrlToEdition(id) {
+  try { history.replaceState(null, '', editionShareUrl(id)); } catch(err) {}
+}
+
+function newEdition() {
+  if (!confirm('Repartir sur un modèle vierge ? Les modifications non sauvegardées seront perdues.')) return;
+  location.href = location.pathname;
+}
+
 async function saveEdition() {
   if (!window._db) { toast('Firebase non connecté', 'red'); return; }
   const data = collectAllData();
-  const id = 'edition_' + Date.now();
+  const { doc, setDoc } = window._fs;
   try {
-    const { doc, setDoc } = window._fs;
-    await setDoc(doc(window._db, 'editions', id), data);
-    toast('Édition sauvegardée ✓', 'green');
+    if (currentEditionId) {
+      await setDoc(doc(window._db, 'editions', currentEditionId), data);
+      toast('Édition mise à jour ✓', 'green');
+    } else {
+      const id = 'edition_' + Date.now();
+      await setDoc(doc(window._db, 'editions', id), data);
+      currentEditionId = id;
+      setUrlToEdition(id);
+      toast('Édition sauvegardée ✓', 'green');
+    }
     loadEditionsList();
   } catch(e) { toast('Erreur sauvegarde : '+e.message, 'red'); }
 }
@@ -1513,6 +1539,7 @@ async function loadEditionsList() {
           <div class="ed-date">${date}</div>
         </div>
         <div class="ed-actions">
+          <button class="ed-link" onclick="copyEditionLink('${d.id}',event)" title="Copier le lien">🔗</button>
           <button class="ed-dup" onclick="duplicateEdition('${d.id}',event)" title="Dupliquer">⧉</button>
           <button class="ed-del" onclick="deleteEdition('${d.id}',event)" title="Supprimer">×</button>
         </div>
@@ -1521,13 +1548,32 @@ async function loadEditionsList() {
   } catch(e) { menu.innerHTML = '<div class="ed-empty">Erreur chargement</div>'; }
 }
 
-async function loadEdition(id) {
+function copyEditionLink(id, e) {
+  e.stopPropagation();
+  navigator.clipboard.writeText(editionShareUrl(id)).then(() => toast('Lien copié ✓', 'green')).catch(() => toast('Erreur copie du lien', 'red'));
+}
+
+async function loadEdition(id, fromMenu) {
+  if (fromMenu === undefined) fromMenu = true;
   if (!window._db) return;
   const { doc, getDoc } = window._fs;
   try {
     const snap = await getDoc(doc(window._db, 'editions', id));
-    if (snap.exists()) { loadAllData(snap.data()); toast('Édition chargée ✓', 'green'); toggleEdMenu(); }
+    if (snap.exists()) {
+      loadAllData(snap.data());
+      currentEditionId = id;
+      setUrlToEdition(id);
+      toast('Édition chargée ✓', 'green');
+      if (fromMenu) toggleEdMenu();
+    } else {
+      toast('Édition introuvable', 'red');
+    }
   } catch(e) { toast('Erreur chargement : '+e.message, 'red'); }
+}
+
+function loadEditionFromUrlIfPresent() {
+  const id = new URLSearchParams(location.search).get('edition');
+  if (id) loadEdition(id, false);
 }
 
 async function duplicateEdition(id, e) {
@@ -1595,7 +1641,12 @@ document.addEventListener('click', e => {
   if (dd && menu && !dd.contains(e.target) && !menu.contains(e.target)) menu.style.display = 'none';
 });
 
-document.addEventListener('firebase-ready', () => { if(sessionStorage.getItem('acl_auth')==='1') loadEditionsList(); });
+document.addEventListener('firebase-ready', () => {
+  if (sessionStorage.getItem('acl_auth') === '1') {
+    loadEditionsList();
+    loadEditionFromUrlIfPresent();
+  }
+});
 
 // Init si déjà auth
 if (sessionStorage.getItem('acl_auth') === '1') {
