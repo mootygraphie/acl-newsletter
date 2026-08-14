@@ -265,7 +265,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">14/08/2026 16:27</div>
+  <div class="build-stamp">14/08/2026 16:30</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -1122,10 +1122,14 @@ async function copyLang(lang) {
   if (lang === 'fr') updateWorkflowStep(4);
 }
 
-function openPreview(lang) {
-  const html = buildHTML(lang);
+async function openPreview(lang) {
   const w = window.open('', '_blank');
-  w.document.write(html); w.document.close();
+  if (w) { try { w.document.write('<p style="font-family:Arial,Helvetica,sans-serif;color:#888;padding:40px;">⏳ Préparation de l\'aperçu…</p>'); } catch(err) {} }
+  if (!window._db) { toast('Firebase non connecté', 'red'); if (w) w.close(); return; }
+  await saveEdition();
+  if (!currentEditionId) { toast('Erreur : édition non sauvegardée', 'red'); return; }
+  const url = location.origin + location.pathname + '?preview=' + encodeURIComponent(currentEditionId) + '&lang=' + lang;
+  if (w) w.location.href = url; else window.open(url, '_blank');
 }
 
 function getBg(lang, key) {
