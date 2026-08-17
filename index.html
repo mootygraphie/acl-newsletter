@@ -265,7 +265,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">14/08/2026 16:50</div>
+  <div class="build-stamp">17/08/2026 15:55</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -312,7 +312,6 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       <div class="g2">
       <div>
         <div class="field"><label>Image (640×300)</label><input type="url" id="fr_une_img" value="https://img.mailinblue.com/4363334/images/content_library/original/6a2fbe4b4c87acf1b003cc4d.png" oninput="previewImg(this,'ppu')" /><img id="ppu" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/6a2fbe4b4c87acf1b003cc4d.png" /></div>
-        <div class="field"><label>Étiquette thème</label><input type="text" id="fr_une_tag" value="Rapport annuel 2025" /></div>
       </div>
       <div>
         <div class="field"><label>Titre</label><input type="text" id="fr_une_title" value="L'ACL en 2025 : les chiffres d'une année de croissance" /></div>
@@ -348,6 +347,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   <div class="form-section" data-section="banc" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🚗</span><input type="text" class="form-section-title-input" id="fr_title_banc" value="Au banc d'essai" /><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body"><div id="cpicker_fr_banc"></div>
+      <div class="field" style="margin-bottom:14px;"><label>Logo LuxGear (URL)</label><input type="url" id="fr_luxgear_logo" placeholder="https://..." /></div>
       <div id="fr_banc_c"></div><button class="btn-add" onclick="addBanc('fr')">+ Ajouter un essai</button></div>
   </div>
 
@@ -933,7 +933,7 @@ function collectLangData(lang) {
       job_kicker: v(p+'title_job_kicker'), job_heading: v(p+'title_job_heading'),
       parr_kicker: v(p+'title_parr_kicker'), parr_heading: v(p+'title_parr_heading')
     },
-    une: { img: v(p+'une_img'), tag: v(p+'une_tag'), title: v(p+'une_title'), text: v(p+'une_text'), cta: v(p+'une_cta'), url: v(p+'une_url') },
+    une: { img: v(p+'une_img'), title: v(p+'une_title'), text: v(p+'une_text'), cta: v(p+'une_cta'), url: v(p+'une_url') },
     actu: JSON.parse(JSON.stringify(D[lang].actu)), bref: JSON.parse(JSON.stringify(D[lang].bref)), banc: JSON.parse(JSON.stringify(D[lang].banc)),
     vm: { img: v(p+'vm_img'), title: v(p+'vm_title'), text: v(p+'vm_text'), url: v(p+'vm_url') },
     voy: JSON.parse(JSON.stringify(D[lang].voy)), agenda: JSON.parse(JSON.stringify(D[lang].agenda)),
@@ -965,7 +965,7 @@ function applyFrDataToLang(lang, d) {
   setField(lang+'_title_auto_kicker', t.auto_kicker); setField(lang+'_title_auto_heading', t.auto_heading);
   setField(lang+'_title_job_kicker',  t.job_kicker);  setField(lang+'_title_job_heading',  t.job_heading);
   setField(lang+'_title_parr_kicker', t.parr_kicker); setField(lang+'_title_parr_heading', t.parr_heading);
-  setField(lang+'_une_img',   u.img);   setField(lang+'_une_tag',   u.tag);
+  setField(lang+'_une_img',   u.img);
   setField(lang+'_une_title', u.title); setField(lang+'_une_text',  u.text);
   setField(lang+'_une_cta',   u.cta);   setField(lang+'_une_url',   u.url);
   setField(lang+'_vm_img',    vm.img);  setField(lang+'_vm_title',  vm.title);
@@ -1019,8 +1019,7 @@ function buildTranslatedFields(lang, d) {
     <div class="cg-label" style="margin-bottom:10px;">À la une</div>
     <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="${lang}_title_une" value="${esc((d.titles||{}).une||'')}" /></div>
     <div class="g2">
-    <div><div class="field"><label>Image</label><input type="url" id="${lang}_une_img" value="${esc(u.img||'')}" /><img class="img-prev" src="${u.img||''}" /></div>
-    <div class="field"><label>Étiquette</label><input type="text" id="${lang}_une_tag" value="${esc(u.tag||'')}" /></div></div>
+    <div><div class="field"><label>Image</label><input type="url" id="${lang}_une_img" value="${esc(u.img||'')}" /><img class="img-prev" src="${u.img||''}" /></div></div>
     <div><div class="field"><label>Titre</label><input type="text" id="${lang}_une_title" value="${esc(u.title||'')}" /></div>
     <div class="field"><label>Texte</label><textarea id="${lang}_une_text">${esc(u.text||'')}</textarea></div>
     <div class="g2"><div class="field"><label>CTA</label><input type="text" id="${lang}_une_cta" value="${esc(u.cta||'')}" /></div>
@@ -1174,7 +1173,7 @@ function buildHTML(lang) {
             <tr><td style="height:6px;font-size:0;line-height:0;">&nbsp;</td></tr>`).join('');
 
   const n = D[lang].actu.length;
-  const actuCardTop = (d) => `<img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.35;color:#1A1A1A;margin:13px 0 0 0;">${esc(d.title)}</p>`;
+  const actuCardTop = (d) => `<a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /></a><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.35;color:#1A1A1A;margin:13px 0 0 0;">${esc(d.title)}</p>`;
   const actuCardCta = (d) => `<a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;margin-top:14px;border:1px solid #000000;padding:3px 5px;border-radius:15px;">${esc(d.cta||'En savoir plus')} ▸</a>`;
   const actuH = n === 0 ? '' : chunkPairs(D[lang].actu).map((pair, gi) => `
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"${gi>0?' style="margin-top:22px;"':''}>
@@ -1198,23 +1197,24 @@ function buildHTML(lang) {
   const brefH = D[lang].bref.map((d,i,a) => `
       <tr><td style="padding:14px 0;${i<a.length-1?'border-bottom:1px solid #F0F0F0;':''}">
         <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
-          <td width="70" style="vertical-align:middle;"><span style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FCD900;">${esc(d.cat)}</span></td>
+          <td width="70" style="vertical-align:middle;"><span style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#555555;">${esc(d.cat)}</span></td>
           <td style="vertical-align:middle;"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#1A1A1A!important;text-decoration:none;line-height:1.3;">${esc(d.title)}</a></td>
           <td width="44" align="right" style="vertical-align:middle;padding-right:8px;"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:700;color:#FCD900!important;text-decoration:none;">▸</a></td>
         </tr></table>
       </td></tr>`).join('');
 
   const nb = D[lang].banc.length;
+  const luxgearLogo = v('fr_luxgear_logo');
   const bancH = nb === 0 ? '' : D[lang].banc.map((d,i) => `
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="${i>0?'margin-top:12px;':''}background-color:#FFFFFF;border-radius:6px;">
       <tr>
-        <td width="180" style="padding:0;vertical-align:top;line-height:0;font-size:0;"><img src="${esc(d.img)}" width="180" alt="${esc(d.title)}" style="display:block;width:180px;height:130px;object-fit:cover;border-radius:6px 0 0 6px;" /></td>
-        <td style="padding:16px 16px 16px 18px;vertical-align:middle;"><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.35;color:#1A1A1A;margin:0 0 10px 0;">${esc(d.title)}</p><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;border:1px solid #000000;padding:3px 5px;border-radius:15px;">${d.luxgear?'À regarder sur LuxGear ▸':'En savoir plus ▸'}</a></td>
+        <td width="180" style="padding:0;vertical-align:top;line-height:0;font-size:0;"><a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img src="${esc(d.img)}" width="180" alt="${esc(d.title)}" style="display:block;width:180px;height:130px;object-fit:cover;border-radius:6px 0 0 6px;" /></a></td>
+        <td style="padding:16px 16px 16px 18px;vertical-align:middle;"><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.35;color:#1A1A1A;margin:0 0 10px 0;">${esc(d.title)}</p><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;border:1px solid #000000;padding:3px 5px;border-radius:15px;">${d.luxgear&&luxgearLogo?`<img src="${esc(luxgearLogo)}" alt="LuxGear" height="16" style="display:inline-block;vertical-align:middle;margin-right:6px;" />`:''}${d.luxgear?'À regarder sur LuxGear ▸':'En savoir plus ▸'}</a></td>
       </tr>
     </table>`).join('');
 
   const nv = D[lang].voy.length;
-  const voyCardTop = (d) => `<img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" />${d.badge?`<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:11px 0 8px;"><tr><td style="background-color:#EEEEEE;padding:4px 10px;border-radius:10px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#666666;">${esc(d.badge)}</td></tr></table>`:''}<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:13px;line-height:1.3;color:#1A1A1A;margin:0 0 6px 0;">${esc(d.title)}</p><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.55;color:#666666;margin:0;">${esc(d.text||'')}</p>`;
+  const voyCardTop = (d) => `<a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /></a>${d.badge?`<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:11px 0 8px;"><tr><td style="background-color:#EEEEEE;padding:4px 10px;border-radius:10px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#666666;">${esc(d.badge)}</td></tr></table>`:''}<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:13px;line-height:1.3;color:#1A1A1A;margin:0 0 6px 0;">${esc(d.title)}</p><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.55;color:#666666;margin:0;">${esc(d.text||'')}</p>`;
   const voyCardCta = (d) => `<a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;margin-top:14px;border:1px solid #000000;padding:3px 5px;border-radius:15px;">En savoir plus ▸</a>`;
   const voyH = nv === 0 ? '' : chunkPairs(D[lang].voy).map((pair, gi) => `
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"${gi>0?' style="margin-top:22px;"':''}>
@@ -1246,14 +1246,14 @@ function buildHTML(lang) {
 
   const parrImg = v(p+'parr_img');
   const parrImgH = parrImg
-    ? `<td width="45%" valign="bottom" style="padding:28px 28px 28px 0;vertical-align:bottom;line-height:0;font-size:0;"><img src="${parrImg}" width="100%" alt="Parrainage" style="display:block;width:100%;border-radius:6px;" /></td>`
+    ? `<td width="45%" valign="bottom" style="padding:28px 28px 28px 0;vertical-align:bottom;line-height:0;font-size:0;"><a target="_blank" href="${uu(v(p+'parr_url'))}" style="display:block;line-height:0;"><img src="${parrImg}" width="100%" alt="Parrainage" style="display:block;width:100%;border-radius:6px;" /></a></td>`
     : `<td width="45%" valign="bottom" style="padding:28px 28px 28px 0;vertical-align:bottom;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:220px;background-color:#E6C400;border-radius:6px;text-align:center;vertical-align:middle;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:9px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#B89900;">[ IMAGE PARRAINAGE ]</td></tr></table></td>`;
 
   const autoImg = v(p+'auto_img')||'https://img.mailinblue.com/4363334/images/content_library/original/69fc509afbf75c9e7ebbd9c8.png';
 
-  const extraImgH = (url) => url ? `<img src="${esc(url)}" width="100%" alt="" style="display:block;width:100%;border-radius:6px;" />` : '';
-  const extra1Img = extraImgH(v(p+'extra1_img'));
-  const extra2Img = extraImgH(v(p+'extra2_img'));
+  const extraImgH = (url, link) => url ? `<a target="_blank" href="${uu(link)}" style="display:block;line-height:0;"><img src="${esc(url)}" width="100%" alt="" style="display:block;width:100%;border-radius:6px;" /></a>` : '';
+  const extra1Img = extraImgH(v(p+'extra1_img'), v(p+'extra1_url'));
+  const extra2Img = extraImgH(v(p+'extra2_img'), v(p+'extra2_url'));
 
   // ── BLOCS DE SECTION (assemblés dans l'ordre choisi dans le builder) ──
   const blocks = {};
@@ -1266,8 +1266,7 @@ function buildHTML(lang) {
     <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">${esc(v(p+'title_une'))}</td>
     <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
   </tr></table>
-  <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:14px;"><tr><td style="background-color:#FCD900;padding:4px 12px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#1A1A1A;">${esc(v(p+'une_tag'))}</td></tr></table>
-  <img src="${esc(v(p+'une_img'))}" width="584" alt="${esc(v(p+'une_title'))}" style="display:block;width:100%;max-width:584px;border-radius:8px;margin:0 auto 20px;" />
+  <a target="_blank" href="${uu(v(p+'une_url'))}" style="display:block;line-height:0;"><img src="${esc(v(p+'une_img'))}" width="584" alt="${esc(v(p+'une_title'))}" style="display:block;width:100%;max-width:584px;border-radius:8px;margin:0 auto 20px;" /></a>
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:22px;line-height:1.25;color:#1A1A1A;margin:0 0 12px 0;text-align:center;">${esc(v(p+'une_title'))}</p>
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:16px;line-height:1.7;color:#555555;margin:0 0 22px 0;text-align:center;">${esc(v(p+'une_text'))}</p>
   <div style="text-align:center;">
@@ -1309,7 +1308,7 @@ function buildHTML(lang) {
     <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">${esc(v(p+'title_voy'))}</td>
     <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
   </tr></table>
-  <img src="${esc(v(p+'vm_img'))}" width="584" alt="${esc(v(p+'vm_title'))}" style="display:block;width:100%;max-width:584px;border-radius:8px;margin:0 auto 18px;" />
+  <a target="_blank" href="${uu(v(p+'vm_url'))}" style="display:block;line-height:0;"><img src="${esc(v(p+'vm_img'))}" width="584" alt="${esc(v(p+'vm_title'))}" style="display:block;width:100%;max-width:584px;border-radius:8px;margin:0 auto 18px;" /></a>
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:18px;line-height:1.25;color:#1A1A1A;margin:0 0 8px 0;text-align:center;">${esc(v(p+'vm_title'))}</p>
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:15px;line-height:1.65;color:#555555;margin:0 0 16px 0;text-align:center;">${esc(v(p+'vm_text'))}</p>
   <div style="text-align:center;margin-bottom:24px;">
@@ -1336,7 +1335,7 @@ function buildHTML(lang) {
   const boxInner = {
     autotouring: `<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">${esc(v(p+'title_auto_kicker'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:0 0 14px 0;">${esc(v(p+'title_auto_heading'))}</p>
-      <img src="${autoImg}" width="100%" alt="Autotouring" style="display:block;width:100%;border-radius:6px;margin-bottom:14px;" />
+      <a target="_blank" href="${uu(v(p+'auto_url'))}" style="display:block;line-height:0;"><img src="${autoImg}" width="100%" alt="Autotouring" style="display:block;width:100%;border-radius:6px;margin-bottom:14px;" /></a>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0 0 14px 0;">Disponible en FR, DE et EN. Prochaine édition le <strong style="color:#1A1A1A;">${esc(v(p+'auto_date'))}</strong>.</p>
       <a target="_blank" href="${uu(v(p+'auto_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Lire le magazine digital ▸</a>`,
     recrutement: `<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">${esc(v(p+'title_job_kicker'))}</p>
@@ -1522,6 +1521,7 @@ function collectAllData() {
     name: v('fr_edition') || 'Sans titre',
     order: getSectionOrder(),
     hidden: getHiddenSections(),
+    luxgearLogo: v('fr_luxgear_logo'),
     fr: collectLangData('fr'),
     en: collectLangData('en'),
     de: collectLangData('de')
@@ -1534,6 +1534,7 @@ function loadAllData(data) {
   if (!data || !data.fr) return;
   applyHiddenSections(data.hidden);
   if (data.order) applySectionOrder(data.order);
+  setField('fr_luxgear_logo', data.luxgearLogo);
   applyFrDataToLang('fr', data.fr);
   if (data.en) { applyFrDataToLang('en', data.en); document.getElementById('badge-en').textContent = data.en.actu?.length ? '✓ Copié' : '—'; }
   if (data.de) { applyFrDataToLang('de', data.de); document.getElementById('badge-de').textContent = data.de.actu?.length ? '✓ Copié' : '—'; }
