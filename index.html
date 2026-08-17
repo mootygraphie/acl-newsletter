@@ -265,7 +265,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">17/08/2026 16:07</div>
+  <div class="build-stamp">17/08/2026 16:26</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -347,7 +347,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   <div class="form-section" data-section="banc" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🚗</span><input type="text" class="form-section-title-input" id="fr_title_banc" value="Au banc d'essai" /><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body"><div id="cpicker_fr_banc"></div>
-      <div class="field" style="margin-bottom:14px;"><label>Logo LuxGear (URL)</label><input type="url" id="fr_luxgear_logo" placeholder="https://..." /></div>
+      <div class="field" style="margin-bottom:14px;"><label>Logo LuxGear (URL)</label><input type="url" id="fr_luxgear_logo" value="https://img.mailinblue.com/4363334/images/content_library/original/6a8318ec7f694711a3d4ea86.png" /></div>
       <div id="fr_banc_c"></div><button class="btn-add" onclick="addBanc('fr')">+ Ajouter un essai</button></div>
   </div>
 
@@ -1209,7 +1209,13 @@ function buildHTML(lang) {
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="${i>0?'margin-top:12px;':''}background-color:#FFFFFF;border-radius:6px;">
       <tr>
         <td width="180" style="padding:0;vertical-align:top;line-height:0;font-size:0;"><a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img src="${esc(d.img)}" width="180" alt="${esc(d.title)}" style="display:block;width:180px;height:130px;object-fit:cover;border-radius:6px 0 0 6px;" /></a></td>
-        <td style="padding:16px 16px 16px 18px;vertical-align:middle;"><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.35;color:#1A1A1A;margin:0 0 10px 0;">${esc(d.title)}</p><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#444444!important;text-decoration:none;display:inline-block;border:1px dotted #444444;padding:4px 8px;border-radius:15px;">${d.luxgear&&luxgearLogo?`<img src="${esc(luxgearLogo)}" alt="LuxGear" height="16" style="display:inline-block;vertical-align:middle;margin-right:6px;" />`:''}${d.luxgear?'À regarder sur LuxGear ▸':'En savoir plus ▸'}</a></td>
+        <td style="padding:16px 16px 16px 18px;vertical-align:middle;">
+          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.35;color:#1A1A1A;margin:0 0 10px 0;">${esc(d.title)}</p>
+          <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
+            <td valign="bottom"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#444444!important;text-decoration:none;display:inline-block;border:1px dotted #444444;padding:4px 8px;border-radius:15px;">${d.luxgear?'À regarder sur LuxGear ▸':'En savoir plus ▸'}</a></td>
+            ${d.luxgear && luxgearLogo ? `<td width="1" align="right" valign="bottom" style="padding-left:8px;"><img src="${esc(luxgearLogo)}" alt="LuxGear" height="22" style="display:block;" /></td>` : ''}
+          </tr></table>
+        </td>
       </tr>
     </table>`).join('');
 
