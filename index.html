@@ -266,7 +266,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">17/08/2026 16:36</div>
+  <div class="build-stamp">17/08/2026 16:57</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -1214,7 +1214,7 @@ function buildHTML(lang) {
           <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.35;color:#1A1A1A;margin:0 0 10px 0;">${esc(d.title)}</p>
           <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
             <td valign="bottom"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#444444!important;text-decoration:none;display:inline-block;border:1px dotted #444444;padding:4px 8px;border-radius:15px;">${d.luxgear?'À regarder sur LuxGear ▸':'En savoir plus ▸'}</a></td>
-            ${d.luxgear && luxgearLogo ? `<td width="1" align="right" valign="bottom" style="padding-left:8px;"><img src="${esc(luxgearLogo)}" alt="LuxGear" height="22" style="display:block;" /></td>` : ''}
+            ${d.luxgear && luxgearLogo ? `<td width="50" align="right" valign="bottom" style="padding-left:8px;"><img src="${esc(luxgearLogo)}" alt="LuxGear" width="50" style="display:block;width:50px;" /></td>` : ''}
           </tr></table>
         </td>
       </tr>
