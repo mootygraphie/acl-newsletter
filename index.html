@@ -265,7 +265,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">17/08/2026 15:57</div>
+  <div class="build-stamp">17/08/2026 16:07</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -1155,7 +1155,7 @@ function buildHTML(lang) {
           <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;color:#888888;margin:0;">${esc(ev.details)}</p>
         </td>
         <td width="44" align="center" valign="middle" style="padding-right:8px;">
-          <span style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:700;color:#FCD900;">▸</span>
+          <span style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:700;color:#444444;">▸</span>
         </td>
       </tr>
     </table>
@@ -1166,7 +1166,7 @@ function buildHTML(lang) {
               <a target="_blank" href="${uu(j.url)}" style="display:block;background-color:#FFFFFF;padding:10px 14px;border-radius:8px;text-decoration:none;">
                 <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
                   <td style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A;line-height:1.4;">${esc(j.title)}<span style="display:block;font-weight:400;font-size:12px;color:#888888;margin-top:2px;">${esc(j.detail)}</span></td>
-                  <td width="20" align="right" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#FCD900;padding-left:8px;">▸</td>
+                  <td width="20" align="right" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#444444;padding-left:8px;">▸</td>
                 </tr></table>
               </a>
             </td></tr>
@@ -1174,7 +1174,7 @@ function buildHTML(lang) {
 
   const n = D[lang].actu.length;
   const actuCardTop = (d) => `<a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /></a><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.35;color:#1A1A1A;margin:13px 0 0 0;">${esc(d.title)}</p>`;
-  const actuCardCta = (d) => `<a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;margin-top:14px;border:1px solid #000000;padding:4px 8px;border-radius:15px;">${esc(d.cta||'En savoir plus')} ▸</a>`;
+  const actuCardCta = (d) => `<a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#444444!important;text-decoration:none;display:inline-block;margin-top:14px;border:1px dotted #444444;padding:4px 8px;border-radius:15px;">${esc(d.cta||'En savoir plus')} ▸</a>`;
   const actuH = n === 0 ? '' : chunkPairs(D[lang].actu).map((pair, gi) => `
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"${gi>0?' style="margin-top:22px;"':''}>
       <tr>
@@ -1199,7 +1199,7 @@ function buildHTML(lang) {
         <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
           <td width="70" style="vertical-align:middle;"><span style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#555555;">${esc(d.cat)}</span></td>
           <td style="vertical-align:middle;"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#1A1A1A!important;text-decoration:none;line-height:1.3;">${esc(d.title)}</a></td>
-          <td width="44" align="right" style="vertical-align:middle;padding-right:8px;"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:700;color:#FCD900!important;text-decoration:none;">▸</a></td>
+          <td width="44" align="right" style="vertical-align:middle;padding-right:8px;"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:700;color:#444444!important;text-decoration:none;">▸</a></td>
         </tr></table>
       </td></tr>`).join('');
 
@@ -1209,13 +1209,13 @@ function buildHTML(lang) {
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="${i>0?'margin-top:12px;':''}background-color:#FFFFFF;border-radius:6px;">
       <tr>
         <td width="180" style="padding:0;vertical-align:top;line-height:0;font-size:0;"><a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img src="${esc(d.img)}" width="180" alt="${esc(d.title)}" style="display:block;width:180px;height:130px;object-fit:cover;border-radius:6px 0 0 6px;" /></a></td>
-        <td style="padding:16px 16px 16px 18px;vertical-align:middle;"><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.35;color:#1A1A1A;margin:0 0 10px 0;">${esc(d.title)}</p><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;border:1px solid #000000;padding:4px 8px;border-radius:15px;">${d.luxgear&&luxgearLogo?`<img src="${esc(luxgearLogo)}" alt="LuxGear" height="16" style="display:inline-block;vertical-align:middle;margin-right:6px;" />`:''}${d.luxgear?'À regarder sur LuxGear ▸':'En savoir plus ▸'}</a></td>
+        <td style="padding:16px 16px 16px 18px;vertical-align:middle;"><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;line-height:1.35;color:#1A1A1A;margin:0 0 10px 0;">${esc(d.title)}</p><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#444444!important;text-decoration:none;display:inline-block;border:1px dotted #444444;padding:4px 8px;border-radius:15px;">${d.luxgear&&luxgearLogo?`<img src="${esc(luxgearLogo)}" alt="LuxGear" height="16" style="display:inline-block;vertical-align:middle;margin-right:6px;" />`:''}${d.luxgear?'À regarder sur LuxGear ▸':'En savoir plus ▸'}</a></td>
       </tr>
     </table>`).join('');
 
   const nv = D[lang].voy.length;
   const voyCardTop = (d) => `<a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /></a>${d.badge?`<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:11px 0 8px;"><tr><td style="background-color:#EEEEEE;padding:4px 10px;border-radius:10px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#666666;">${esc(d.badge)}</td></tr></table>`:''}<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:13px;line-height:1.3;color:#1A1A1A;margin:0 0 6px 0;">${esc(d.title)}</p><p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.55;color:#666666;margin:0;">${esc(d.text||'')}</p>`;
-  const voyCardCta = (d) => `<a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;display:inline-block;margin-top:14px;border:1px solid #000000;padding:4px 8px;border-radius:15px;">En savoir plus ▸</a>`;
+  const voyCardCta = (d) => `<a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#444444!important;text-decoration:none;display:inline-block;margin-top:14px;border:1px dotted #444444;padding:4px 8px;border-radius:15px;">En savoir plus ▸</a>`;
   const voyH = nv === 0 ? '' : chunkPairs(D[lang].voy).map((pair, gi) => `
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"${gi>0?' style="margin-top:22px;"':''}>
       <tr>
@@ -1345,11 +1345,11 @@ function buildHTML(lang) {
     extra1: `${extra1Img}
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:14px 0 8px 0;">${esc(v(p+'extra1_title'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0 0 14px 0;">${esc(v(p+'extra1_text'))}</p>
-      <a target="_blank" href="${uu(v(p+'extra1_url'))}" style="display:inline-block;border:1px solid #000000;padding:4px 8px;border-radius:15px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'extra1_cta')||'En savoir plus')} ▸</a>`,
+      <a target="_blank" href="${uu(v(p+'extra1_url'))}" style="display:inline-block;border:1px dotted #444444;padding:4px 8px;border-radius:15px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#444444!important;text-decoration:none;">${esc(v(p+'extra1_cta')||'En savoir plus')} ▸</a>`,
     extra2: `${extra2Img}
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:16px;line-height:1.2;color:#1A1A1A;margin:14px 0 8px 0;">${esc(v(p+'extra2_title'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0 0 14px 0;">${esc(v(p+'extra2_text'))}</p>
-      <a target="_blank" href="${uu(v(p+'extra2_url'))}" style="display:inline-block;border:1px solid #000000;padding:4px 8px;border-radius:15px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'extra2_cta')||'En savoir plus')} ▸</a>`
+      <a target="_blank" href="${uu(v(p+'extra2_url'))}" style="display:inline-block;border:1px dotted #444444;padding:4px 8px;border-radius:15px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#444444!important;text-decoration:none;">${esc(v(p+'extra2_cta')||'En savoir plus')} ▸</a>`
   };
 
   function renderBoxableSingle(key) {
