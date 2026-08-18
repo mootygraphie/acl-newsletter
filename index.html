@@ -138,8 +138,9 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 .btn-o:hover { border-color: var(--black); }
 .btn-topbar { display: inline-flex; align-items: center; gap: 8px; background: none; color: #fff; font-family: var(--font); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; border: 1.5px solid #555; border-radius: 22px; padding: 9px 16px; cursor: pointer; transition: border-color 0.15s; }
 .btn-topbar:hover { border-color: #fff; }
-.btn-fetch { background: var(--grey); color: var(--black); border: 1px solid var(--border); border-radius: 6px; padding: 6px 11px; font-family: var(--font); font-size: 11px; font-weight: 700; letter-spacing: 0.04em; cursor: pointer; flex-shrink: 0; white-space: nowrap; transition: background 0.15s; }
+.btn-fetch { background: var(--grey); color: var(--black); border: 1px solid var(--border); border-radius: 6px; padding: 6px 11px; font-family: var(--font); font-size: 11px; font-weight: 700; letter-spacing: 0.04em; cursor: pointer; flex-shrink: 0; white-space: nowrap; transition: background 0.15s; vertical-align: top; margin-top: 0; }
 .btn-fetch:hover { background: var(--yellow); border-color: var(--yellow); }
+.field input[type="url"]:has(+ .btn-fetch) { width: calc(100% - 42px); vertical-align: top; }
 .btn-copy-lang { display: inline-flex; align-items: center; gap: 5px; background: none; color: var(--black); font-family: var(--font); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border: 1.5px solid var(--border); border-radius: 22px; padding: 8px 14px; cursor: pointer; transition: opacity 0.15s, border-color 0.15s; }
 .btn-copy-lang:not(:disabled):hover { border-color: var(--black); }
 .btn-copy-lang:disabled { opacity: 0.3; cursor: default; }
@@ -266,7 +267,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">18/08/2026 11:24</div>
+  <div class="build-stamp">18/08/2026 13:27</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -281,6 +282,9 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+
+<!-- INPUT FICHIER CACHÉ (upload image Cloudinary) -->
+<input type="file" id="cloudinaryFileInput" accept="image/*" style="display:none" onchange="handleCloudinaryFileSelected(event)" />
 
 <!-- ══ TAB FR ══ -->
 <div class="tab-pane active" id="pane-fr">
@@ -298,7 +302,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   <div class="form-section" data-section="pub1" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 1</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body g2">
-      <div class="field"><label>URL image</label><input type="url" id="fr_pub1_img" value="https://img.mailinblue.com/4363334/images/content_library/original/6a300abac8e9e1c3ee19ff90.jpg" oninput="previewImg(this,'pp1')" /><img id="pp1" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/6a300abac8e9e1c3ee19ff90.jpg" /></div>
+      <div class="field"><label>URL image</label><input type="url" id="fr_pub1_img" value="https://img.mailinblue.com/4363334/images/content_library/original/6a300abac8e9e1c3ee19ff90.jpg" oninput="previewImg(this,'pp1')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="pp1" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/6a300abac8e9e1c3ee19ff90.jpg" /></div>
       <div class="field"><label>Lien cliquable (opt.)</label><input type="url" id="fr_pub1_link" placeholder="https://..." /></div>
     </div>
   </div>
@@ -312,7 +316,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="fr_title_une" value="À la une" /></div>
       <div class="g2">
       <div>
-        <div class="field"><label>Image (640×300)</label><input type="url" id="fr_une_img" value="https://img.mailinblue.com/4363334/images/content_library/original/6a2fbe4b4c87acf1b003cc4d.png" oninput="previewImg(this,'ppu')" /><img id="ppu" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/6a2fbe4b4c87acf1b003cc4d.png" /></div>
+        <div class="field"><label>Image (640×300)</label><input type="url" id="fr_une_img" value="https://img.mailinblue.com/4363334/images/content_library/original/6a2fbe4b4c87acf1b003cc4d.png" oninput="previewImg(this,'ppu')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="ppu" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/6a2fbe4b4c87acf1b003cc4d.png" /></div>
       </div>
       <div>
         <div class="field"><label>Titre</label><input type="text" id="fr_une_title" value="L'ACL en 2025 : les chiffres d'une année de croissance" /></div>
@@ -339,7 +343,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   <div class="form-section" data-section="pub2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 2</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body g2">
-      <div class="field"><label>URL image</label><input type="url" id="fr_pub2_img" value="https://img.mailinblue.com/4363334/images/content_library/original/69675df04a53a52a8e9e9f56.jpg" oninput="previewImg(this,'pp2')" /><img id="pp2" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/69675df04a53a52a8e9e9f56.jpg" /></div>
+      <div class="field"><label>URL image</label><input type="url" id="fr_pub2_img" value="https://img.mailinblue.com/4363334/images/content_library/original/69675df04a53a52a8e9e9f56.jpg" oninput="previewImg(this,'pp2')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="pp2" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/69675df04a53a52a8e9e9f56.jpg" /></div>
       <div class="field"><label>Lien cliquable (opt.)</label><input type="url" id="fr_pub2_link" placeholder="https://..." /></div>
     </div>
   </div>
@@ -359,7 +363,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       <div class="cg" style="margin-bottom:14px;">
         <div class="cg-label" style="margin-bottom:10px;">Article principal (pleine largeur)</div>
         <div class="g2">
-          <div class="field"><label>Image</label><input type="url" id="fr_vm_img" value="https://img.mailinblue.com/4363334/images/content_library/original/6a2fcda487ff7b8ea43e0df0.png" oninput="previewImg(this,'ppvm')" /><img id="ppvm" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/6a2fcda487ff7b8ea43e0df0.png" /></div>
+          <div class="field"><label>Image</label><input type="url" id="fr_vm_img" value="https://img.mailinblue.com/4363334/images/content_library/original/6a2fcda487ff7b8ea43e0df0.png" oninput="previewImg(this,'ppvm')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="ppvm" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/6a2fcda487ff7b8ea43e0df0.png" /></div>
           <div>
             <div class="field"><label>Titre</label><input type="text" id="fr_vm_title" value="Séjours linguistiques avec Juvigo" /></div>
             <div class="field"><label>Texte</label><textarea id="fr_vm_text">Des expériences inoubliables pour les enfants et les adolescents</textarea></div>
@@ -390,7 +394,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
         <div class="field"><label>Titre</label><input type="text" id="fr_title_auto_heading" value="Lisez Autotouring !" /></div>
       </div>
       <div class="g2">
-      <div class="field"><label>Image</label><input type="url" id="fr_auto_img" value="https://img.mailinblue.com/4363334/images/content_library/original/69fc509afbf75c9e7ebbd9c8.png" oninput="previewImg(this,'ppa')" /><img id="ppa" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/69fc509afbf75c9e7ebbd9c8.png" /></div>
+      <div class="field"><label>Image</label><input type="url" id="fr_auto_img" value="https://img.mailinblue.com/4363334/images/content_library/original/69fc509afbf75c9e7ebbd9c8.png" oninput="previewImg(this,'ppa')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="ppa" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/69fc509afbf75c9e7ebbd9c8.png" /></div>
       <div>
         <div class="field"><label>Date de parution</label><input type="text" id="fr_auto_date" value="29 juin 2026" /></div>
         <div class="field"><label>Lien</label><input type="url" id="fr_auto_url" value="https://autotouring.acl.lu/fr/publications/" /></div>
@@ -435,7 +439,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   <div class="form-section" data-section="extra1" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🗂</span><span class="form-section-title">Carte additionnelle 1</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
-      <div class="field"><label>Image</label><input type="url" id="fr_extra1_img" placeholder="https://..." oninput="previewImg(this,'ppe1')" /><img id="ppe1" class="img-prev" src="" /></div>
+      <div class="field"><label>Image</label><input type="url" id="fr_extra1_img" placeholder="https://..." oninput="previewImg(this,'ppe1')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="ppe1" class="img-prev" src="" /></div>
       <div class="field"><label>Titre</label><input type="text" id="fr_extra1_title" placeholder="Titre de la carte" /></div>
       <div class="field"><label>Texte</label><textarea id="fr_extra1_text" placeholder="Texte de la carte"></textarea></div>
       <div class="g2"><div class="field"><label>CTA texte</label><input type="text" id="fr_extra1_cta" placeholder="En savoir plus" /></div><div class="field"><label>CTA lien</label><input type="url" id="fr_extra1_url" placeholder="https://..." /></div></div>
@@ -446,7 +450,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   <div class="form-section" data-section="extra2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🗂</span><span class="form-section-title">Carte additionnelle 2</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
-      <div class="field"><label>Image</label><input type="url" id="fr_extra2_img" placeholder="https://..." oninput="previewImg(this,'ppe2')" /><img id="ppe2" class="img-prev" src="" /></div>
+      <div class="field"><label>Image</label><input type="url" id="fr_extra2_img" placeholder="https://..." oninput="previewImg(this,'ppe2')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="ppe2" class="img-prev" src="" /></div>
       <div class="field"><label>Titre</label><input type="text" id="fr_extra2_title" placeholder="Titre de la carte" /></div>
       <div class="field"><label>Texte</label><textarea id="fr_extra2_text" placeholder="Texte de la carte"></textarea></div>
       <div class="g2"><div class="field"><label>CTA texte</label><input type="text" id="fr_extra2_cta" placeholder="En savoir plus" /></div><div class="field"><label>CTA lien</label><input type="url" id="fr_extra2_url" placeholder="https://..." /></div></div>
@@ -637,6 +641,55 @@ function v(id) { const el = document.getElementById(id); return el ? el.value.tr
 function esc(s) { return (s||'').replace(/&(?!amp;|lt;|gt;|quot;|#)/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function chunkPairs(arr) { const out = []; for (let i = 0; i < arr.length; i += 2) out.push(arr.slice(i, i+2)); return out; }
 function previewImg(el, id) { const t = document.getElementById(id); if(t) t.src = el.value; }
+
+// ── UPLOAD IMAGE (CLOUDINARY) ──────────────────────
+const CLOUDINARY_CLOUD_NAME = 'ljn2pwxw';
+const CLOUDINARY_UPLOAD_PRESET = 'ACL_Newsletter';
+let pendingUploadInput = null;
+
+function triggerImageUpload(btn) {
+  const input = btn.parentElement.querySelector('input[type="url"]');
+  if (!input) return;
+  pendingUploadInput = input;
+  document.getElementById('cloudinaryFileInput').click();
+}
+
+async function handleCloudinaryFileSelected(e) {
+  const file = e.target.files[0];
+  e.target.value = '';
+  const input = pendingUploadInput;
+  pendingUploadInput = null;
+  if (!file || !input) return;
+  toast('⏳ Upload en cours...');
+  try {
+    const url = await uploadToCloudinary(file);
+    input.value = url;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    let sib = input.nextElementSibling;
+    while (sib && sib.tagName !== 'IMG') sib = sib.nextElementSibling;
+    if (sib) sib.src = url;
+    toast('Image uploadée ✓', 'green');
+  } catch (err) {
+    toast('Erreur upload : ' + err.message, 'red');
+  }
+}
+
+async function uploadToCloudinary(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  const now = new Date();
+  const folder = `Generateur Newsletters/${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  formData.append('folder', folder);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
+  if (!res.ok) {
+    let msg = 'HTTP ' + res.status;
+    try { const err = await res.json(); if (err?.error?.message) msg = err.error.message; } catch(parseErr) {}
+    throw new Error(msg);
+  }
+  const data = await res.json();
+  return data.secure_url;
+}
 function toast(msg, type='') {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = 'toast show ' + type;
@@ -655,7 +708,7 @@ function renderActu(lang) {
   c.innerHTML = data.map((d,i) => `
     <div class="cg" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','actu')"><div class="cg-header"><span class="item-drag-handle" title="Déplacer">⠿</span><span class="cg-label">Vignette ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','actu',${i})">×</button></div>
     <div class="field"><label>🔗 URL article</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].actu[${i}].url=this.value" /></div>
-    <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].actu[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /></div>
+    <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].actu[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button></div>
     <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].actu[${i}].title=this.value" /></div>
     <div class="field"><label>Texte CTA</label><input type="text" value="${esc(d.cta||'')}" placeholder="En savoir plus" oninput="D['${lang}'].actu[${i}].cta=this.value" /></div>
     </div>`).join('');
@@ -681,7 +734,7 @@ function renderBanc(lang) {
     <div class="dyn-item" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','banc')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','banc',${i})">×</button>
     <div class="field" style="margin-bottom:10px;"><label>🔗 URL article</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].banc[${i}].url=this.value" /></div>
     <div class="g2" style="gap:10px;">
-      <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].banc[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /></div>
+      <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].banc[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button></div>
       <div>
         <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].banc[${i}].title=this.value" /></div>
         <div class="field"><label><input type="checkbox" ${d.luxgear?'checked':''} onchange="D['${lang}'].banc[${i}].luxgear=this.checked" /> Bouton LuxGear</label></div>
@@ -695,7 +748,7 @@ function renderVoy(lang) {
   c.innerHTML = data.map((d,i) => `
     <div class="cg" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','voy')"><div class="cg-header"><span class="item-drag-handle" title="Déplacer">⠿</span><span class="cg-label">Carte ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','voy',${i})">×</button></div>
     <div class="field"><label>🔗 URL article</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].voy[${i}].url=this.value" /></div>
-    <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].voy[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /></div>
+    <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].voy[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button></div>
     <div class="field"><label>Badge</label><input type="text" value="${esc(d.badge||'')}" oninput="D['${lang}'].voy[${i}].badge=this.value" /></div>
     <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].voy[${i}].title=this.value" /></div>
     <div class="field"><label>Texte</label><textarea oninput="D['${lang}'].voy[${i}].text=this.value">${esc(d.text||'')}</textarea></div>
@@ -1011,7 +1064,7 @@ function buildTranslatedFields(lang, d) {
 
   <div class="form-section" data-section="pub1"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 1</span>${tgl}</div>
   <div class="form-section-body g2">
-    <div class="field"><label>URL image</label><input type="url" id="${lang}_pub1_img" value="${esc(d.pub1_img||'')}" /><img class="img-prev" src="${d.pub1_img||''}" /></div>
+    <div class="field"><label>URL image</label><input type="url" id="${lang}_pub1_img" value="${esc(d.pub1_img||'')}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img class="img-prev" src="${d.pub1_img||''}" /></div>
     <div class="field"><label>Lien cliquable (opt.)</label><input type="url" id="${lang}_pub1_link" value="${esc(d.pub1_link||'')}" /></div>
   </div></div>
 
@@ -1020,7 +1073,7 @@ function buildTranslatedFields(lang, d) {
     <div class="cg-label" style="margin-bottom:10px;">À la une</div>
     <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="${lang}_title_une" value="${esc((d.titles||{}).une||'')}" /></div>
     <div class="g2">
-    <div><div class="field"><label>Image</label><input type="url" id="${lang}_une_img" value="${esc(u.img||'')}" /><img class="img-prev" src="${u.img||''}" /></div></div>
+    <div><div class="field"><label>Image</label><input type="url" id="${lang}_une_img" value="${esc(u.img||'')}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img class="img-prev" src="${u.img||''}" /></div></div>
     <div><div class="field"><label>Titre</label><input type="text" id="${lang}_une_title" value="${esc(u.title||'')}" /></div>
     <div class="field"><label>Texte</label><textarea id="${lang}_une_text">${esc(u.text||'')}</textarea></div>
     <div class="g2"><div class="field"><label>CTA</label><input type="text" id="${lang}_une_cta" value="${esc(u.cta||'')}" /></div>
@@ -1040,7 +1093,7 @@ function buildTranslatedFields(lang, d) {
 
   <div class="form-section" data-section="pub2"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 2</span>${tgl}</div>
   <div class="form-section-body g2">
-    <div class="field"><label>URL image</label><input type="url" id="${lang}_pub2_img" value="${esc(d.pub2_img||'')}" /><img class="img-prev" src="${d.pub2_img||''}" /></div>
+    <div class="field"><label>URL image</label><input type="url" id="${lang}_pub2_img" value="${esc(d.pub2_img||'')}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img class="img-prev" src="${d.pub2_img||''}" /></div>
     <div class="field"><label>Lien cliquable (opt.)</label><input type="url" id="${lang}_pub2_link" value="${esc(d.pub2_link||'')}" /></div>
   </div></div>
 
@@ -1051,7 +1104,7 @@ function buildTranslatedFields(lang, d) {
   <div class="form-section" data-section="voy"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">✈️</span><input type="text" class="form-section-title-input" id="${lang}_title_voy" value="${esc((d.titles||{}).voy||'')}" />${tgl}</div>
   <div class="form-section-body">
     <div class="cg" style="margin-bottom:12px;"><div class="cg-label" style="margin-bottom:8px;">Principal</div>
-    <div class="g2"><div class="field"><label>Image</label><input type="url" id="${lang}_vm_img" value="${esc(vm.img||'')}" /><img class="img-prev" src="${vm.img||''}" /></div>
+    <div class="g2"><div class="field"><label>Image</label><input type="url" id="${lang}_vm_img" value="${esc(vm.img||'')}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img class="img-prev" src="${vm.img||''}" /></div>
     <div><div class="field"><label>Titre</label><input type="text" id="${lang}_vm_title" value="${esc(vm.title||'')}" /></div>
     <div class="field"><label>Texte</label><textarea id="${lang}_vm_text">${esc(vm.text||'')}</textarea></div>
     <div class="field"><label>URL</label><input type="url" id="${lang}_vm_url" value="${esc(vm.url||'')}" /></div></div></div></div>
@@ -1070,7 +1123,7 @@ function buildTranslatedFields(lang, d) {
       <div class="field"><label>Titre</label><input type="text" id="${lang}_title_auto_heading" value="${esc((d.titles||{}).auto_heading||'')}" /></div>
     </div>
     <div class="g2">
-    <div class="field"><label>Image</label><input type="url" id="${lang}_auto_img" value="${esc(au.img||'')}" /><img class="img-prev" src="${au.img||''}" /></div>
+    <div class="field"><label>Image</label><input type="url" id="${lang}_auto_img" value="${esc(au.img||'')}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img class="img-prev" src="${au.img||''}" /></div>
     <div><div class="field"><label>Date</label><input type="text" id="${lang}_auto_date" value="${esc(au.date||'')}" /></div>
     <div class="field"><label>URL</label><input type="url" id="${lang}_auto_url" value="${esc(au.url||'')}" /></div></div>
     </div>
@@ -1100,7 +1153,7 @@ function buildTranslatedFields(lang, d) {
 
   <div class="form-section" data-section="extra1"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">🗂</span><span class="form-section-title">Carte additionnelle 1</span>${tgl}</div>
   <div class="form-section-body">
-    <div class="field"><label>Image</label><input type="url" id="${lang}_extra1_img" value="${esc(e1.img||'')}" /><img class="img-prev" src="${e1.img||''}" /></div>
+    <div class="field"><label>Image</label><input type="url" id="${lang}_extra1_img" value="${esc(e1.img||'')}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img class="img-prev" src="${e1.img||''}" /></div>
     <div class="field"><label>Titre</label><input type="text" id="${lang}_extra1_title" value="${esc(e1.title||'')}" /></div>
     <div class="field"><label>Texte</label><textarea id="${lang}_extra1_text">${esc(e1.text||'')}</textarea></div>
     <div class="g2"><div class="field"><label>CTA texte</label><input type="text" id="${lang}_extra1_cta" value="${esc(e1.cta||'')}" /></div><div class="field"><label>CTA lien</label><input type="url" id="${lang}_extra1_url" value="${esc(e1.url||'')}" /></div></div>
@@ -1108,7 +1161,7 @@ function buildTranslatedFields(lang, d) {
 
   <div class="form-section" data-section="extra2"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">🗂</span><span class="form-section-title">Carte additionnelle 2</span>${tgl}</div>
   <div class="form-section-body">
-    <div class="field"><label>Image</label><input type="url" id="${lang}_extra2_img" value="${esc(e2.img||'')}" /><img class="img-prev" src="${e2.img||''}" /></div>
+    <div class="field"><label>Image</label><input type="url" id="${lang}_extra2_img" value="${esc(e2.img||'')}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img class="img-prev" src="${e2.img||''}" /></div>
     <div class="field"><label>Titre</label><input type="text" id="${lang}_extra2_title" value="${esc(e2.title||'')}" /></div>
     <div class="field"><label>Texte</label><textarea id="${lang}_extra2_text">${esc(e2.text||'')}</textarea></div>
     <div class="g2"><div class="field"><label>CTA texte</label><input type="text" id="${lang}_extra2_cta" value="${esc(e2.cta||'')}" /></div><div class="field"><label>CTA lien</label><input type="url" id="${lang}_extra2_url" value="${esc(e2.url||'')}" /></div></div>
