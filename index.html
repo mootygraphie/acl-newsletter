@@ -266,7 +266,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">18/08/2026 15:14</div>
+  <div class="build-stamp">18/08/2026 16:05</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -1270,15 +1270,28 @@ function buildHTML(lang) {
             <tr><td style="height:6px;font-size:0;line-height:0;">&nbsp;</td></tr>`).join('');
 
   const n = D[lang].actu.length;
-  const actuCard = (d) => `<a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /></a>
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td class="mobile-center" style="height:56px;vertical-align:top;padding-top:13px;">
+  const actuBody = (d) => `<a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img class="mobile-center" src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /></a>
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td class="mobile-center" style="vertical-align:top;padding-top:13px;">
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.35;color:#1A1A1A;margin:0;">${esc(d.title)}</p>
-    </td></tr></table>
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td class="mobile-center" style="border-top:1px solid #E8E8E8;padding-top:14px;">
+    </td></tr></table>`;
+  const actuCta = (d) => `<table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td class="mobile-center" style="border-top:1px solid #E8E8E8;padding-top:14px;">
       <a target="_blank" href="${uu(d.url)}" style="${SMALL_BTN_STYLE}margin-top:0;">${esc(d.cta||'En savoir plus')} ▸</a>
     </td></tr></table>`;
+  const actuCard = (d) => `${actuBody(d)}${actuCta(d)}`;
   const actuH = n === 0 ? '' : chunkPairs(D[lang].actu).map((pair, gi) => `
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"${gi>0?' style="margin-top:22px;"':''}>
+    <table class="pair-desktop" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"${gi>0?' style="margin-top:22px;"':''}>
+      <tr>
+        <td class="col2" width="49%" valign="top" style="padding:0 12px 0 0;">${actuBody(pair[0])}</td>
+        <td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>
+        <td class="col2" width="49%" valign="top" style="padding:0 0 0 12px;">${pair[1] ? actuBody(pair[1]) : ''}</td>
+      </tr>
+      <tr>
+        <td class="col2" width="49%" valign="top" style="padding:0 12px 0 0;">${actuCta(pair[0])}</td>
+        <td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>
+        <td class="col2" width="49%" valign="top" style="padding:0 0 0 12px;">${pair[1] ? actuCta(pair[1]) : ''}</td>
+      </tr>
+    </table>
+    <table class="pair-mobile" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="display:none;${gi>0?'margin-top:22px;':''}">
       <tr>
         <td class="col2" width="49%" valign="top" style="padding:0 12px 0 0;">${actuCard(pair[0])}</td>
         <td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>
@@ -1308,17 +1321,30 @@ function buildHTML(lang) {
     </table>`).join('');
 
   const nv = D[lang].voy.length;
-  const voyCard = (d) => `<a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /></a>
-    ${d.badge?`<table class="mobile-center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:11px 0 8px;"><tr><td style="background-color:#EEEEEE;padding:4px 10px;border-radius:10px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#666666;">${esc(d.badge)}</td></tr></table>`:''}
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td class="mobile-center" style="height:92px;vertical-align:top;${d.badge?'':'padding-top:11px;'}">
+  const voyBody = (d) => `<a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img class="mobile-center" src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /></a>
+    ${d.badge?`<table class="mobile-center" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:11px 0 8px;"><tr><td style="background-color:#EEEEEE;padding:4px 10px;border-radius:10px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#666666;">${esc(d.badge)}</td></tr></table>`:''}
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td class="mobile-center" style="vertical-align:top;${d.badge?'':'padding-top:11px;'}">
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.3;color:#1A1A1A;margin:0 0 6px 0;">${esc(d.title)}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.55;color:#666666;margin:0;">${esc(d.text||'')}</p>
-    </td></tr></table>
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td class="mobile-center" style="border-top:1px solid #F0F0F0;padding-top:14px;">
+    </td></tr></table>`;
+  const voyCta = (d) => `<table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td class="mobile-center" style="border-top:1px solid #F0F0F0;padding-top:14px;">
       <a target="_blank" href="${uu(d.url)}" style="${SMALL_BTN_STYLE}margin-top:0;">En savoir plus ▸</a>
     </td></tr></table>`;
+  const voyCard = (d) => `${voyBody(d)}${voyCta(d)}`;
   const voyH = nv === 0 ? '' : chunkPairs(D[lang].voy).map((pair, gi) => `
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"${gi>0?' style="margin-top:22px;"':''}>
+    <table class="pair-desktop" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"${gi>0?' style="margin-top:22px;"':''}>
+      <tr>
+        <td class="col2" width="49%" valign="top" style="padding:0 12px 0 0;">${voyBody(pair[0])}</td>
+        <td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>
+        <td class="col2" width="49%" valign="top" style="padding:0 0 0 12px;">${pair[1] ? voyBody(pair[1]) : ''}</td>
+      </tr>
+      <tr>
+        <td class="col2" width="49%" valign="top" style="padding:0 12px 0 0;">${voyCta(pair[0])}</td>
+        <td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>
+        <td class="col2" width="49%" valign="top" style="padding:0 0 0 12px;">${pair[1] ? voyCta(pair[1]) : ''}</td>
+      </tr>
+    </table>
+    <table class="pair-mobile" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="display:none;${gi>0?'margin-top:22px;':''}">
       <tr>
         <td class="col2" width="49%" valign="top" style="padding:0 12px 0 0;">${voyCard(pair[0])}</td>
         <td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>
@@ -1430,24 +1456,32 @@ function buildHTML(lang) {
   </tr></table>
 </td></tr>`;
 
-  const boxInner = {
+  const boxBody = {
     autotouring: `<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">${esc(v(p+'title_auto_kicker'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.2;color:#1A1A1A;margin:0 0 14px 0;">${esc(v(p+'title_auto_heading'))}</p>
-      <a target="_blank" href="${uu(v(p+'auto_url'))}" style="display:block;line-height:0;"><img src="${autoImg}" width="100%" alt="Autotouring" style="display:block;width:100%;border-radius:6px;margin-bottom:14px;" /></a>
-      <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0 0 14px 0;">Disponible en FR, DE et EN. Prochaine édition le <strong style="color:#1A1A1A;">${esc(v(p+'auto_date'))}</strong>.</p>
-      <a target="_blank" href="${uu(v(p+'auto_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Lire le magazine digital ▸</a>`,
+      <a target="_blank" href="${uu(v(p+'auto_url'))}" style="display:block;line-height:0;"><img src="${autoImg}" width="100%" alt="Autotouring" style="display:block;width:100%;border-radius:6px;" /></a>
+      <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:14px 0 0 0;">Disponible en FR, DE et EN. Prochaine édition le <strong style="color:#1A1A1A;">${esc(v(p+'auto_date'))}</strong>.</p>`,
     recrutement: `<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">${esc(v(p+'title_job_kicker'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.2;color:#1A1A1A;margin:0 0 16px 0;">${esc(v(p+'title_job_heading'))}</p>
-      <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">${jobsH}</table>
-      <a target="_blank" href="${uu(v(p+'job_url'))}" style="display:block;margin-top:6px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Toutes nos offres ▸</a>`,
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">${jobsH}</table>`,
     extra1: `${extra1Img}
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.2;color:#1A1A1A;margin:14px 0 8px 0;">${esc(v(p+'extra1_title'))}</p>
-      <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0 0 14px 0;">${esc(v(p+'extra1_text'))}</p>
-      <a target="_blank" href="${uu(v(p+'extra1_url'))}" style="${SMALL_BTN_STYLE}">${esc(v(p+'extra1_cta')||'En savoir plus')} ▸</a>`,
+      <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0;">${esc(v(p+'extra1_text'))}</p>`,
     extra2: `${extra2Img}
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.2;color:#1A1A1A;margin:14px 0 8px 0;">${esc(v(p+'extra2_title'))}</p>
-      <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0 0 14px 0;">${esc(v(p+'extra2_text'))}</p>
-      <a target="_blank" href="${uu(v(p+'extra2_url'))}" style="${SMALL_BTN_STYLE}">${esc(v(p+'extra2_cta')||'En savoir plus')} ▸</a>`
+      <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0;">${esc(v(p+'extra2_text'))}</p>`
+  };
+  const boxCta = {
+    autotouring: `<a target="_blank" href="${uu(v(p+'auto_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Lire le magazine digital ▸</a>`,
+    recrutement: `<a target="_blank" href="${uu(v(p+'job_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">Toutes nos offres ▸</a>`,
+    extra1: `<a target="_blank" href="${uu(v(p+'extra1_url'))}" style="${SMALL_BTN_STYLE}margin-top:0;">${esc(v(p+'extra1_cta')||'En savoir plus')} ▸</a>`,
+    extra2: `<a target="_blank" href="${uu(v(p+'extra2_url'))}" style="${SMALL_BTN_STYLE}margin-top:0;">${esc(v(p+'extra2_cta')||'En savoir plus')} ▸</a>`
+  };
+  const boxInner = {
+    autotouring: `${boxBody.autotouring}<div style="padding-top:14px;">${boxCta.autotouring}</div>`,
+    recrutement: `${boxBody.recrutement}<div style="padding-top:6px;">${boxCta.recrutement}</div>`,
+    extra1: `${boxBody.extra1}<div style="padding-top:14px;">${boxCta.extra1}</div>`,
+    extra2: `${boxBody.extra2}<div style="padding-top:14px;">${boxCta.extra2}</div>`
   };
 
   function renderBoxableSingle(key) {
@@ -1462,7 +1496,19 @@ function buildHTML(lang) {
 
   function renderBoxablePair(key1, key2) {
     return `<tr><td style="background-color:#FFFFFF;padding:20px 28px;">
-  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+  <table class="pair-desktop" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+    <tr>
+      <td class="col2 mobile-center" width="49%" valign="top" style="background-color:#F5F5F5;border-radius:10px 10px 0 0;padding:22px 22px 0;">${boxBody[key1]}</td>
+      <td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>
+      <td class="col2 mobile-center" width="49%" valign="top" style="background-color:#F5F5F5;border-radius:10px 10px 0 0;padding:22px 22px 0;">${boxBody[key2]}</td>
+    </tr>
+    <tr>
+      <td class="col2 mobile-center" width="49%" valign="top" style="background-color:#F5F5F5;border-radius:0 0 10px 10px;padding:14px 22px 22px;">${boxCta[key1]}</td>
+      <td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>
+      <td class="col2 mobile-center" width="49%" valign="top" style="background-color:#F5F5F5;border-radius:0 0 10px 10px;padding:14px 22px 22px;">${boxCta[key2]}</td>
+    </tr>
+  </table>
+  <table class="pair-mobile" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="display:none;">
     <tr>
       <td class="col2 mobile-center" width="49%" valign="top" style="background-color:#F5F5F5;border-radius:10px;padding:22px 22px;">${boxInner[key1]}</td>
       <td class="col2-divider" width="2%" style="font-size:0;">&nbsp;</td>
@@ -1532,7 +1578,10 @@ body{background-color:#EFEFEF;font-family:'Albert Sans',Helvetica,Arial,sans-ser
   .mobile-center{text-align:center!important;}
   .mobile-center table{margin-left:auto!important;margin-right:auto!important;}
   .mobile-center img{margin-left:auto!important;margin-right:auto!important;}
+  img.mobile-center,table.mobile-center{margin-left:auto!important;margin-right:auto!important;}
   .boxable-single{width:100%!important;}
+  .pair-desktop{display:none!important;}
+  .pair-mobile{display:table!important;}
 }
 </style>
 </head>
