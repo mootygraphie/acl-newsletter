@@ -267,7 +267,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">18/08/2026 13:27</div>
+  <div class="build-stamp">18/08/2026 13:30</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -688,7 +688,7 @@ async function uploadToCloudinary(file) {
     throw new Error(msg);
   }
   const data = await res.json();
-  return data.secure_url;
+  return data.secure_url.replace('/upload/', '/upload/c_limit,w_600,h_600/');
 }
 function toast(msg, type='') {
   const t = document.getElementById('toast');
