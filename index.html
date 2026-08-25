@@ -264,7 +264,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">25/08/2026 20:57</div>
+  <div class="build-stamp">25/08/2026 21:25</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -316,7 +316,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 
   <!-- À LA UNE / ACTUALITÉS / EN BREF -->
   <div class="form-section" data-section="unebref" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
-    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🗞</span><span class="form-section-title">À la Une / Actualités / En Bref</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🗞</span><span class="form-section-title">À la Une / Actualités / En Bref</span><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="cg-label" style="margin-bottom:10px;">À la une</div>
       <div id="cpicker_fr_une"></div>
@@ -346,6 +346,35 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
     </div>
   </div>
 
+  <!-- À LA UNE / ACTUALITÉS / EN BREF (copie) -->
+  <div class="form-section section-hidden" data-section="unebref2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🗞</span><span class="form-section-title">À la Une / Actualités / En Bref (copie)</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
+    <div class="form-section-body">
+      <div class="cg-label" style="margin-bottom:10px;">À la une (opt.)</div>
+      <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="fr_title_une2" placeholder="À la une" /></div>
+      <div class="g2">
+      <div>
+        <div class="field"><label>Image (640×300)</label><input type="url" id="fr_une2_img" placeholder="https://..." oninput="previewImg(this,'ppu2')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="ppu2" class="img-prev" src="" /></div>
+      </div>
+      <div>
+        <div class="field"><label>Titre</label><input type="text" id="fr_une2_title" placeholder="Titre" /></div>
+        <div class="field"><label>Texte</label><textarea id="fr_une2_text" placeholder="Texte"></textarea></div>
+        <div class="g2"><div class="field"><label>CTA texte</label><input type="text" id="fr_une2_cta" placeholder="En savoir plus" /></div><div class="field"><label>CTA lien</label><input type="url" id="fr_une2_url" placeholder="https://..." /></div></div>
+      </div>
+      </div>
+
+      <div class="sub-divider"></div>
+      <div class="cg-label" style="margin-bottom:10px;">Actualités</div>
+      <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="fr_title_actu2" placeholder="Actualités" /></div>
+      <div id="fr_actu2_c" class="g2"></div><button class="btn-add" onclick="addActu2('fr')">+ Ajouter une vignette</button>
+
+      <div class="sub-divider"></div>
+      <div class="cg-label" style="margin-bottom:10px;">En bref</div>
+      <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="fr_title_bref2" placeholder="En bref" /></div>
+      <div id="fr_bref2_c"></div><button class="btn-add" onclick="addBref2('fr')">+ Ajouter un item</button>
+    </div>
+  </div>
+
   <!-- PUB 2 -->
   <div class="form-section" data-section="pub2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 2</span><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
@@ -367,14 +396,21 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 
   <!-- BANC D'ESSAI -->
   <div class="form-section" data-section="banc" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
-    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🚗</span><input type="text" class="form-section-title-input" id="fr_title_banc" value="Au banc d'essai" /><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🚗</span><input type="text" class="form-section-title-input" id="fr_title_banc" value="Au banc d'essai" /><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body"><div id="cpicker_fr_banc"></div>
       <div id="fr_banc_c"></div><button class="btn-add" onclick="addBanc('fr')">+ Ajouter un essai</button></div>
   </div>
 
+  <!-- BANC D'ESSAI (copie) -->
+  <div class="form-section section-hidden" data-section="banc2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🚗</span><input type="text" class="form-section-title-input" id="fr_title_banc2" placeholder="Au banc d'essai" /><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
+    <div class="form-section-body">
+      <div id="fr_banc2_c"></div><button class="btn-add" onclick="addBanc2('fr')">+ Ajouter un essai</button></div>
+  </div>
+
   <!-- VOYAGES -->
   <div class="form-section" data-section="voy" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
-    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">✈️</span><input type="text" class="form-section-title-input" id="fr_title_voy" value="Nos Voyages" /><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">✈️</span><input type="text" class="form-section-title-input" id="fr_title_voy" value="Nos Voyages" /><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="cg" style="margin-bottom:14px;">
         <div class="cg-label" style="margin-bottom:10px;">Article principal (pleine largeur)</div>
@@ -394,15 +430,49 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
     </div>
   </div>
 
+  <!-- VOYAGES (copie) -->
+  <div class="form-section section-hidden" data-section="voy2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">✈️</span><input type="text" class="form-section-title-input" id="fr_title_voy2" placeholder="Nos Voyages" /><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
+    <div class="form-section-body">
+      <div class="cg" style="margin-bottom:14px;">
+        <div class="cg-label" style="margin-bottom:10px;">Article principal (opt., pleine largeur)</div>
+        <div class="g2">
+          <div class="field"><label>Image</label><input type="url" id="fr_vm2_img" placeholder="https://..." oninput="previewImg(this,'ppvm2')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="ppvm2" class="img-prev" src="" /></div>
+          <div>
+            <div class="field"><label>Date</label><input type="text" id="fr_vm2_date" placeholder="ex. 01.07.2026" /></div>
+            <div class="field"><label>Titre</label><input type="text" id="fr_vm2_title" placeholder="Titre" /></div>
+            <div class="field"><label>Texte</label><textarea id="fr_vm2_text" placeholder="Texte"></textarea></div>
+            <div class="field"><label>Lien CTA</label><input type="url" id="fr_vm2_url" placeholder="https://..." /></div>
+          </div>
+        </div>
+      </div>
+      <div id="fr_voy2_c" class="g2"></div>
+      <button class="btn-add" onclick="addVoy2('fr')">+ Ajouter une carte voyage</button>
+    </div>
+  </div>
+
   <!-- AGENDA -->
   <div class="form-section" data-section="agenda" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
-    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📅</span><input type="text" class="form-section-title-input" id="fr_title_agenda" value="L'Agenda" /><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📅</span><input type="text" class="form-section-title-input" id="fr_title_agenda" value="L'Agenda" /><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body"><div id="cpicker_fr_agenda"></div>
       <div class="field" style="margin-bottom:14px;"><label>Sous-titre</label><input type="text" id="fr_title_agenda_kicker" value="Formations &amp; événements" /></div>
       <div id="fr_agenda_c"></div><button class="btn-add" onclick="addAgenda('fr')">+ Ajouter un événement</button>
       <div class="g2" style="margin-top:14px;">
         <div class="field"><label>CTA texte</label><input type="text" id="fr_agenda_cta" placeholder="Voir tout l'agenda" /></div>
         <div class="field"><label>CTA lien</label><input type="url" id="fr_agenda_url" value="https://www.acl.lu/fr/agenda/" /></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENDA (copie) -->
+  <div class="form-section section-hidden" data-section="agenda2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📅</span><input type="text" class="form-section-title-input" id="fr_title_agenda2" placeholder="L'Agenda" /><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
+    <div class="form-section-body">
+      <div class="field" style="margin-bottom:14px;"><label>Sous-titre</label><input type="text" id="fr_title_agenda2_kicker" placeholder="Formations &amp; événements" /></div>
+      <div id="fr_agenda2_c"></div><button class="btn-add" onclick="addAgenda2('fr')">+ Ajouter un événement</button>
+      <div class="g2" style="margin-top:14px;">
+        <div class="field"><label>CTA texte</label><input type="text" id="fr_agenda2_cta" placeholder="Voir tout l'agenda" /></div>
+        <div class="field"><label>CTA lien</label><input type="url" id="fr_agenda2_url" placeholder="https://..." /></div>
       </div>
     </div>
   </div>
@@ -467,7 +537,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 
   <!-- RECRUTEMENT -->
   <div class="form-section" data-section="recrutement" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
-    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">💼</span><span class="form-section-title">Recrutement</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">💼</span><span class="form-section-title">Recrutement</span><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="g2" style="margin-bottom:14px;">
         <div class="field"><label>Sous-titre (kicker)</label><input type="text" id="fr_title_job_kicker" value="On recrute" /></div>
@@ -479,6 +549,23 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
       <div id="fr_jobs_c"></div>
       <button class="btn-add" onclick="addJob('fr')">+ Ajouter un poste</button>
+    </div>
+  </div>
+
+  <!-- RECRUTEMENT (copie) -->
+  <div class="form-section section-hidden" data-section="recrutement2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+    <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">💼</span><span class="form-section-title">Recrutement (copie)</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
+    <div class="form-section-body">
+      <div class="g2" style="margin-bottom:14px;">
+        <div class="field"><label>Sous-titre (kicker)</label><input type="text" id="fr_title_job2_kicker" placeholder="On recrute" /></div>
+        <div class="field"><label>Titre</label><input type="text" id="fr_title_job2_heading" placeholder="Rejoignez l'équipe ACL" /></div>
+      </div>
+      <div class="g2" style="margin-bottom:12px;">
+        <div class="field"><label>Lien "Toutes nos offres"</label><input type="url" id="fr_job2_url" placeholder="https://..." /></div>
+        <div class="field"><label>CTA texte</label><input type="text" id="fr_job2_cta" placeholder="Toutes nos offres" /></div>
+      </div>
+      <div id="fr_jobs2_c"></div>
+      <button class="btn-add" onclick="addJob2('fr')">+ Ajouter un poste</button>
     </div>
   </div>
 
@@ -724,10 +811,11 @@ const D = {
       { title: 'Dépanneur / Dépanneuse', detail: 'H/F · CDI · Temps plein', url: 'https://www.acl.lu/fr/carrieres/une-depanneur-depanneuse-h-f-cdi-temps-plein/' },
       { title: 'Agent « Assistance Center »', detail: 'H/F · CDI · Temps plein', url: 'https://www.acl.lu/fr/carrieres/un-agent-assistance-center-h-f-cdi-temps-plein/' },
       { title: 'Chargé(e) de Projets Communication', detail: 'CDI · Temps plein', url: 'https://www.acl.lu/fr/carrieres/charge-projets-communication/' }
-    ]
+    ],
+    actu2:[], bref2:[], banc2:[], voy2:[], agenda2:[], jobs2:[]
   },
-  en: { actu:[], bref:[], banc:[], voy:[], agenda:[], jobs:[] },
-  de: { actu:[], bref:[], banc:[], voy:[], agenda:[], jobs:[] }
+  en: { actu:[], bref:[], banc:[], voy:[], agenda:[], jobs:[], actu2:[], bref2:[], banc2:[], voy2:[], agenda2:[], jobs2:[] },
+  de: { actu:[], bref:[], banc:[], voy:[], agenda:[], jobs:[], actu2:[], bref2:[], banc2:[], voy2:[], agenda2:[], jobs2:[] }
 };
 
 // ── HELPERS ───────────────────────────────────────
@@ -823,92 +911,104 @@ function toast(msg, type='') {
 function renderAll(lang) {
   renderActu(lang); renderBref(lang); renderBanc(lang);
   renderVoy(lang); renderAgenda(lang); renderJobs(lang);
+  renderActu(lang,'actu2'); renderBref(lang,'bref2'); renderBanc(lang,'banc2');
+  renderVoy(lang,'voy2'); renderAgenda(lang,'agenda2'); renderJobs(lang,'jobs2');
 }
 
-function renderActu(lang) {
-  const c = document.getElementById(lang+'_actu_c'); if(!c) return;
-  const data = D[lang].actu;
+function renderActu(lang, key) {
+  key = key || 'actu';
+  const c = document.getElementById(lang+'_'+key+'_c'); if(!c) return;
+  const data = D[lang][key];
   c.innerHTML = data.map((d,i) => `
-    <div class="cg" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','actu')"><div class="cg-header"><span class="item-drag-handle" title="Déplacer">⠿</span><span class="cg-label">Vignette ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','actu',${i})">×</button></div>
-    <div class="field"><label>🔗 URL article</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].actu[${i}].url=this.value" /></div>
-    <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].actu[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button></div>
-    <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].actu[${i}].title=this.value" /></div>
-    <div class="field"><label>Texte CTA</label><input type="text" value="${esc(d.cta||'')}" placeholder="En savoir plus" oninput="D['${lang}'].actu[${i}].cta=this.value" /></div>
+    <div class="cg" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><div class="cg-header"><span class="item-drag-handle" title="Déplacer">⠿</span><span class="cg-label">Vignette ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button></div>
+    <div class="field"><label>🔗 URL article</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}']['${key}'][${i}].url=this.value" /></div>
+    <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}']['${key}'][${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button></div>
+    <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}']['${key}'][${i}].title=this.value" /></div>
+    <div class="field"><label>Texte CTA</label><input type="text" value="${esc(d.cta||'')}" placeholder="En savoir plus" oninput="D['${lang}']['${key}'][${i}].cta=this.value" /></div>
     </div>`).join('');
 }
 
-function renderBref(lang) {
-  const c = document.getElementById(lang+'_bref_c'); if(!c) return;
-  const data = D[lang].bref;
+function renderBref(lang, key) {
+  key = key || 'bref';
+  const c = document.getElementById(lang+'_'+key+'_c'); if(!c) return;
+  const data = D[lang][key];
   c.innerHTML = data.map((d,i) => `
-    <div class="dyn-item" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','bref')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','bref',${i})">×</button>
+    <div class="dyn-item" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button>
     <div class="g3" style="gap:8px;">
-      <div class="field"><label>Catégorie</label><input type="text" value="${esc(d.cat||'')}" oninput="D['${lang}'].bref[${i}].cat=this.value" /></div>
-      <div class="field" style="grid-column:span 2"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].bref[${i}].title=this.value" /></div>
+      <div class="field"><label>Catégorie</label><input type="text" value="${esc(d.cat||'')}" oninput="D['${lang}']['${key}'][${i}].cat=this.value" /></div>
+      <div class="field" style="grid-column:span 2"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}']['${key}'][${i}].title=this.value" /></div>
     </div>
-    <div class="field"><label>Lien</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].bref[${i}].url=this.value" /></div>
+    <div class="field"><label>Lien</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}']['${key}'][${i}].url=this.value" /></div>
     </div>`).join('');
 }
 
-function renderBanc(lang) {
-  const c = document.getElementById(lang+'_banc_c'); if(!c) return;
-  const data = D[lang].banc;
+function renderBanc(lang, key) {
+  key = key || 'banc';
+  const c = document.getElementById(lang+'_'+key+'_c'); if(!c) return;
+  const data = D[lang][key];
   c.innerHTML = data.map((d,i) => `
-    <div class="dyn-item" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','banc')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','banc',${i})">×</button>
-    <div class="field" style="margin-bottom:10px;"><label>🔗 URL article</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].banc[${i}].url=this.value" /></div>
+    <div class="dyn-item" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button>
+    <div class="field" style="margin-bottom:10px;"><label>🔗 URL article</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}']['${key}'][${i}].url=this.value" /></div>
     <div class="g2" style="gap:10px;">
-      <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].banc[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button></div>
+      <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}']['${key}'][${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button></div>
       <div>
-        <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].banc[${i}].title=this.value" /></div>
-        <div class="field"><label>Texte CTA</label><input type="text" value="${esc(d.cta||'')}" placeholder="Voir notre test" oninput="D['${lang}'].banc[${i}].cta=this.value" /></div>
+        <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}']['${key}'][${i}].title=this.value" /></div>
+        <div class="field"><label>Texte CTA</label><input type="text" value="${esc(d.cta||'')}" placeholder="Voir notre test" oninput="D['${lang}']['${key}'][${i}].cta=this.value" /></div>
       </div>
     </div></div>`).join('');
 }
 
-function renderVoy(lang) {
-  const c = document.getElementById(lang+'_voy_c'); if(!c) return;
-  const data = D[lang].voy;
+function renderVoy(lang, key) {
+  key = key || 'voy';
+  const c = document.getElementById(lang+'_'+key+'_c'); if(!c) return;
+  const data = D[lang][key];
   c.innerHTML = data.map((d,i) => `
-    <div class="cg" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','voy')"><div class="cg-header"><span class="item-drag-handle" title="Déplacer">⠿</span><span class="cg-label">Carte ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','voy',${i})">×</button></div>
-    <div class="field"><label>🔗 URL article</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].voy[${i}].url=this.value" /></div>
-    <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}'].voy[${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button></div>
-    <div class="field"><label>Badge</label><input type="text" value="${esc(d.badge||'')}" oninput="D['${lang}'].voy[${i}].badge=this.value" /></div>
-    <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].voy[${i}].title=this.value" /></div>
-    <div class="field"><label>Texte</label><textarea oninput="D['${lang}'].voy[${i}].text=this.value">${esc(d.text||'')}</textarea></div>
+    <div class="cg" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><div class="cg-header"><span class="item-drag-handle" title="Déplacer">⠿</span><span class="cg-label">Carte ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button></div>
+    <div class="field"><label>🔗 URL article</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}']['${key}'][${i}].url=this.value" /></div>
+    <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}']['${key}'][${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button></div>
+    <div class="field"><label>Badge</label><input type="text" value="${esc(d.badge||'')}" oninput="D['${lang}']['${key}'][${i}].badge=this.value" /></div>
+    <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}']['${key}'][${i}].title=this.value" /></div>
+    <div class="field"><label>Texte</label><textarea oninput="D['${lang}']['${key}'][${i}].text=this.value">${esc(d.text||'')}</textarea></div>
     </div>`).join('');
 }
 
-function renderAgenda(lang) {
-  const c = document.getElementById(lang+'_agenda_c'); if(!c) return;
-  const data = D[lang].agenda;
+function renderAgenda(lang, key) {
+  key = key || 'agenda';
+  const c = document.getElementById(lang+'_'+key+'_c'); if(!c) return;
+  const data = D[lang][key];
   c.innerHTML = data.map((d,i) => `
-    <div class="dyn-item" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','agenda')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','agenda',${i})">×</button>
+    <div class="dyn-item" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button>
     <div class="g4" style="gap:8px;margin-bottom:8px;">
-      <div class="field"><label>Jour</label><input type="text" value="${esc(d.jour||'')}" placeholder="SAM" oninput="D['${lang}'].agenda[${i}].jour=this.value" /></div>
-      <div class="field"><label>Num</label><input type="text" value="${esc(d.num||'')}" placeholder="28" oninput="D['${lang}'].agenda[${i}].num=this.value" /></div>
-      <div class="field"><label>Mois</label><input type="text" value="${esc(d.mois||'')}" placeholder="JUIN" oninput="D['${lang}'].agenda[${i}].mois=this.value" /></div>
-      <div class="field"><label>Catégorie</label><input type="text" value="${esc(d.cat||'')}" oninput="D['${lang}'].agenda[${i}].cat=this.value" /></div>
+      <div class="field"><label>Jour</label><input type="text" value="${esc(d.jour||'')}" placeholder="SAM" oninput="D['${lang}']['${key}'][${i}].jour=this.value" /></div>
+      <div class="field"><label>Num</label><input type="text" value="${esc(d.num||'')}" placeholder="28" oninput="D['${lang}']['${key}'][${i}].num=this.value" /></div>
+      <div class="field"><label>Mois</label><input type="text" value="${esc(d.mois||'')}" placeholder="JUIN" oninput="D['${lang}']['${key}'][${i}].mois=this.value" /></div>
+      <div class="field"><label>Catégorie</label><input type="text" value="${esc(d.cat||'')}" oninput="D['${lang}']['${key}'][${i}].cat=this.value" /></div>
     </div>
-    <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].agenda[${i}].title=this.value" /></div>
-    <div class="field"><label>Détails (lieu · horaire)</label><input type="text" value="${esc(d.details||'')}" oninput="D['${lang}'].agenda[${i}].details=this.value" /></div>
-    <div class="field"><label>Lien</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].agenda[${i}].url=this.value" /></div>
+    <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}']['${key}'][${i}].title=this.value" /></div>
+    <div class="field"><label>Détails (lieu · horaire)</label><input type="text" value="${esc(d.details||'')}" oninput="D['${lang}']['${key}'][${i}].details=this.value" /></div>
+    <div class="field"><label>Lien</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}']['${key}'][${i}].url=this.value" /></div>
     </div>`).join('');
 }
 
-function renderJobs(lang) {
-  const c = document.getElementById(lang+'_jobs_c'); if(!c) return;
-  const data = D[lang].jobs;
+function renderJobs(lang, key) {
+  key = key || 'jobs';
+  const c = document.getElementById(lang+'_'+key+'_c'); if(!c) return;
+  const data = D[lang][key];
   c.innerHTML = data.map((d,i) => `
-    <div class="dyn-item" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','jobs')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','jobs',${i})">×</button>
+    <div class="dyn-item" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button>
     <div class="g3" style="gap:8px;">
-      <div class="field" style="grid-column:span 2"><label>Intitulé</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}'].jobs[${i}].title=this.value" /></div>
-      <div class="field"><label>Détails</label><input type="text" value="${esc(d.detail||'')}" oninput="D['${lang}'].jobs[${i}].detail=this.value" /></div>
+      <div class="field" style="grid-column:span 2"><label>Intitulé</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}']['${key}'][${i}].title=this.value" /></div>
+      <div class="field"><label>Détails</label><input type="text" value="${esc(d.detail||'')}" oninput="D['${lang}']['${key}'][${i}].detail=this.value" /></div>
     </div>
-    <div class="field"><label>Lien offre</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}'].jobs[${i}].url=this.value" /></div>
+    <div class="field"><label>Lien offre</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}']['${key}'][${i}].url=this.value" /></div>
     </div>`).join('');
 }
 
-const ITEM_RENDER_FNS = { actu:renderActu, bref:renderBref, banc:renderBanc, voy:renderVoy, agenda:renderAgenda, jobs:renderJobs };
+const ITEM_RENDER_FNS = {
+  actu:renderActu, bref:renderBref, banc:renderBanc, voy:renderVoy, agenda:renderAgenda, jobs:renderJobs,
+  actu2:(l)=>renderActu(l,'actu2'), bref2:(l)=>renderBref(l,'bref2'), banc2:(l)=>renderBanc(l,'banc2'),
+  voy2:(l)=>renderVoy(l,'voy2'), agenda2:(l)=>renderAgenda(l,'agenda2'), jobs2:(l)=>renderJobs(l,'jobs2')
+};
 function rm(lang, key, i) { D[lang][key].splice(i,1); ITEM_RENDER_FNS[key](lang); }
 
 // ── VIGNETTES/ITEMS : DRAG & DROP ─────────────────
@@ -947,6 +1047,13 @@ function addBanc(l)  { D[l].banc.push({img:'',title:'',url:'',cta:'Voir notre te
 function addVoy(l)   { D[l].voy.push({img:'',badge:'',title:'',text:'',url:''}); renderVoy(l); }
 function addAgenda(l){ D[l].agenda.push({jour:'',num:'',mois:'',cat:'',title:'',details:'',url:''}); renderAgenda(l); }
 function addJob(l)   { D[l].jobs.push({title:'',detail:'',url:''}); renderJobs(l); }
+
+function addActu2(l)  { D[l].actu2.push({img:'',title:'',url:'',cta:'En savoir plus'}); renderActu(l,'actu2'); }
+function addBref2(l)  { D[l].bref2.push({cat:'',title:'',url:''}); renderBref(l,'bref2'); }
+function addBanc2(l)  { D[l].banc2.push({img:'',title:'',url:'',cta:'Voir notre test'}); renderBanc(l,'banc2'); }
+function addVoy2(l)   { D[l].voy2.push({img:'',badge:'',title:'',text:'',url:''}); renderVoy(l,'voy2'); }
+function addAgenda2(l){ D[l].agenda2.push({jour:'',num:'',mois:'',cat:'',title:'',details:'',url:''}); renderAgenda(l,'agenda2'); }
+function addJob2(l)   { D[l].jobs2.push({title:'',detail:'',url:''}); renderJobs(l,'jobs2'); }
 
 // ── TABS ─────────────────────────────────────────
 function switchTab(lang, btn) {
@@ -1011,7 +1118,12 @@ const SECTION_LABELS = {
   pub1b: 'Bandeau pub 1 (copie)',
   pub2b: 'Bandeau pub 2 (copie)',
   pub3b: 'Bandeau pub 3 (copie)',
+  unebref2: 'À la Une / Actualités / En Bref (copie)',
+  banc2: "Au banc d'essai (copie)",
+  voy2: 'Nos Voyages (copie)',
+  agenda2: "L'Agenda (copie)",
   autotouring2: 'Autotouring (copie)',
+  recrutement2: 'Recrutement (copie)',
   parrainage2: 'Parrainage (copie)',
   extra3: 'Carte additionnelle 3',
   extra4: 'Carte additionnelle 4'
@@ -1060,7 +1172,22 @@ const DUPLICATE_TYPES = [
       ['extra1_cta','extra3_cta'], ['extra1_url','extra3_url']] },
   { from: 'extra2', to: 'extra4', previewId: 'ppe4',
     fields: [['extra2_img','extra4_img'], ['extra2_title','extra4_title'], ['extra2_text','extra4_text'],
-      ['extra2_cta','extra4_cta'], ['extra2_url','extra4_url']] }
+      ['extra2_cta','extra4_cta'], ['extra2_url','extra4_url']] },
+  { from: 'banc', to: 'banc2', arrays: [['banc','banc2']],
+    fields: [['title_banc','title_banc2']] },
+  { from: 'voy', to: 'voy2', arrays: [['voy','voy2']], previewId: 'ppvm2',
+    fields: [['title_voy','title_voy2'], ['vm_img','vm2_img'], ['vm_date','vm2_date'],
+      ['vm_title','vm2_title'], ['vm_text','vm2_text'], ['vm_url','vm2_url']] },
+  { from: 'agenda', to: 'agenda2', arrays: [['agenda','agenda2']],
+    fields: [['title_agenda','title_agenda2'], ['title_agenda_kicker','title_agenda2_kicker'],
+      ['agenda_cta','agenda2_cta'], ['agenda_url','agenda2_url']] },
+  { from: 'recrutement', to: 'recrutement2', arrays: [['jobs','jobs2']],
+    fields: [['title_job_kicker','title_job2_kicker'], ['title_job_heading','title_job2_heading'],
+      ['job_url','job2_url'], ['job_cta','job2_cta']] },
+  { from: 'unebref', to: 'unebref2', arrays: [['actu','actu2'], ['bref','bref2']], previewId: 'ppu2',
+    fields: [['title_une','title_une2'], ['une_img','une2_img'], ['une_title','une2_title'],
+      ['une_text','une2_text'], ['une_cta','une2_cta'], ['une_url','une2_url'],
+      ['title_actu','title_actu2'], ['title_bref','title_bref2']] }
 ];
 
 function duplicateSection(btn) {
@@ -1070,6 +1197,12 @@ function duplicateSection(btn) {
   if (!spec) return;
   ['fr','en','de'].forEach(lang => {
     spec.fields.forEach(([src, dst]) => setField(lang+'_'+dst, v(lang+'_'+src)));
+    if (spec.arrays) {
+      spec.arrays.forEach(([fromArr, toArr]) => {
+        D[lang][toArr] = JSON.parse(JSON.stringify(D[lang][fromArr]));
+        if (ITEM_RENDER_FNS[toArr]) ITEM_RENDER_FNS[toArr](lang);
+      });
+    }
   });
   document.querySelectorAll(`.form-section[data-section="${spec.to}"]`).forEach(el => {
     el.classList.remove('section-hidden');
@@ -1138,23 +1271,33 @@ function collectLangData(lang) {
     pub2b_link: v(p+'pub2b_link'), pub2b_img: v(p+'pub2b_img'),
     pub3b_link: v(p+'pub3b_link'), pub3b_img: v(p+'pub3b_img'),
     agenda_cta: v(p+'agenda_cta'), agenda_url: v(p+'agenda_url'),
+    agenda2_cta: v(p+'agenda2_cta'), agenda2_url: v(p+'agenda2_url'),
     job_cta: v(p+'job_cta'),
+    job2_url: v(p+'job2_url'), job2_cta: v(p+'job2_cta'),
     titles: {
       une: v(p+'title_une'), actu: v(p+'title_actu'), bref: v(p+'title_bref'), banc: v(p+'title_banc'),
       voy: v(p+'title_voy'), agenda: v(p+'title_agenda'), agenda_kicker: v(p+'title_agenda_kicker'),
+      une2: v(p+'title_une2'), actu2: v(p+'title_actu2'), bref2: v(p+'title_bref2'), banc2: v(p+'title_banc2'),
+      voy2: v(p+'title_voy2'), agenda2: v(p+'title_agenda2'), agenda2_kicker: v(p+'title_agenda2_kicker'),
       auto_kicker: v(p+'title_auto_kicker'), auto_heading: v(p+'title_auto_heading'),
       auto2_kicker: v(p+'title_auto2_kicker'), auto2_heading: v(p+'title_auto2_heading'),
       job_kicker: v(p+'title_job_kicker'), job_heading: v(p+'title_job_heading'),
+      job2_kicker: v(p+'title_job2_kicker'), job2_heading: v(p+'title_job2_heading'),
       parr_kicker: v(p+'title_parr_kicker'), parr_heading: v(p+'title_parr_heading'),
       parr2_kicker: v(p+'title_parr2_kicker'), parr2_heading: v(p+'title_parr2_heading')
     },
     une: { img: v(p+'une_img'), title: v(p+'une_title'), text: v(p+'une_text'), cta: v(p+'une_cta'), url: v(p+'une_url') },
+    une2: { img: v(p+'une2_img'), title: v(p+'une2_title'), text: v(p+'une2_text'), cta: v(p+'une2_cta'), url: v(p+'une2_url') },
     actu: JSON.parse(JSON.stringify(D[lang].actu)), bref: JSON.parse(JSON.stringify(D[lang].bref)), banc: JSON.parse(JSON.stringify(D[lang].banc)),
+    actu2: JSON.parse(JSON.stringify(D[lang].actu2)), bref2: JSON.parse(JSON.stringify(D[lang].bref2)), banc2: JSON.parse(JSON.stringify(D[lang].banc2)),
     vm: { img: v(p+'vm_img'), date: v(p+'vm_date'), title: v(p+'vm_title'), text: v(p+'vm_text'), url: v(p+'vm_url') },
+    vm2: { img: v(p+'vm2_img'), date: v(p+'vm2_date'), title: v(p+'vm2_title'), text: v(p+'vm2_text'), url: v(p+'vm2_url') },
     voy: JSON.parse(JSON.stringify(D[lang].voy)), agenda: JSON.parse(JSON.stringify(D[lang].agenda)),
+    voy2: JSON.parse(JSON.stringify(D[lang].voy2)), agenda2: JSON.parse(JSON.stringify(D[lang].agenda2)),
     auto: { img: v(p+'auto_img'), date: v(p+'auto_date'), url: v(p+'auto_url'), cta: v(p+'auto_cta') },
     auto2: { img: v(p+'auto2_img'), date: v(p+'auto2_date'), url: v(p+'auto2_url'), cta: v(p+'auto2_cta') },
     job_url: v(p+'job_url'), jobs: JSON.parse(JSON.stringify(D[lang].jobs)),
+    jobs2: JSON.parse(JSON.stringify(D[lang].jobs2)),
     parr: { img: v(p+'parr_img'), text: v(p+'parr_text'), url: v(p+'parr_url') },
     parr2: { img: v(p+'parr2_img'), text: v(p+'parr2_text'), url: v(p+'parr2_url') },
     extra1: { img: v(p+'extra1_img'), title: v(p+'extra1_title'), text: v(p+'extra1_text'), cta: v(p+'extra1_cta'), url: v(p+'extra1_url') },
@@ -1171,9 +1314,16 @@ function applyFrDataToLang(lang, d) {
   if (d.voy)    D[lang].voy    = d.voy;
   if (d.agenda) D[lang].agenda = d.agenda;
   if (d.jobs)   D[lang].jobs   = d.jobs;
+  if (d.actu2)   D[lang].actu2   = d.actu2;
+  if (d.bref2)   D[lang].bref2   = d.bref2;
+  if (d.banc2)   D[lang].banc2   = d.banc2;
+  if (d.voy2)    D[lang].voy2    = d.voy2;
+  if (d.agenda2) D[lang].agenda2 = d.agenda2;
+  if (d.jobs2)   D[lang].jobs2   = d.jobs2;
 
   const u = d.une||{}, vm = d.vm||{}, au = d.auto||{}, au2 = d.auto2||{}, pa = d.parr||{}, pa2 = d.parr2||{},
-        t = d.titles||{}, e1 = d.extra1||{}, e2 = d.extra2||{}, e3 = d.extra3||{}, e4 = d.extra4||{};
+        t = d.titles||{}, e1 = d.extra1||{}, e2 = d.extra2||{}, e3 = d.extra3||{}, e4 = d.extra4||{},
+        u2 = d.une2||{}, vm2 = d.vm2||{};
 
   setField(lang+'_edition',   d.edition);
   setField(lang+'_pub1_img',  d.pub1_img); setField(lang+'_pub1_link', d.pub1_link);
@@ -1183,22 +1333,35 @@ function applyFrDataToLang(lang, d) {
   setField(lang+'_pub2b_img', d.pub2b_img); setField(lang+'_pub2b_link', d.pub2b_link);
   setField(lang+'_pub3b_img', d.pub3b_img); setField(lang+'_pub3b_link', d.pub3b_link);
   setField(lang+'_agenda_cta', d.agenda_cta); setField(lang+'_agenda_url', d.agenda_url);
+  setField(lang+'_agenda2_cta', d.agenda2_cta); setField(lang+'_agenda2_url', d.agenda2_url);
   setField(lang+'_job_cta', d.job_cta);
+  setField(lang+'_job2_url', d.job2_url); setField(lang+'_job2_cta', d.job2_cta);
   setField(lang+'_title_une', t.une);       setField(lang+'_title_actu', t.actu);
   setField(lang+'_title_bref', t.bref);     setField(lang+'_title_banc', t.banc);
   setField(lang+'_title_voy', t.voy);       setField(lang+'_title_agenda', t.agenda);
   setField(lang+'_title_agenda_kicker', t.agenda_kicker);
+  setField(lang+'_title_une2', t.une2);     setField(lang+'_title_actu2', t.actu2);
+  setField(lang+'_title_bref2', t.bref2);   setField(lang+'_title_banc2', t.banc2);
+  setField(lang+'_title_voy2', t.voy2);     setField(lang+'_title_agenda2', t.agenda2);
+  setField(lang+'_title_agenda2_kicker', t.agenda2_kicker);
   setField(lang+'_title_auto_kicker', t.auto_kicker); setField(lang+'_title_auto_heading', t.auto_heading);
   setField(lang+'_title_auto2_kicker', t.auto2_kicker); setField(lang+'_title_auto2_heading', t.auto2_heading);
   setField(lang+'_title_job_kicker',  t.job_kicker);  setField(lang+'_title_job_heading',  t.job_heading);
+  setField(lang+'_title_job2_kicker',  t.job2_kicker);  setField(lang+'_title_job2_heading',  t.job2_heading);
   setField(lang+'_title_parr_kicker', t.parr_kicker); setField(lang+'_title_parr_heading', t.parr_heading);
   setField(lang+'_title_parr2_kicker', t.parr2_kicker); setField(lang+'_title_parr2_heading', t.parr2_heading);
   setField(lang+'_une_img',   u.img);
   setField(lang+'_une_title', u.title); setField(lang+'_une_text',  u.text);
   setField(lang+'_une_cta',   u.cta);   setField(lang+'_une_url',   u.url);
+  setField(lang+'_une2_img',  u2.img);
+  setField(lang+'_une2_title', u2.title); setField(lang+'_une2_text',  u2.text);
+  setField(lang+'_une2_cta',  u2.cta);   setField(lang+'_une2_url',   u2.url);
   setField(lang+'_vm_img',    vm.img);  setField(lang+'_vm_title',  vm.title);
   setField(lang+'_vm_text',   vm.text); setField(lang+'_vm_url',    vm.url);
   setField(lang+'_vm_date',   vm.date);
+  setField(lang+'_vm2_img',   vm2.img);  setField(lang+'_vm2_title',  vm2.title);
+  setField(lang+'_vm2_text',  vm2.text); setField(lang+'_vm2_url',    vm2.url);
+  setField(lang+'_vm2_date',  vm2.date);
   setField(lang+'_auto_img',  au.img);  setField(lang+'_auto_date', au.date);
   setField(lang+'_auto_url',  au.url);  setField(lang+'_auto_cta',  au.cta);
   setField(lang+'_auto2_img', au2.img); setField(lang+'_auto2_date', au2.date);
@@ -1240,6 +1403,7 @@ function createEnDe() {
 function buildTranslatedFields(lang, d) {
   const u = d.une||{}, vm = d.vm||{}, au = d.auto||{}, pa = d.parr||{}, e1 = d.extra1||{}, e2 = d.extra2||{};
   const au2 = d.auto2||{}, pa2 = d.parr2||{}, e3 = d.extra3||{}, e4 = d.extra4||{};
+  const u2 = d.une2||{}, vm2 = d.vm2||{};
   const tgl = `<span class="section-toggle-btn" title="Ouvrir/fermer">▾</span>`;
   const delBtn = `<button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button>`;
   const dupBtn = `<button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button>`;
@@ -1261,7 +1425,7 @@ function buildTranslatedFields(lang, d) {
     <div class="field"><label>Lien cliquable (opt.)</label><input type="url" id="${lang}_pub1b_link" value="${esc(d.pub1b_link||'')}" /></div>
   </div></div>
 
-  <div class="form-section" data-section="unebref"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">🗞</span><span class="form-section-title">À la Une / Actualités / En Bref</span>${delBtn}${tgl}</div>
+  <div class="form-section" data-section="unebref"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">🗞</span><span class="form-section-title">À la Une / Actualités / En Bref</span>${dupBtn}${delBtn}${tgl}</div>
   <div class="form-section-body">
     <div class="cg-label" style="margin-bottom:10px;">À la une</div>
     <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="${lang}_title_une" value="${esc((d.titles||{}).une||'')}" /></div>
@@ -1284,6 +1448,29 @@ function buildTranslatedFields(lang, d) {
     <div id="${lang}_bref_c"></div><button class="btn-add" onclick="addBref('${lang}')">+ Ajouter</button>
   </div></div>
 
+  <div class="form-section section-hidden" data-section="unebref2"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">🗞</span><span class="form-section-title">À la Une / Actualités / En Bref (copie)</span>${delBtn}${tgl}</div>
+  <div class="form-section-body">
+    <div class="cg-label" style="margin-bottom:10px;">À la une (opt.)</div>
+    <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="${lang}_title_une2" value="${esc((d.titles||{}).une2||'')}" /></div>
+    <div class="g2">
+    <div><div class="field"><label>Image</label><input type="url" id="${lang}_une2_img" value="${esc(u2.img||'')}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img class="img-prev" src="${u2.img||''}" /></div></div>
+    <div><div class="field"><label>Titre</label><input type="text" id="${lang}_une2_title" value="${esc(u2.title||'')}" /></div>
+    <div class="field"><label>Texte</label><textarea id="${lang}_une2_text">${esc(u2.text||'')}</textarea></div>
+    <div class="g2"><div class="field"><label>CTA</label><input type="text" id="${lang}_une2_cta" value="${esc(u2.cta||'')}" /></div>
+    <div class="field"><label>URL</label><input type="url" id="${lang}_une2_url" value="${esc(u2.url||'')}" /></div></div></div>
+    </div>
+
+    <div class="sub-divider"></div>
+    <div class="cg-label" style="margin-bottom:10px;">Actualités</div>
+    <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="${lang}_title_actu2" value="${esc((d.titles||{}).actu2||'')}" /></div>
+    <div id="${lang}_actu2_c" class="g2"></div><button class="btn-add" onclick="addActu2('${lang}')">+ Ajouter</button>
+
+    <div class="sub-divider"></div>
+    <div class="cg-label" style="margin-bottom:10px;">En bref</div>
+    <div class="field" style="margin-bottom:14px;"><label>Titre de la rubrique</label><input type="text" id="${lang}_title_bref2" value="${esc((d.titles||{}).bref2||'')}" /></div>
+    <div id="${lang}_bref2_c"></div><button class="btn-add" onclick="addBref2('${lang}')">+ Ajouter</button>
+  </div></div>
+
   <div class="form-section" data-section="pub2"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 2</span>${dupBtn}${delBtn}${tgl}</div>
   <div class="form-section-body g2">
     <div class="field"><label>URL image</label><input type="url" id="${lang}_pub2_img" value="${esc(d.pub2_img||'')}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img class="img-prev" src="${d.pub2_img||''}" /></div>
@@ -1296,11 +1483,15 @@ function buildTranslatedFields(lang, d) {
     <div class="field"><label>Lien cliquable (opt.)</label><input type="url" id="${lang}_pub2b_link" value="${esc(d.pub2b_link||'')}" /></div>
   </div></div>
 
-  <div class="form-section" data-section="banc"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">🚗</span><input type="text" class="form-section-title-input" id="${lang}_title_banc" value="${esc((d.titles||{}).banc||'')}" />${delBtn}${tgl}</div>
+  <div class="form-section" data-section="banc"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">🚗</span><input type="text" class="form-section-title-input" id="${lang}_title_banc" value="${esc((d.titles||{}).banc||'')}" />${dupBtn}${delBtn}${tgl}</div>
   <div class="form-section-body">
     <div id="${lang}_banc_c"></div><button class="btn-add" onclick="addBanc('${lang}')">+ Ajouter</button></div></div>
 
-  <div class="form-section" data-section="voy"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">✈️</span><input type="text" class="form-section-title-input" id="${lang}_title_voy" value="${esc((d.titles||{}).voy||'')}" />${delBtn}${tgl}</div>
+  <div class="form-section section-hidden" data-section="banc2"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">🚗</span><input type="text" class="form-section-title-input" id="${lang}_title_banc2" value="${esc((d.titles||{}).banc2||'')}" />${delBtn}${tgl}</div>
+  <div class="form-section-body">
+    <div id="${lang}_banc2_c"></div><button class="btn-add" onclick="addBanc2('${lang}')">+ Ajouter</button></div></div>
+
+  <div class="form-section" data-section="voy"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">✈️</span><input type="text" class="form-section-title-input" id="${lang}_title_voy" value="${esc((d.titles||{}).voy||'')}" />${dupBtn}${delBtn}${tgl}</div>
   <div class="form-section-body">
     <div class="cg" style="margin-bottom:12px;"><div class="cg-label" style="margin-bottom:8px;">Principal</div>
     <div class="g2"><div class="field"><label>Image</label><input type="url" id="${lang}_vm_img" value="${esc(vm.img||'')}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img class="img-prev" src="${vm.img||''}" /></div>
@@ -1311,13 +1502,34 @@ function buildTranslatedFields(lang, d) {
     <div id="${lang}_voy_c" class="g2"></div><button class="btn-add" onclick="addVoy('${lang}')">+ Ajouter</button>
   </div></div>
 
-  <div class="form-section" data-section="agenda"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">📅</span><input type="text" class="form-section-title-input" id="${lang}_title_agenda" value="${esc((d.titles||{}).agenda||'')}" />${delBtn}${tgl}</div>
+  <div class="form-section section-hidden" data-section="voy2"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">✈️</span><input type="text" class="form-section-title-input" id="${lang}_title_voy2" value="${esc((d.titles||{}).voy2||'')}" />${delBtn}${tgl}</div>
+  <div class="form-section-body">
+    <div class="cg" style="margin-bottom:12px;"><div class="cg-label" style="margin-bottom:8px;">Principal (opt.)</div>
+    <div class="g2"><div class="field"><label>Image</label><input type="url" id="${lang}_vm2_img" value="${esc(vm2.img||'')}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img class="img-prev" src="${vm2.img||''}" /></div>
+    <div><div class="field"><label>Date</label><input type="text" id="${lang}_vm2_date" value="${esc(vm2.date||'')}" /></div>
+    <div class="field"><label>Titre</label><input type="text" id="${lang}_vm2_title" value="${esc(vm2.title||'')}" /></div>
+    <div class="field"><label>Texte</label><textarea id="${lang}_vm2_text">${esc(vm2.text||'')}</textarea></div>
+    <div class="field"><label>URL</label><input type="url" id="${lang}_vm2_url" value="${esc(vm2.url||'')}" /></div></div></div></div>
+    <div id="${lang}_voy2_c" class="g2"></div><button class="btn-add" onclick="addVoy2('${lang}')">+ Ajouter</button>
+  </div></div>
+
+  <div class="form-section" data-section="agenda"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">📅</span><input type="text" class="form-section-title-input" id="${lang}_title_agenda" value="${esc((d.titles||{}).agenda||'')}" />${dupBtn}${delBtn}${tgl}</div>
   <div class="form-section-body">
     <div class="field" style="margin-bottom:14px;"><label>Sous-titre</label><input type="text" id="${lang}_title_agenda_kicker" value="${esc((d.titles||{}).agenda_kicker||'')}" /></div>
     <div id="${lang}_agenda_c"></div><button class="btn-add" onclick="addAgenda('${lang}')">+ Ajouter</button>
     <div class="g2" style="margin-top:14px;">
       <div class="field"><label>CTA texte</label><input type="text" id="${lang}_agenda_cta" value="${esc(d.agenda_cta||'')}" /></div>
       <div class="field"><label>CTA lien</label><input type="url" id="${lang}_agenda_url" value="${esc(d.agenda_url||'')}" /></div>
+    </div>
+    </div></div>
+
+  <div class="form-section section-hidden" data-section="agenda2"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">📅</span><input type="text" class="form-section-title-input" id="${lang}_title_agenda2" value="${esc((d.titles||{}).agenda2||'')}" />${delBtn}${tgl}</div>
+  <div class="form-section-body">
+    <div class="field" style="margin-bottom:14px;"><label>Sous-titre</label><input type="text" id="${lang}_title_agenda2_kicker" value="${esc((d.titles||{}).agenda2_kicker||'')}" /></div>
+    <div id="${lang}_agenda2_c"></div><button class="btn-add" onclick="addAgenda2('${lang}')">+ Ajouter</button>
+    <div class="g2" style="margin-top:14px;">
+      <div class="field"><label>CTA texte</label><input type="text" id="${lang}_agenda2_cta" value="${esc(d.agenda2_cta||'')}" /></div>
+      <div class="field"><label>CTA lien</label><input type="url" id="${lang}_agenda2_url" value="${esc(d.agenda2_url||'')}" /></div>
     </div>
     </div></div>
 
@@ -1361,7 +1573,7 @@ function buildTranslatedFields(lang, d) {
     <div class="field" style="margin-top:14px;"><label>CTA texte</label><input type="text" id="${lang}_auto2_cta" value="${esc(au2.cta||'')}" /></div>
   </div></div>
 
-  <div class="form-section" data-section="recrutement"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">💼</span><span class="form-section-title">Recrutement</span>${delBtn}${tgl}</div>
+  <div class="form-section" data-section="recrutement"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">💼</span><span class="form-section-title">Recrutement</span>${dupBtn}${delBtn}${tgl}</div>
   <div class="form-section-body">
     <div class="g2" style="margin-bottom:14px;">
       <div class="field"><label>Sous-titre (kicker)</label><input type="text" id="${lang}_title_job_kicker" value="${esc((d.titles||{}).job_kicker||'')}" /></div>
@@ -1372,6 +1584,18 @@ function buildTranslatedFields(lang, d) {
       <div class="field"><label>CTA texte</label><input type="text" id="${lang}_job_cta" value="${esc(d.job_cta||'')}" /></div>
     </div>
   <div id="${lang}_jobs_c"></div><button class="btn-add" onclick="addJob('${lang}')">+ Ajouter</button></div></div>
+
+  <div class="form-section section-hidden" data-section="recrutement2"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">💼</span><span class="form-section-title">Recrutement (copie)</span>${delBtn}${tgl}</div>
+  <div class="form-section-body">
+    <div class="g2" style="margin-bottom:14px;">
+      <div class="field"><label>Sous-titre (kicker)</label><input type="text" id="${lang}_title_job2_kicker" value="${esc((d.titles||{}).job2_kicker||'')}" /></div>
+      <div class="field"><label>Titre</label><input type="text" id="${lang}_title_job2_heading" value="${esc((d.titles||{}).job2_heading||'')}" /></div>
+    </div>
+    <div class="g2" style="margin-bottom:10px;">
+      <div class="field"><label>URL offres</label><input type="url" id="${lang}_job2_url" value="${esc(d.job2_url||'')}" /></div>
+      <div class="field"><label>CTA texte</label><input type="text" id="${lang}_job2_cta" value="${esc(d.job2_cta||'')}" /></div>
+    </div>
+  <div id="${lang}_jobs2_c"></div><button class="btn-add" onclick="addJob2('${lang}')">+ Ajouter</button></div></div>
 
   <div class="form-section" data-section="parrainage"><div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="form-section-icon">🎁</span><span class="form-section-title">Parrainage</span>${dupBtn}${delBtn}${tgl}</div>
   <div class="form-section-body">
@@ -1459,7 +1683,7 @@ function buildHTML(lang) {
   const uu = (url) => url || '#';
   const SMALL_BTN_STYLE = "font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;color:#000000!important;display:inline-block;margin-top:14px;padding:6px 12px;border-radius:15px;background:#FCD900;text-transform:uppercase;letter-spacing:1px;text-decoration:none!important;";
 
-  const agendaH = D[lang].agenda.map(ev => `
+  const buildAgendaH = (items) => items.map(ev => `
     <a target="_blank" href="${uu(ev.url)}" style="display:block;text-decoration:none;margin-bottom:10px;">
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#FFFFFF;border-radius:6px;">
       <tr>
@@ -1479,8 +1703,10 @@ function buildHTML(lang) {
       </tr>
     </table>
     </a>`).join('');
+  const agendaH = buildAgendaH(D[lang].agenda);
+  const agendaH2 = buildAgendaH(D[lang].agenda2);
 
-  const jobsH = D[lang].jobs.map(j => `
+  const buildJobsH = (items) => items.map(j => `
             <tr><td style="padding:0;">
               <a target="_blank" href="${uu(j.url)}" style="display:block;background-color:#FFFFFF;padding:10px 14px;border-radius:8px;text-decoration:none;">
                 <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
@@ -1490,8 +1716,9 @@ function buildHTML(lang) {
               </a>
             </td></tr>
             <tr><td style="height:6px;font-size:0;line-height:0;">&nbsp;</td></tr>`).join('');
+  const jobsH = buildJobsH(D[lang].jobs);
+  const jobsH2 = buildJobsH(D[lang].jobs2);
 
-  const n = D[lang].actu.length;
   const actuBody = (d) => `<a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img class="mobile-center" src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /></a>
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td class="mobile-center" style="vertical-align:top;padding-top:13px;">
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.35;color:#1A1A1A;margin:0;">${esc(d.title)}</p>
@@ -1500,7 +1727,7 @@ function buildHTML(lang) {
       <a target="_blank" href="${uu(d.url)}" style="${SMALL_BTN_STYLE}margin-top:0;">${esc(d.cta||'En savoir plus')} ▸</a>
     </td></tr></table>`;
   const actuCard = (d) => `${actuBody(d)}${actuCta(d)}`;
-  const actuH = n === 0 ? '' : chunkPairs(D[lang].actu).map((pair, gi) => `
+  const buildActuH = (items) => items.length === 0 ? '' : chunkPairs(items).map((pair, gi) => `
     <table class="pair-desktop" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"${gi>0?' style="margin-top:22px;"':''}>
       <tr>
         <td class="col2" width="49%" valign="top" style="padding:0 12px 0 0;">${actuBody(pair[0])}</td>
@@ -1520,8 +1747,10 @@ function buildHTML(lang) {
         <td class="col2" width="49%" valign="top" style="padding:0 0 0 12px;">${pair[1] ? actuCard(pair[1]) : ''}</td>
       </tr>
     </table>`).join('');
+  const actuH = buildActuH(D[lang].actu);
+  const actuH2 = buildActuH(D[lang].actu2);
 
-  const brefH = D[lang].bref.map((d,i,a) => `
+  const buildBrefH = (items) => items.map((d,i,a) => `
       <tr><td style="padding:14px 0;${i<a.length-1?'border-bottom:1px solid #F0F0F0;':''}">
         <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
           <td width="70" style="vertical-align:middle;"><span style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#555555;">${esc(d.cat)}</span></td>
@@ -1529,9 +1758,10 @@ function buildHTML(lang) {
           <td width="44" align="right" style="vertical-align:middle;padding-right:8px;"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:700;color:#444444!important;text-decoration:none;">▸</a></td>
         </tr></table>
       </td></tr>`).join('');
+  const brefH = buildBrefH(D[lang].bref);
+  const brefH2 = buildBrefH(D[lang].bref2);
 
-  const nb = D[lang].banc.length;
-  const bancH = nb === 0 ? '' : D[lang].banc.map((d,i) => `
+  const buildBancH = (items) => items.length === 0 ? '' : items.map((d,i) => `
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="${i>0?'margin-top:12px;':''}background-color:#FFFFFF;border-radius:6px;">
       <tr>
         <td width="180" style="padding:0;vertical-align:top;line-height:0;font-size:0;"><a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img src="${esc(d.img)}" width="180" alt="${esc(d.title)}" style="display:block;width:180px;height:130px;object-fit:cover;border-radius:6px 0 0 6px;" /></a></td>
@@ -1541,8 +1771,9 @@ function buildHTML(lang) {
         </td>
       </tr>
     </table>`).join('');
+  const bancH = buildBancH(D[lang].banc);
+  const bancH2 = buildBancH(D[lang].banc2);
 
-  const nv = D[lang].voy.length;
   const voyBody = (d) => `<a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img class="mobile-center" src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /></a>
     ${d.badge?`<table class="mobile-center" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:11px 0 8px;"><tr><td style="background-color:#EEEEEE;padding:4px 10px;border-radius:10px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#666666;">${esc(d.badge)}</td></tr></table>`:''}
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td class="mobile-center" style="vertical-align:top;${d.badge?'':'padding-top:11px;'}">
@@ -1553,7 +1784,7 @@ function buildHTML(lang) {
       <a target="_blank" href="${uu(d.url)}" style="${SMALL_BTN_STYLE}margin-top:0;">En savoir plus ▸</a>
     </td></tr></table>`;
   const voyCard = (d) => `${voyBody(d)}${voyCta(d)}`;
-  const voyH = nv === 0 ? '' : chunkPairs(D[lang].voy).map((pair, gi) => `
+  const buildVoyH = (items) => items.length === 0 ? '' : chunkPairs(items).map((pair, gi) => `
     <table class="pair-desktop" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"${gi>0?' style="margin-top:22px;"':''}>
       <tr>
         <td class="col2" width="49%" valign="top" style="padding:0 12px 0 0;">${voyBody(pair[0])}</td>
@@ -1573,6 +1804,8 @@ function buildHTML(lang) {
         <td class="col2" width="49%" valign="top" style="padding:0 0 0 12px;">${pair[1] ? voyCard(pair[1]) : ''}</td>
       </tr>
     </table>`).join('');
+  const voyH = buildVoyH(D[lang].voy);
+  const voyH2 = buildVoyH(D[lang].voy2);
 
   const pub1 = v(p+'pub1_img')||'https://img.mailinblue.com/4363334/images/content_library/original/6a300abac8e9e1c3ee19ff90.jpg';
   const pub2 = v(p+'pub2_img')||'https://img.mailinblue.com/4363334/images/content_library/original/69675df04a53a52a8e9e9f56.jpg';
@@ -1648,6 +1881,37 @@ function buildHTML(lang) {
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">${brefH}</table>
 </td></tr>`;
 
+  blocks.unebref2 = (v(p+'une2_title') || actuH2 || brefH2) ? `<!-- À LA UNE (copie) -->
+<tr><td style="background-color:#FFFFFF;padding:28px 28px 28px;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
+    <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">${esc(v(p+'title_une2'))}</td>
+    <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+  </tr></table>
+  ${v(p+'une2_img') ? `<a target="_blank" href="${uu(v(p+'une2_url'))}" style="display:block;line-height:0;"><img src="${esc(v(p+'une2_img'))}" width="584" alt="${esc(v(p+'une2_title'))}" style="display:block;width:100%;max-width:584px;border-radius:8px;margin:0 auto 20px;" /></a>` : ''}
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:22px;line-height:1.25;color:#1A1A1A;margin:0 0 12px 0;text-align:center;">${esc(v(p+'une2_title'))}</p>
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:16px;line-height:1.7;color:#555555;margin:0 0 22px 0;text-align:center;">${esc(v(p+'une2_text'))}</p>
+  ${v(p+'une2_title') ? `<div style="text-align:center;">
+    <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${uu(v(p+'une2_url'))}" style="height:40px;v-text-anchor:middle;width:162px;" arcsize="20%" fillcolor="#FCD900" stroke="f"><w:anchorlock/><center style="color:#1A1A1A;font-family:Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">${esc(v(p+'une2_cta')).toUpperCase()}</center></v:roundrect><![endif]-->
+    <!--[if !mso]><!--><a target="_blank" href="${uu(v(p+'une2_url'))}" style="display:inline-block;background-color:#FCD900;color:#1A1A1A!important;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none!important;padding:11px 22px;border-radius:20px;">${esc(v(p+'une2_cta'))}</a><!--<![endif]-->
+  </div>` : ''}
+</td></tr>
+${actuH2 ? `<!-- ACTUALITÉS (copie) -->
+<tr><td style="background-color:#FFFFFF;padding:28px 28px 28px;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
+    <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">${esc(v(p+'title_actu2'))}</td>
+    <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+  </tr></table>
+  ${actuH2}
+</td></tr>` : ''}
+${brefH2 ? `<!-- EN BREF (copie) -->
+<tr><td style="background-color:#FFFFFF;padding:28px 28px 28px;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
+    <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">${esc(v(p+'title_bref2'))}</td>
+    <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+  </tr></table>
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">${brefH2}</table>
+</td></tr>` : ''}` : '';
+
   blocks.pub2 = `<tr><td style="background-color:#EFEFEF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub2H}</td></tr>`;
   blocks.pub2b = pub2b ? `<tr><td style="background-color:#EFEFEF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub2bH}</td></tr>` : '';
 
@@ -1662,6 +1926,14 @@ function buildHTML(lang) {
   </tr></table>
   ${bancH}
 </td></tr>`;
+  blocks.banc2 = bancH2 ? `<!-- BANC D'ESSAI (copie) -->
+<tr><td style="background-color:#FFFFFF;padding:28px 28px 28px;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
+    <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">${esc(v(p+'title_banc2'))}</td>
+    <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+  </tr></table>
+  ${bancH2}
+</td></tr>` : '';
 
   blocks.voy = `<!-- NOS VOYAGES -->
 <tr><td style="background-color:${getBg(lang,'voy')};padding:28px 28px 28px;">
@@ -1680,6 +1952,23 @@ function buildHTML(lang) {
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr><td style="border-top:1px solid #F0F0F0;font-size:0;line-height:0;">&nbsp;</td></tr></table>
   ${voyH}
 </td></tr>`;
+  blocks.voy2 = (v(p+'vm2_title') || voyH2) ? `<!-- NOS VOYAGES (copie) -->
+<tr><td style="background-color:#FFFFFF;padding:28px 28px 28px;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr>
+    <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">${esc(v(p+'title_voy2'))}</td>
+    <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+  </tr></table>
+  ${v(p+'vm2_img') ? `<a target="_blank" href="${uu(v(p+'vm2_url'))}" style="display:block;line-height:0;"><img src="${esc(v(p+'vm2_img'))}" width="584" alt="${esc(v(p+'vm2_title'))}" style="display:block;width:100%;max-width:584px;border-radius:8px;margin:0 auto 18px;" /></a>` : ''}
+  ${v(p+'vm2_date') ? `<table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto 8px;"><tr><td style="background-color:#EEEEEE;padding:4px 10px;border-radius:10px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#666666;">${esc(v(p+'vm2_date'))}</td></tr></table>` : ''}
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:18px;line-height:1.25;color:#1A1A1A;margin:0 0 8px 0;text-align:center;">${esc(v(p+'vm2_title'))}</p>
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:15px;line-height:1.65;color:#555555;margin:0 0 16px 0;text-align:center;">${esc(v(p+'vm2_text'))}</p>
+  ${v(p+'vm2_title') ? `<div style="text-align:center;margin-bottom:24px;">
+    <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${uu(v(p+'vm2_url'))}" style="height:40px;v-text-anchor:middle;width:162px;" arcsize="20%" fillcolor="#FCD900" stroke="f"><w:anchorlock/><center style="color:#1A1A1A;font-family:Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">EN SAVOIR PLUS</center></v:roundrect><![endif]-->
+    <!--[if !mso]><!--><a target="_blank" href="${uu(v(p+'vm2_url'))}" style="display:inline-block;background-color:#FCD900;color:#1A1A1A!important;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none!important;padding:11px 22px;border-radius:20px;">En savoir plus</a><!--<![endif]-->
+  </div>
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr><td style="border-top:1px solid #F0F0F0;font-size:0;line-height:0;">&nbsp;</td></tr></table>` : ''}
+  ${voyH2}
+</td></tr>` : '';
 
   blocks.agenda = `<!-- AGENDA -->
 <tr><td style="background-color:${getBg(lang,'agenda')};padding:28px 28px 28px;">
@@ -1693,6 +1982,18 @@ function buildHTML(lang) {
     <td><a target="_blank" href="${uu(v(p+'agenda_url')||'https://www.acl.lu/fr/agenda/')}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'agenda_cta')||"Voir tout l'agenda")} ▸</a></td>
   </tr></table>
 </td></tr>`;
+  blocks.agenda2 = agendaH2 ? `<!-- AGENDA (copie) -->
+<tr><td style="background-color:#FFFFFF;padding:28px 28px 28px;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:6px;"><tr>
+    <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">${esc(v(p+'title_agenda2'))}</td>
+    <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+  </tr></table>
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:11px;color:#888888;margin:0 0 20px 0;letter-spacing:0.04em;text-transform:uppercase;">${esc(v(p+'title_agenda2_kicker'))}</p>
+  ${agendaH2}
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-top:16px;"><tr>
+    <td><a target="_blank" href="${uu(v(p+'agenda2_url'))}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'agenda2_cta')||"Voir tout l'agenda")} ▸</a></td>
+  </tr></table>
+</td></tr>` : '';
 
   const boxBody = {
     autotouring: `<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">${esc(v(p+'title_auto_kicker'))}</p>
@@ -1721,7 +2022,10 @@ function buildHTML(lang) {
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0;">${esc(v(p+'extra3_text'))}</p>`,
     extra4: `${extra4Img}
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.2;color:#1A1A1A;margin:14px 0 8px 0;">${esc(v(p+'extra4_title'))}</p>
-      <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0;">${esc(v(p+'extra4_text'))}</p>`
+      <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0;">${esc(v(p+'extra4_text'))}</p>`,
+    recrutement2: `<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">${esc(v(p+'title_job2_kicker'))}</p>
+      <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.2;color:#1A1A1A;margin:0 0 16px 0;">${esc(v(p+'title_job2_heading'))}</p>
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">${jobsH2}</table>`
   };
   const boxCta = {
     autotouring: `<a target="_blank" href="${uu(v(p+'auto_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'auto_cta')||'Lire le magazine digital')} ▸</a>`,
@@ -1731,13 +2035,15 @@ function buildHTML(lang) {
     autotouring2: `<a target="_blank" href="${uu(v(p+'auto2_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'auto2_cta')||'Lire le magazine digital')} ▸</a>`,
     parrainage2: `<a target="_blank" href="${uu(v(p+'parr2_url'))}" style="${SMALL_BTN_STYLE}margin-top:0;">Mon lien de parrainage ▸</a>`,
     extra3: `<a target="_blank" href="${uu(v(p+'extra3_url'))}" style="${SMALL_BTN_STYLE}margin-top:0;">${esc(v(p+'extra3_cta')||'En savoir plus')} ▸</a>`,
-    extra4: `<a target="_blank" href="${uu(v(p+'extra4_url'))}" style="${SMALL_BTN_STYLE}margin-top:0;">${esc(v(p+'extra4_cta')||'En savoir plus')} ▸</a>`
+    extra4: `<a target="_blank" href="${uu(v(p+'extra4_url'))}" style="${SMALL_BTN_STYLE}margin-top:0;">${esc(v(p+'extra4_cta')||'En savoir plus')} ▸</a>`,
+    recrutement2: `<a target="_blank" href="${uu(v(p+'job2_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'job2_cta')||'Toutes nos offres')} ▸</a>`
   };
   const boxInner = {
     autotouring: `${boxBody.autotouring}<div style="padding-top:14px;">${boxCta.autotouring}</div>`,
     recrutement: `${boxBody.recrutement}<div style="padding-top:6px;">${boxCta.recrutement}</div>`,
     extra1: `${boxBody.extra1}<div style="padding-top:14px;">${boxCta.extra1}</div>`,
     extra2: `${boxBody.extra2}<div style="padding-top:14px;">${boxCta.extra2}</div>`,
+    recrutement2: `${boxBody.recrutement2}<div style="padding-top:6px;">${boxCta.recrutement2}</div>`,
     autotouring2: `${boxBody.autotouring2}<div style="padding-top:14px;">${boxCta.autotouring2}</div>`,
     parrainage2: `${boxBody.parrainage2}<div style="padding-top:14px;">${boxCta.parrainage2}</div>`,
     extra3: `${boxBody.extra3}<div style="padding-top:14px;">${boxCta.extra3}</div>`,
@@ -1794,7 +2100,7 @@ function buildHTML(lang) {
   </table>
 </td></tr>`;
 
-  const BOXABLE = new Set(['autotouring', 'recrutement', 'extra1', 'extra2', 'autotouring2', 'parrainage2', 'extra3', 'extra4']);
+  const BOXABLE = new Set(['autotouring', 'recrutement', 'extra1', 'extra2', 'autotouring2', 'recrutement2', 'parrainage2', 'extra3', 'extra4']);
   const sectionOrder = getSectionOrder();
   const orderedParts = [];
   for (let i = 0; i < sectionOrder.length; i++) {
@@ -1949,7 +2255,8 @@ function loadAllData(data) {
   updateEditionValidity();
   // Update image previews (champs FR restés sans oninput dynamique)
   ['fr_pub1_img:pp1','fr_pub2_img:pp2','fr_pub3_img:pp3','fr_une_img:ppu','fr_vm_img:ppvm','fr_auto_img:ppa','fr_extra1_img:ppe1','fr_extra2_img:ppe2','fr_parr_img:ppparr',
-   'fr_pub1b_img:pp1b','fr_pub2b_img:pp2b','fr_pub3b_img:pp3b','fr_auto2_img:ppa2','fr_parr2_img:ppparr2','fr_extra3_img:ppe3','fr_extra4_img:ppe4'].forEach(pair => {
+   'fr_pub1b_img:pp1b','fr_pub2b_img:pp2b','fr_pub3b_img:pp3b','fr_auto2_img:ppa2','fr_parr2_img:ppparr2','fr_extra3_img:ppe3','fr_extra4_img:ppe4',
+   'fr_une2_img:ppu2','fr_vm2_img:ppvm2'].forEach(pair => {
     const [inp, prev] = pair.split(':');
     const el = document.getElementById(prev); if(el) el.src = v(inp);
   });
