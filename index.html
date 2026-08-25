@@ -266,7 +266,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">25/08/2026 14:15</div>
+  <div class="build-stamp">25/08/2026 16:46</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -435,7 +435,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
         <div class="field"><label>Titre</label><input type="text" id="fr_title_parr_heading" value="Parrainez un proche, gagnez 10 €" /></div>
       </div>
       <div class="g2">
-      <div class="field"><label>Image (opt.)</label><input type="url" id="fr_parr_img" placeholder="https://..." /></div>
+      <div class="field"><label>Image (opt.)</label><input type="url" id="fr_parr_img" placeholder="https://..." oninput="previewImg(this,'ppparr')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="ppparr" class="img-prev" src="" /></div>
       <div>
         <div class="field"><label>Texte</label><textarea id="fr_parr_text">Faites découvrir l'ACL à vos proches et recevez un bon d'achat dès leur adhésion.</textarea></div>
         <div class="field"><label>Lien CTA</label><input type="url" id="fr_parr_url" value="https://www.acl.lu/myacl/fr/referral/" /></div>
@@ -1187,7 +1187,7 @@ function buildTranslatedFields(lang, d) {
       <div class="field"><label>Titre</label><input type="text" id="${lang}_title_parr_heading" value="${esc((d.titles||{}).parr_heading||'')}" /></div>
     </div>
     <div class="g2">
-    <div class="field"><label>Image (opt.)</label><input type="url" id="${lang}_parr_img" value="${esc(pa.img||'')}" /></div>
+    <div class="field"><label>Image (opt.)</label><input type="url" id="${lang}_parr_img" value="${esc(pa.img||'')}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img class="img-prev" src="${pa.img||''}" /></div>
     <div><div class="field"><label>Texte</label><textarea id="${lang}_parr_text">${esc(pa.text||'')}</textarea></div>
     <div class="field"><label>URL</label><input type="url" id="${lang}_parr_url" value="${esc(pa.url||'')}" /></div></div>
     </div>
@@ -1689,7 +1689,7 @@ function loadAllData(data) {
   if (data.de) { applyFrDataToLang('de', data.de); document.getElementById('badge-de').textContent = data.de.actu?.length ? '✓ Copié' : '—'; }
   updateEditionValidity();
   // Update image previews (champs FR restés sans oninput dynamique)
-  ['fr_pub1_img:pp1','fr_pub2_img:pp2','fr_pub3_img:pp3','fr_une_img:ppu','fr_vm_img:ppvm','fr_auto_img:ppa','fr_extra1_img:ppe1','fr_extra2_img:ppe2'].forEach(pair => {
+  ['fr_pub1_img:pp1','fr_pub2_img:pp2','fr_pub3_img:pp3','fr_une_img:ppu','fr_vm_img:ppvm','fr_auto_img:ppa','fr_extra1_img:ppe1','fr_extra2_img:ppe2','fr_parr_img:ppparr'].forEach(pair => {
     const [inp, prev] = pair.split(':');
     const el = document.getElementById(prev); if(el) el.src = v(inp);
   });
