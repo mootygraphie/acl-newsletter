@@ -264,7 +264,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">25/08/2026 21:25</div>
+  <div class="build-stamp">26/08/2026 16:33</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -2222,11 +2222,16 @@ function getHiddenSections() {
   });
 }
 
-function applyHiddenSections(hidden) {
-  const list = Array.isArray(hidden) ? hidden : [];
+function applyHiddenSections(hidden, order) {
+  const hiddenList = Array.isArray(hidden) ? hidden : [];
+  const orderList = Array.isArray(order) ? order : null;
   Object.keys(SECTION_LABELS).forEach(key => {
+    // Si on a un "order" sauvegardé, il fait foi : une section n'est visible que si elle y figure.
+    // Ça évite qu'une clé inconnue au moment de la sauvegarde (ex: une section "copie" ajoutée
+    // depuis) se retrouve affichée par défaut au rechargement d'une édition plus ancienne.
+    const shouldHide = orderList ? !orderList.includes(key) : hiddenList.includes(key);
     document.querySelectorAll(`.form-section[data-section="${key}"]`).forEach(el => {
-      el.classList.toggle('section-hidden', list.includes(key));
+      el.classList.toggle('section-hidden', shouldHide);
     });
   });
 }
@@ -2247,7 +2252,7 @@ function setField(id, val) { const el = document.getElementById(id); if(el && va
 
 function loadAllData(data) {
   if (!data || !data.fr) return;
-  applyHiddenSections(data.hidden);
+  applyHiddenSections(data.hidden, data.order);
   if (data.order) applySectionOrder(data.order);
   applyFrDataToLang('fr', data.fr);
   if (data.en) { applyFrDataToLang('en', data.en); document.getElementById('badge-en').textContent = data.en.actu?.length ? '✓ Copié' : '—'; }
