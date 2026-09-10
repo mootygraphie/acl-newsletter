@@ -264,7 +264,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">26/08/2026 16:33</div>
+  <div class="build-stamp">10/09/2026 14:56</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -296,7 +296,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- PUB 1 -->
-  <div class="form-section" data-section="pub1" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section" data-section="pub1" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 1</span><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body g2">
       <div class="field"><label>URL image</label><input type="url" id="fr_pub1_img" value="https://img.mailinblue.com/4363334/images/content_library/original/6a300abac8e9e1c3ee19ff90.jpg" oninput="previewImg(this,'pp1')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="pp1" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/6a300abac8e9e1c3ee19ff90.jpg" /></div>
@@ -305,7 +305,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- PUB 1 (copie) -->
-  <div class="form-section section-hidden" data-section="pub1b" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section section-hidden" data-section="pub1b" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 1 (copie)</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body g2">
       <div class="field"><label>URL image</label><input type="url" id="fr_pub1b_img" placeholder="https://..." oninput="previewImg(this,'pp1b')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="pp1b" class="img-prev" src="" /></div>
@@ -315,7 +315,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- À LA UNE / ACTUALITÉS / EN BREF -->
-  <div class="form-section" data-section="unebref" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section" data-section="unebref" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🗞</span><span class="form-section-title">À la Une / Actualités / En Bref</span><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="cg-label" style="margin-bottom:10px;">À la une</div>
@@ -347,7 +347,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- À LA UNE / ACTUALITÉS / EN BREF (copie) -->
-  <div class="form-section section-hidden" data-section="unebref2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section section-hidden" data-section="unebref2" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🗞</span><span class="form-section-title">À la Une / Actualités / En Bref (copie)</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="cg-label" style="margin-bottom:10px;">À la une (opt.)</div>
@@ -376,7 +376,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- PUB 2 -->
-  <div class="form-section" data-section="pub2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section" data-section="pub2" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 2</span><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body g2">
       <div class="field"><label>URL image</label><input type="url" id="fr_pub2_img" value="https://img.mailinblue.com/4363334/images/content_library/original/69675df04a53a52a8e9e9f56.jpg" oninput="previewImg(this,'pp2')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="pp2" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/69675df04a53a52a8e9e9f56.jpg" /></div>
@@ -385,7 +385,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- PUB 2 (copie) -->
-  <div class="form-section section-hidden" data-section="pub2b" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section section-hidden" data-section="pub2b" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 2 (copie)</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body g2">
       <div class="field"><label>URL image</label><input type="url" id="fr_pub2b_img" placeholder="https://..." oninput="previewImg(this,'pp2b')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="pp2b" class="img-prev" src="" /></div>
@@ -395,21 +395,21 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- BANC D'ESSAI -->
-  <div class="form-section" data-section="banc" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section" data-section="banc" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🚗</span><input type="text" class="form-section-title-input" id="fr_title_banc" value="Au banc d'essai" /><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body"><div id="cpicker_fr_banc"></div>
       <div id="fr_banc_c"></div><button class="btn-add" onclick="addBanc('fr')">+ Ajouter un essai</button></div>
   </div>
 
   <!-- BANC D'ESSAI (copie) -->
-  <div class="form-section section-hidden" data-section="banc2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section section-hidden" data-section="banc2" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🚗</span><input type="text" class="form-section-title-input" id="fr_title_banc2" placeholder="Au banc d'essai" /><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div id="fr_banc2_c"></div><button class="btn-add" onclick="addBanc2('fr')">+ Ajouter un essai</button></div>
   </div>
 
   <!-- VOYAGES -->
-  <div class="form-section" data-section="voy" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section" data-section="voy" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">✈️</span><input type="text" class="form-section-title-input" id="fr_title_voy" value="Nos Voyages" /><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="cg" style="margin-bottom:14px;">
@@ -431,7 +431,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- VOYAGES (copie) -->
-  <div class="form-section section-hidden" data-section="voy2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section section-hidden" data-section="voy2" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">✈️</span><input type="text" class="form-section-title-input" id="fr_title_voy2" placeholder="Nos Voyages" /><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="cg" style="margin-bottom:14px;">
@@ -452,7 +452,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- AGENDA -->
-  <div class="form-section" data-section="agenda" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section" data-section="agenda" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📅</span><input type="text" class="form-section-title-input" id="fr_title_agenda" value="L'Agenda" /><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body"><div id="cpicker_fr_agenda"></div>
       <div class="field" style="margin-bottom:14px;"><label>Sous-titre</label><input type="text" id="fr_title_agenda_kicker" value="Formations &amp; événements" /></div>
@@ -465,7 +465,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- AGENDA (copie) -->
-  <div class="form-section section-hidden" data-section="agenda2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section section-hidden" data-section="agenda2" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📅</span><input type="text" class="form-section-title-input" id="fr_title_agenda2" placeholder="L'Agenda" /><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="field" style="margin-bottom:14px;"><label>Sous-titre</label><input type="text" id="fr_title_agenda2_kicker" placeholder="Formations &amp; événements" /></div>
@@ -478,7 +478,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- PUB 3 -->
-  <div class="form-section" data-section="pub3" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section" data-section="pub3" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 3</span><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body g2">
       <div class="field"><label>URL image</label><input type="url" id="fr_pub3_img" placeholder="https://..." oninput="previewImg(this,'pp3')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="pp3" class="img-prev" src="" /></div>
@@ -488,7 +488,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- PUB 3 (copie) -->
-  <div class="form-section section-hidden" data-section="pub3b" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section section-hidden" data-section="pub3b" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📢</span><span class="form-section-title">Bandeau pub 3 (copie)</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body g2">
       <div class="field"><label>URL image</label><input type="url" id="fr_pub3b_img" placeholder="https://..." oninput="previewImg(this,'pp3b')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="pp3b" class="img-prev" src="" /></div>
@@ -498,7 +498,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- AUTOTOURING -->
-  <div class="form-section" data-section="autotouring" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section" data-section="autotouring" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📖</span><span class="form-section-title">Autotouring</span><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="g2" style="margin-bottom:14px;">
@@ -517,7 +517,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- AUTOTOURING (copie) -->
-  <div class="form-section section-hidden" data-section="autotouring2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section section-hidden" data-section="autotouring2" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">📖</span><span class="form-section-title">Autotouring (copie)</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="g2" style="margin-bottom:14px;">
@@ -536,7 +536,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- RECRUTEMENT -->
-  <div class="form-section" data-section="recrutement" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section" data-section="recrutement" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">💼</span><span class="form-section-title">Recrutement</span><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="g2" style="margin-bottom:14px;">
@@ -553,7 +553,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- RECRUTEMENT (copie) -->
-  <div class="form-section section-hidden" data-section="recrutement2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section section-hidden" data-section="recrutement2" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">💼</span><span class="form-section-title">Recrutement (copie)</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="g2" style="margin-bottom:14px;">
@@ -570,7 +570,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- PARRAINAGE -->
-  <div class="form-section" data-section="parrainage" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section" data-section="parrainage" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🎁</span><span class="form-section-title">Parrainage</span><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="g2" style="margin-bottom:14px;">
@@ -588,7 +588,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- PARRAINAGE (copie) -->
-  <div class="form-section section-hidden" data-section="parrainage2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section section-hidden" data-section="parrainage2" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🎁</span><span class="form-section-title">Parrainage (copie)</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="g2" style="margin-bottom:14px;">
@@ -606,7 +606,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- CARTE ADDITIONNELLE 1 -->
-  <div class="form-section" data-section="extra1" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section" data-section="extra1" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🗂</span><span class="form-section-title">Carte additionnelle 1</span><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="field"><label>Image</label><input type="url" id="fr_extra1_img" placeholder="https://..." oninput="previewImg(this,'ppe1')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="ppe1" class="img-prev" src="" /></div>
@@ -617,7 +617,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- CARTE ADDITIONNELLE 1 (copie / carte 3) -->
-  <div class="form-section section-hidden" data-section="extra3" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section section-hidden" data-section="extra3" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🗂</span><span class="form-section-title">Carte additionnelle 3</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="field"><label>Image</label><input type="url" id="fr_extra3_img" placeholder="https://..." oninput="previewImg(this,'ppe3')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="ppe3" class="img-prev" src="" /></div>
@@ -628,7 +628,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- CARTE ADDITIONNELLE 2 -->
-  <div class="form-section" data-section="extra2" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section" data-section="extra2" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🗂</span><span class="form-section-title">Carte additionnelle 2</span><button type="button" class="section-dup-btn" onclick="event.stopPropagation();duplicateSection(this)" title="Dupliquer">⧉</button><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="field"><label>Image</label><input type="url" id="fr_extra2_img" placeholder="https://..." oninput="previewImg(this,'ppe2')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="ppe2" class="img-prev" src="" /></div>
@@ -639,7 +639,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
   </div>
 
   <!-- CARTE ADDITIONNELLE 2 (copie / carte 4) -->
-  <div class="form-section section-hidden" data-section="extra4" draggable="true" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
+  <div class="form-section section-hidden" data-section="extra4" ondragstart="sectionDragStart(event)" ondragover="sectionDragOver(event)" ondrop="event.preventDefault()" ondragend="sectionDragEnd(event)">
     <div class="form-section-header" onclick="handleSectionHeaderClick(event)"><span class="section-drag-handle" title="Déplacer">⠿</span><span class="form-section-icon">🗂</span><span class="form-section-title">Carte additionnelle 4</span><button type="button" class="section-delete-btn" onclick="event.stopPropagation();deleteSection(this)" title="Supprimer">✕</button><span class="section-toggle-btn" title="Ouvrir/fermer">▾</span></div>
     <div class="form-section-body">
       <div class="field"><label>Image</label><input type="url" id="fr_extra4_img" placeholder="https://..." oninput="previewImg(this,'ppe4')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="ppe4" class="img-prev" src="" /></div>
@@ -920,7 +920,7 @@ function renderActu(lang, key) {
   const c = document.getElementById(lang+'_'+key+'_c'); if(!c) return;
   const data = D[lang][key];
   c.innerHTML = data.map((d,i) => `
-    <div class="cg" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><div class="cg-header"><span class="item-drag-handle" title="Déplacer">⠿</span><span class="cg-label">Vignette ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button></div>
+    <div class="cg" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><div class="cg-header"><span class="item-drag-handle" title="Déplacer">⠿</span><span class="cg-label">Vignette ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button></div>
     <div class="field"><label>🔗 URL article</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}']['${key}'][${i}].url=this.value" /></div>
     <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}']['${key}'][${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button></div>
     <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}']['${key}'][${i}].title=this.value" /></div>
@@ -933,7 +933,7 @@ function renderBref(lang, key) {
   const c = document.getElementById(lang+'_'+key+'_c'); if(!c) return;
   const data = D[lang][key];
   c.innerHTML = data.map((d,i) => `
-    <div class="dyn-item" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button>
+    <div class="dyn-item" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button>
     <div class="g3" style="gap:8px;">
       <div class="field"><label>Catégorie</label><input type="text" value="${esc(d.cat||'')}" oninput="D['${lang}']['${key}'][${i}].cat=this.value" /></div>
       <div class="field" style="grid-column:span 2"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}']['${key}'][${i}].title=this.value" /></div>
@@ -947,7 +947,7 @@ function renderBanc(lang, key) {
   const c = document.getElementById(lang+'_'+key+'_c'); if(!c) return;
   const data = D[lang][key];
   c.innerHTML = data.map((d,i) => `
-    <div class="dyn-item" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button>
+    <div class="dyn-item" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button>
     <div class="field" style="margin-bottom:10px;"><label>🔗 URL article</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}']['${key}'][${i}].url=this.value" /></div>
     <div class="g2" style="gap:10px;">
       <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}']['${key}'][${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button></div>
@@ -963,7 +963,7 @@ function renderVoy(lang, key) {
   const c = document.getElementById(lang+'_'+key+'_c'); if(!c) return;
   const data = D[lang][key];
   c.innerHTML = data.map((d,i) => `
-    <div class="cg" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><div class="cg-header"><span class="item-drag-handle" title="Déplacer">⠿</span><span class="cg-label">Carte ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button></div>
+    <div class="cg" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><div class="cg-header"><span class="item-drag-handle" title="Déplacer">⠿</span><span class="cg-label">Carte ${i+1}</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button></div>
     <div class="field"><label>🔗 URL article</label><input type="url" value="${esc(d.url||'')}" oninput="D['${lang}']['${key}'][${i}].url=this.value" /></div>
     <div class="field"><label>Image</label><input type="url" value="${esc(d.img||'')}" oninput="D['${lang}']['${key}'][${i}].img=this.value;this.nextElementSibling.src=this.value" /><img class="img-prev" src="${d.img||''}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button></div>
     <div class="field"><label>Badge</label><input type="text" value="${esc(d.badge||'')}" oninput="D['${lang}']['${key}'][${i}].badge=this.value" /></div>
@@ -977,7 +977,7 @@ function renderAgenda(lang, key) {
   const c = document.getElementById(lang+'_'+key+'_c'); if(!c) return;
   const data = D[lang][key];
   c.innerHTML = data.map((d,i) => `
-    <div class="dyn-item" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button>
+    <div class="dyn-item" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button>
     <div class="g4" style="gap:8px;margin-bottom:8px;">
       <div class="field"><label>Jour</label><input type="text" value="${esc(d.jour||'')}" placeholder="SAM" oninput="D['${lang}']['${key}'][${i}].jour=this.value" /></div>
       <div class="field"><label>Num</label><input type="text" value="${esc(d.num||'')}" placeholder="28" oninput="D['${lang}']['${key}'][${i}].num=this.value" /></div>
@@ -995,7 +995,7 @@ function renderJobs(lang, key) {
   const c = document.getElementById(lang+'_'+key+'_c'); if(!c) return;
   const data = D[lang][key];
   c.innerHTML = data.map((d,i) => `
-    <div class="dyn-item" draggable="true" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button>
+    <div class="dyn-item" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button>
     <div class="g3" style="gap:8px;">
       <div class="field" style="grid-column:span 2"><label>Intitulé</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}']['${key}'][${i}].title=this.value" /></div>
       <div class="field"><label>Détails</label><input type="text" value="${esc(d.detail||'')}" oninput="D['${lang}']['${key}'][${i}].detail=this.value" /></div>
@@ -1078,6 +1078,22 @@ function collapseAllExceptParams(scope) {
     if (el.dataset.section !== 'params') el.classList.add('collapsed');
   });
 }
+
+// ── DRAG UNIQUEMENT DEPUIS LA POIGNÉE ⠿ ───────────
+// draggable="true" n'est posé sur la carte qu'au moment où on presse la poignée,
+// pour ne pas capturer la sélection de texte ailleurs dans la section/carte.
+document.addEventListener('mousedown', (e) => {
+  const handle = e.target.closest('.section-drag-handle, .item-drag-handle');
+  if (!handle) return;
+  const draggableParent = handle.closest('.form-section, .cg, .dyn-item');
+  if (draggableParent) draggableParent.setAttribute('draggable', 'true');
+});
+function releaseDragHandles() {
+  document.querySelectorAll('.form-section[draggable="true"], .cg[draggable="true"], .dyn-item[draggable="true"]')
+    .forEach(el => el.removeAttribute('draggable'));
+}
+document.addEventListener('mouseup', releaseDragHandles);
+document.addEventListener('dragend', releaseDragHandles);
 
 let dragSectionEl = null;
 function sectionDragStart(e) {
