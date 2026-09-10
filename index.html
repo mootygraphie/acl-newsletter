@@ -265,7 +265,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">10/09/2026 15:39</div>
+  <div class="build-stamp">10/09/2026 17:18</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -1876,8 +1876,8 @@ function buildHTML(lang) {
   // ── BLOCS DE SECTION (assemblés dans l'ordre choisi dans le builder) ──
   const blocks = {};
 
-  blocks.pub1 = `<tr><td style="background-color:#EFEFEF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub1H}</td></tr>`;
-  blocks.pub1b = pub1b ? `<tr><td style="background-color:#EFEFEF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub1bH}</td></tr>` : '';
+  blocks.pub1 = `<tr><td style="background-color:#FFFFFF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub1H}</td></tr>`;
+  blocks.pub1b = pub1b ? `<tr><td style="background-color:#FFFFFF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub1bH}</td></tr>` : '';
 
   blocks.unebref = `<!-- À LA UNE -->
 <tr><td style="background-color:${getBg(lang,'une')};padding:28px 28px 28px;">
@@ -1941,11 +1941,11 @@ ${brefH2 ? `<!-- EN BREF (copie) -->
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">${brefH2}</table>
 </td></tr>` : ''}` : '';
 
-  blocks.pub2 = `<tr><td style="background-color:#EFEFEF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub2H}</td></tr>`;
-  blocks.pub2b = pub2b ? `<tr><td style="background-color:#EFEFEF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub2bH}</td></tr>` : '';
+  blocks.pub2 = `<tr><td style="background-color:#FFFFFF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub2H}</td></tr>`;
+  blocks.pub2b = pub2b ? `<tr><td style="background-color:#FFFFFF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub2bH}</td></tr>` : '';
 
-  blocks.pub3 = pub3 ? `<tr><td style="background-color:#EFEFEF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub3H}</td></tr>` : '';
-  blocks.pub3b = pub3b ? `<tr><td style="background-color:#EFEFEF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub3bH}</td></tr>` : '';
+  blocks.pub3 = pub3 ? `<tr><td style="background-color:#FFFFFF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub3H}</td></tr>` : '';
+  blocks.pub3b = pub3b ? `<tr><td style="background-color:#FFFFFF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub3bH}</td></tr>` : '';
 
   blocks.banc = `<!-- BANC D'ESSAI -->
 <tr><td style="background-color:${getBg(lang,'banc')};padding:28px 28px 28px;">
