@@ -264,7 +264,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">10/09/2026 14:56</div>
+  <div class="build-stamp">10/09/2026 15:03</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -802,10 +802,10 @@ const D = {
       { img: 'https://img.mailinblue.com/4363334/images/content_library/original/6a2fcd7d4c87acf1b003d4f2.png', badge: 'Témoignage', title: 'Toscana Splendida', text: "L'Italie dans toute sa splendeur, par Lydia Mutsch.", url: 'https://www.acl.lu/fr/magazine/temoignages-de-voyages/toscana-splendida-litalie-dans-toute-sa-splendeur/' }
     ],
     agenda: [
-      { jour: 'SAM', num: '28', mois: 'JUIN', cat: 'Diagnostic', title: 'Test vacances au Diagnostic Center', details: 'ACL Bertrange · Sur rendez-vous', url: 'https://www.acl.lu/fr/mobilite/diagnostic-vehicule/' },
-      { jour: 'MER', num: '01', mois: 'JUIL', cat: "Séance d'info", title: '20 ans EuroAsie : deux voyages en Chine', details: 'ACL Bertrange · 17h00 (DE) & 19h30 (FR)', url: 'https://www.acl.lu/fr/agenda/' },
-      { jour: 'SAM', num: '05', mois: 'JUIL', cat: 'Formation', title: 'Stage de perfectionnement moto', details: 'ACL Driving Center · 08h30', url: 'https://www.acl.lu/fr/agenda/' },
-      { jour: 'SAM', num: '12', mois: 'JUIL', cat: 'Atelier', title: 'Sécurité des enfants à bord', details: 'ACL Bertrange · 10h00', url: 'https://www.acl.lu/fr/agenda/' }
+      { date: '2026-06-28', cat: 'Diagnostic', title: 'Test vacances au Diagnostic Center', details: 'ACL Bertrange · Sur rendez-vous', url: 'https://www.acl.lu/fr/mobilite/diagnostic-vehicule/' },
+      { date: '2026-07-01', cat: "Séance d'info", title: '20 ans EuroAsie : deux voyages en Chine', details: 'ACL Bertrange · 17h00 (DE) & 19h30 (FR)', url: 'https://www.acl.lu/fr/agenda/' },
+      { date: '2026-07-05', cat: 'Formation', title: 'Stage de perfectionnement moto', details: 'ACL Driving Center · 08h30', url: 'https://www.acl.lu/fr/agenda/' },
+      { date: '2026-07-12', cat: 'Atelier', title: 'Sécurité des enfants à bord', details: 'ACL Bertrange · 10h00', url: 'https://www.acl.lu/fr/agenda/' }
     ],
     jobs: [
       { title: 'Dépanneur / Dépanneuse', detail: 'H/F · CDI · Temps plein', url: 'https://www.acl.lu/fr/carrieres/une-depanneur-depanneuse-h-f-cdi-temps-plein/' },
@@ -978,10 +978,8 @@ function renderAgenda(lang, key) {
   const data = D[lang][key];
   c.innerHTML = data.map((d,i) => `
     <div class="dyn-item" data-index="${i}" ondragstart="itemDragStart(event)" ondragover="itemDragOver(event)" ondrop="event.preventDefault()" ondragend="itemDragEnd(event,'${lang}','${key}')"><span class="item-drag-handle" title="Déplacer">⠿</span><button class="btn-rm" onclick="rm('${lang}','${key}',${i})">×</button>
-    <div class="g4" style="gap:8px;margin-bottom:8px;">
-      <div class="field"><label>Jour</label><input type="text" value="${esc(d.jour||'')}" placeholder="SAM" oninput="D['${lang}']['${key}'][${i}].jour=this.value" /></div>
-      <div class="field"><label>Num</label><input type="text" value="${esc(d.num||'')}" placeholder="28" oninput="D['${lang}']['${key}'][${i}].num=this.value" /></div>
-      <div class="field"><label>Mois</label><input type="text" value="${esc(d.mois||'')}" placeholder="JUIN" oninput="D['${lang}']['${key}'][${i}].mois=this.value" /></div>
+    <div class="g2" style="gap:8px;margin-bottom:8px;">
+      <div class="field"><label>Date</label><input type="date" value="${esc(d.date||'')}" oninput="D['${lang}']['${key}'][${i}].date=this.value" /></div>
       <div class="field"><label>Catégorie</label><input type="text" value="${esc(d.cat||'')}" oninput="D['${lang}']['${key}'][${i}].cat=this.value" /></div>
     </div>
     <div class="field"><label>Titre</label><input type="text" value="${esc(d.title||'')}" oninput="D['${lang}']['${key}'][${i}].title=this.value" /></div>
@@ -1045,14 +1043,14 @@ function addActu(l)  { D[l].actu.push({img:'',title:'',url:'',cta:'En savoir plu
 function addBref(l)  { D[l].bref.push({cat:'',title:'',url:''}); renderBref(l); }
 function addBanc(l)  { D[l].banc.push({img:'',title:'',url:'',cta:'Voir notre test'}); renderBanc(l); }
 function addVoy(l)   { D[l].voy.push({img:'',badge:'',title:'',text:'',url:''}); renderVoy(l); }
-function addAgenda(l){ D[l].agenda.push({jour:'',num:'',mois:'',cat:'',title:'',details:'',url:''}); renderAgenda(l); }
+function addAgenda(l){ D[l].agenda.push({date:'',cat:'',title:'',details:'',url:''}); renderAgenda(l); }
 function addJob(l)   { D[l].jobs.push({title:'',detail:'',url:''}); renderJobs(l); }
 
 function addActu2(l)  { D[l].actu2.push({img:'',title:'',url:'',cta:'En savoir plus'}); renderActu(l,'actu2'); }
 function addBref2(l)  { D[l].bref2.push({cat:'',title:'',url:''}); renderBref(l,'bref2'); }
 function addBanc2(l)  { D[l].banc2.push({img:'',title:'',url:'',cta:'Voir notre test'}); renderBanc(l,'banc2'); }
 function addVoy2(l)   { D[l].voy2.push({img:'',badge:'',title:'',text:'',url:''}); renderVoy(l,'voy2'); }
-function addAgenda2(l){ D[l].agenda2.push({jour:'',num:'',mois:'',cat:'',title:'',details:'',url:''}); renderAgenda(l,'agenda2'); }
+function addAgenda2(l){ D[l].agenda2.push({date:'',cat:'',title:'',details:'',url:''}); renderAgenda(l,'agenda2'); }
 function addJob2(l)   { D[l].jobs2.push({title:'',detail:'',url:''}); renderJobs(l,'jobs2'); }
 
 // ── TABS ─────────────────────────────────────────
@@ -1699,14 +1697,28 @@ function buildHTML(lang) {
   const uu = (url) => url || '#';
   const SMALL_BTN_STYLE = "font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;color:#000000!important;display:inline-block;margin-top:14px;padding:6px 12px;border-radius:15px;background:#FCD900;text-transform:uppercase;letter-spacing:1px;text-decoration:none!important;";
 
-  const buildAgendaH = (items) => items.map(ev => `
+  const AGENDA_LOCALE = { fr: 'fr-FR', en: 'en-GB', de: 'de-DE' };
+  const AGENDA_JOUR_LEN = { fr: 3, en: 3, de: 2 };
+  const formatAgendaDate = (ev) => {
+    const d = ev.date ? new Date(ev.date + 'T00:00:00') : null;
+    if (!d || isNaN(d)) return { jour: ev.jour || '', num: ev.num || '', mois: ev.mois || '' };
+    const locale = AGENDA_LOCALE[lang] || 'fr-FR';
+    const weekdayFull = new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(d);
+    const monthFull = new Intl.DateTimeFormat(locale, { month: 'long' }).format(d);
+    const num = new Intl.DateTimeFormat(locale, { day: '2-digit' }).format(d);
+    const jourLen = AGENDA_JOUR_LEN[lang] || 3;
+    const jour = weekdayFull.slice(0, jourLen) + '.';
+    const mois = monthFull.length > 4 ? monthFull.slice(0, 4) + '.' : monthFull;
+    return { jour, num, mois };
+  };
+  const buildAgendaH = (items) => items.map(ev => { const dt = formatAgendaDate(ev); return `
     <a target="_blank" href="${uu(ev.url)}" style="display:block;text-decoration:none;margin-bottom:10px;">
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#FFFFFF;border-radius:6px;">
       <tr>
         <td width="68" valign="middle" align="center" style="background-color:#1A1A1A;border-radius:6px 0 0 6px;padding:14px 10px;">
-          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;color:#FCD900;margin:0;line-height:1;">${esc(ev.jour)}</p>
-          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:24px;color:#FFFFFF;margin:2px 0;line-height:1;">${esc(ev.num)}</p>
-          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;color:#FCD900;margin:0;line-height:1;">${esc(ev.mois)}</p>
+          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;color:#FCD900;margin:0;line-height:1;">${esc(dt.jour)}</p>
+          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:24px;color:#FFFFFF;margin:2px 0;line-height:1;">${esc(dt.num)}</p>
+          <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;color:#FCD900;margin:0;line-height:1;">${esc(dt.mois)}</p>
         </td>
         <td style="padding:14px 16px;vertical-align:middle;">
           <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FCD900;margin:0 0 4px 0;">${esc(ev.cat)}</p>
@@ -1718,7 +1730,7 @@ function buildHTML(lang) {
         </td>
       </tr>
     </table>
-    </a>`).join('');
+    </a>`; }).join('');
   const agendaH = buildAgendaH(D[lang].agenda);
   const agendaH2 = buildAgendaH(D[lang].agenda2);
 
