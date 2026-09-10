@@ -265,7 +265,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">10/09/2026 17:18</div>
+  <div class="build-stamp">10/09/2026 17:22</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -1842,9 +1842,9 @@ function buildHTML(lang) {
   const pub1l = v(p+'pub1_link');
   const pub2l = v(p+'pub2_link');
   const pub3l = v(p+'pub3_link');
-  const p1 = `<img src="${pub1}" width="584" alt="" style="display:block;width:100%;max-width:584px;border-radius:4px;margin:0 auto;" />`;
-  const p2 = `<img src="${pub2}" width="584" alt="" style="display:block;width:100%;max-width:584px;border-radius:4px;margin:0 auto;" />`;
-  const p3 = `<img src="${pub3}" width="584" alt="" style="display:block;width:100%;max-width:584px;border-radius:4px;margin:0 auto;" />`;
+  const p1 = `<img src="${pub1}" width="584" alt="" style="display:block;width:100%;max-width:584px;border-radius:4px;margin:0 auto;background-color:#FFFFFF;" />`;
+  const p2 = `<img src="${pub2}" width="584" alt="" style="display:block;width:100%;max-width:584px;border-radius:4px;margin:0 auto;background-color:#FFFFFF;" />`;
+  const p3 = `<img src="${pub3}" width="584" alt="" style="display:block;width:100%;max-width:584px;border-radius:4px;margin:0 auto;background-color:#FFFFFF;" />`;
   const pub1H = pub1l ? `<a target="_blank" href="${uu(pub1l)}" style="display:block;line-height:0;">${p1}</a>` : p1;
   const pub2H = pub2l ? `<a target="_blank" href="${uu(pub2l)}" style="display:block;line-height:0;">${p2}</a>` : p2;
   const pub3H = pub3l ? `<a target="_blank" href="${uu(pub3l)}" style="display:block;line-height:0;">${p3}</a>` : p3;
@@ -1853,7 +1853,7 @@ function buildHTML(lang) {
   const pub1bl = v(p+'pub1b_link'), pub2bl = v(p+'pub2b_link'), pub3bl = v(p+'pub3b_link');
   const dupPubH = (img, link) => {
     if (!img) return '';
-    const tag = `<img src="${img}" width="584" alt="" style="display:block;width:100%;max-width:584px;border-radius:4px;margin:0 auto;" />`;
+    const tag = `<img src="${img}" width="584" alt="" style="display:block;width:100%;max-width:584px;border-radius:4px;margin:0 auto;background-color:#FFFFFF;" />`;
     return link ? `<a target="_blank" href="${uu(link)}" style="display:block;line-height:0;">${tag}</a>` : tag;
   };
   const pub1bH = dupPubH(pub1b, pub1bl), pub2bH = dupPubH(pub2b, pub2bl), pub3bH = dupPubH(pub3b, pub3bl);
@@ -1876,8 +1876,8 @@ function buildHTML(lang) {
   // ── BLOCS DE SECTION (assemblés dans l'ordre choisi dans le builder) ──
   const blocks = {};
 
-  blocks.pub1 = `<tr><td style="background-color:#FFFFFF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub1H}</td></tr>`;
-  blocks.pub1b = pub1b ? `<tr><td style="background-color:#FFFFFF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub1bH}</td></tr>` : '';
+  blocks.pub1 = `<tr><td style="background-color:#EFEFEF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub1H}</td></tr>`;
+  blocks.pub1b = pub1b ? `<tr><td style="background-color:#EFEFEF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub1bH}</td></tr>` : '';
 
   blocks.unebref = `<!-- À LA UNE -->
 <tr><td style="background-color:${getBg(lang,'une')};padding:28px 28px 28px;">
@@ -1941,11 +1941,11 @@ ${brefH2 ? `<!-- EN BREF (copie) -->
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">${brefH2}</table>
 </td></tr>` : ''}` : '';
 
-  blocks.pub2 = `<tr><td style="background-color:#FFFFFF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub2H}</td></tr>`;
-  blocks.pub2b = pub2b ? `<tr><td style="background-color:#FFFFFF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub2bH}</td></tr>` : '';
+  blocks.pub2 = `<tr><td style="background-color:#EFEFEF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub2H}</td></tr>`;
+  blocks.pub2b = pub2b ? `<tr><td style="background-color:#EFEFEF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub2bH}</td></tr>` : '';
 
-  blocks.pub3 = pub3 ? `<tr><td style="background-color:#FFFFFF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub3H}</td></tr>` : '';
-  blocks.pub3b = pub3b ? `<tr><td style="background-color:#FFFFFF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub3bH}</td></tr>` : '';
+  blocks.pub3 = pub3 ? `<tr><td style="background-color:#EFEFEF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub3H}</td></tr>` : '';
+  blocks.pub3b = pub3b ? `<tr><td style="background-color:#EFEFEF;padding:20px 28px;text-align:center;line-height:0;font-size:0;">${pub3bH}</td></tr>` : '';
 
   blocks.banc = `<!-- BANC D'ESSAI -->
 <tr><td style="background-color:${getBg(lang,'banc')};padding:28px 28px 28px;">
