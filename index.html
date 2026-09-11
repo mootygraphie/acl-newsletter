@@ -265,7 +265,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">10/09/2026 17:22</div>
+  <div class="build-stamp">11/09/2026 11:26</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -1748,7 +1748,7 @@ function buildHTML(lang) {
   const jobsH = buildJobsH(D[lang].jobs);
   const jobsH2 = buildJobsH(D[lang].jobs2);
 
-  const actuBody = (d) => `<a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img class="mobile-center" src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /></a>
+  const actuBody = (d) => `<a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img class="mobile-center" src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;height:auto;max-height:185px;object-fit:cover;border-radius:6px;" /></a>
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td class="mobile-center" style="vertical-align:top;padding-top:13px;">
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.35;color:#1A1A1A;margin:0;">${esc(d.title)}</p>
     </td></tr></table>`;
@@ -1803,7 +1803,7 @@ function buildHTML(lang) {
   const bancH = buildBancH(D[lang].banc);
   const bancH2 = buildBancH(D[lang].banc2);
 
-  const voyBody = (d) => `<a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img class="mobile-center" src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;border-radius:6px;" /></a>
+  const voyBody = (d) => `<a target="_blank" href="${uu(d.url)}" style="display:block;line-height:0;"><img class="mobile-center" src="${esc(d.img)}" width="278" alt="${esc(d.title)}" style="display:block;width:100%;max-width:278px;height:auto;max-height:185px;object-fit:cover;border-radius:6px;" /></a>
     ${d.badge?`<table class="mobile-center" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:11px 0 8px;"><tr><td style="background-color:#EEEEEE;padding:4px 10px;border-radius:10px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#666666;">${esc(d.badge)}</td></tr></table>`:''}
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td class="mobile-center" style="vertical-align:top;${d.badge?'':'padding-top:11px;'}">
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.3;color:#1A1A1A;margin:0 0 6px 0;">${esc(d.title)}</p>
@@ -1842,9 +1842,9 @@ function buildHTML(lang) {
   const pub1l = v(p+'pub1_link');
   const pub2l = v(p+'pub2_link');
   const pub3l = v(p+'pub3_link');
-  const p1 = `<img src="${pub1}" width="584" alt="" style="display:block;width:100%;max-width:584px;border-radius:4px;margin:0 auto;background-color:#FFFFFF;" />`;
-  const p2 = `<img src="${pub2}" width="584" alt="" style="display:block;width:100%;max-width:584px;border-radius:4px;margin:0 auto;background-color:#FFFFFF;" />`;
-  const p3 = `<img src="${pub3}" width="584" alt="" style="display:block;width:100%;max-width:584px;border-radius:4px;margin:0 auto;background-color:#FFFFFF;" />`;
+  const p1 = `<img src="${pub1}" width="584" alt="" style="display:block;width:100%;max-width:584px;height:auto;max-height:220px;object-fit:cover;border-radius:4px;margin:0 auto;background-color:#FFFFFF;" />`;
+  const p2 = `<img src="${pub2}" width="584" alt="" style="display:block;width:100%;max-width:584px;height:auto;max-height:220px;object-fit:cover;border-radius:4px;margin:0 auto;background-color:#FFFFFF;" />`;
+  const p3 = `<img src="${pub3}" width="584" alt="" style="display:block;width:100%;max-width:584px;height:auto;max-height:220px;object-fit:cover;border-radius:4px;margin:0 auto;background-color:#FFFFFF;" />`;
   const pub1H = pub1l ? `<a target="_blank" href="${uu(pub1l)}" style="display:block;line-height:0;">${p1}</a>` : p1;
   const pub2H = pub2l ? `<a target="_blank" href="${uu(pub2l)}" style="display:block;line-height:0;">${p2}</a>` : p2;
   const pub3H = pub3l ? `<a target="_blank" href="${uu(pub3l)}" style="display:block;line-height:0;">${p3}</a>` : p3;
@@ -1853,20 +1853,20 @@ function buildHTML(lang) {
   const pub1bl = v(p+'pub1b_link'), pub2bl = v(p+'pub2b_link'), pub3bl = v(p+'pub3b_link');
   const dupPubH = (img, link) => {
     if (!img) return '';
-    const tag = `<img src="${img}" width="584" alt="" style="display:block;width:100%;max-width:584px;border-radius:4px;margin:0 auto;background-color:#FFFFFF;" />`;
+    const tag = `<img src="${img}" width="584" alt="" style="display:block;width:100%;max-width:584px;height:auto;max-height:220px;object-fit:cover;border-radius:4px;margin:0 auto;background-color:#FFFFFF;" />`;
     return link ? `<a target="_blank" href="${uu(link)}" style="display:block;line-height:0;">${tag}</a>` : tag;
   };
   const pub1bH = dupPubH(pub1b, pub1bl), pub2bH = dupPubH(pub2b, pub2bl), pub3bH = dupPubH(pub3b, pub3bl);
 
   const parrImg = v(p+'parr_img');
   const parrImgH = parrImg
-    ? `<td width="45%" valign="bottom" style="padding:28px 28px 28px 0;vertical-align:bottom;line-height:0;font-size:0;"><a target="_blank" href="${uu(v(p+'parr_url'))}" style="display:block;line-height:0;"><img src="${parrImg}" width="100%" alt="Parrainage" style="display:block;width:100%;border-radius:6px;" /></a></td>`
+    ? `<td width="45%" valign="bottom" style="padding:28px 28px 28px 0;vertical-align:bottom;line-height:0;font-size:0;"><a target="_blank" href="${uu(v(p+'parr_url'))}" style="display:block;line-height:0;"><img src="${parrImg}" width="100%" alt="Parrainage" style="display:block;width:100%;height:auto;max-height:220px;object-fit:cover;border-radius:6px;" /></a></td>`
     : `<td width="45%" valign="bottom" style="padding:28px 28px 28px 0;vertical-align:bottom;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:220px;background-color:#E6C400;border-radius:6px;text-align:center;vertical-align:middle;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:9px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#B89900;">[ IMAGE PARRAINAGE ]</td></tr></table></td>`;
 
   const autoImg = v(p+'auto_img')||'https://img.mailinblue.com/4363334/images/content_library/original/69fc509afbf75c9e7ebbd9c8.png';
   const auto2Img = v(p+'auto2_img')||autoImg;
 
-  const extraImgH = (url, link) => url ? `<a target="_blank" href="${uu(link)}" style="display:block;line-height:0;"><img src="${esc(url)}" width="100%" alt="" style="display:block;width:100%;border-radius:6px;" /></a>` : '';
+  const extraImgH = (url, link) => url ? `<a target="_blank" href="${uu(link)}" style="display:block;line-height:0;"><img src="${esc(url)}" width="100%" alt="" style="display:block;width:100%;height:auto;max-height:170px;object-fit:cover;border-radius:6px;" /></a>` : '';
   const extra1Img = extraImgH(v(p+'extra1_img'), v(p+'extra1_url'));
   const extra2Img = extraImgH(v(p+'extra2_img'), v(p+'extra2_url'));
   const extra3Img = extraImgH(v(p+'extra3_img'), v(p+'extra3_url'));
@@ -1885,7 +1885,7 @@ function buildHTML(lang) {
     <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">${esc(v(p+'title_une'))}</td>
     <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
   </tr></table>
-  <a target="_blank" href="${uu(v(p+'une_url'))}" style="display:block;line-height:0;"><img src="${esc(v(p+'une_img'))}" width="584" alt="${esc(v(p+'une_title'))}" style="display:block;width:100%;max-width:584px;border-radius:8px;margin:0 auto 20px;" /></a>
+  <a target="_blank" href="${uu(v(p+'une_url'))}" style="display:block;line-height:0;"><img src="${esc(v(p+'une_img'))}" width="584" alt="${esc(v(p+'une_title'))}" style="display:block;width:100%;max-width:584px;height:auto;max-height:274px;object-fit:cover;border-radius:8px;margin:0 auto 20px;" /></a>
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:22px;line-height:1.25;color:#1A1A1A;margin:0 0 12px 0;text-align:center;">${esc(v(p+'une_title'))}</p>
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:16px;line-height:1.7;color:#555555;margin:0 0 22px 0;text-align:center;">${esc(v(p+'une_text'))}</p>
   <div style="text-align:center;">
@@ -1916,7 +1916,7 @@ function buildHTML(lang) {
     <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">${esc(v(p+'title_une2'))}</td>
     <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
   </tr></table>
-  ${v(p+'une2_img') ? `<a target="_blank" href="${uu(v(p+'une2_url'))}" style="display:block;line-height:0;"><img src="${esc(v(p+'une2_img'))}" width="584" alt="${esc(v(p+'une2_title'))}" style="display:block;width:100%;max-width:584px;border-radius:8px;margin:0 auto 20px;" /></a>` : ''}
+  ${v(p+'une2_img') ? `<a target="_blank" href="${uu(v(p+'une2_url'))}" style="display:block;line-height:0;"><img src="${esc(v(p+'une2_img'))}" width="584" alt="${esc(v(p+'une2_title'))}" style="display:block;width:100%;max-width:584px;height:auto;max-height:274px;object-fit:cover;border-radius:8px;margin:0 auto 20px;" /></a>` : ''}
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:22px;line-height:1.25;color:#1A1A1A;margin:0 0 12px 0;text-align:center;">${esc(v(p+'une2_title'))}</p>
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:16px;line-height:1.7;color:#555555;margin:0 0 22px 0;text-align:center;">${esc(v(p+'une2_text'))}</p>
   ${v(p+'une2_title') ? `<div style="text-align:center;">
@@ -1970,7 +1970,7 @@ ${brefH2 ? `<!-- EN BREF (copie) -->
     <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">${esc(v(p+'title_voy'))}</td>
     <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
   </tr></table>
-  <a target="_blank" href="${uu(v(p+'vm_url'))}" style="display:block;line-height:0;"><img src="${esc(v(p+'vm_img'))}" width="584" alt="${esc(v(p+'vm_title'))}" style="display:block;width:100%;max-width:584px;border-radius:8px;margin:0 auto 18px;" /></a>
+  <a target="_blank" href="${uu(v(p+'vm_url'))}" style="display:block;line-height:0;"><img src="${esc(v(p+'vm_img'))}" width="584" alt="${esc(v(p+'vm_title'))}" style="display:block;width:100%;max-width:584px;height:auto;max-height:274px;object-fit:cover;border-radius:8px;margin:0 auto 18px;" /></a>
   ${v(p+'vm_date') ? `<table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto 8px;"><tr><td style="background-color:#EEEEEE;padding:4px 10px;border-radius:10px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#666666;">${esc(v(p+'vm_date'))}</td></tr></table>` : ''}
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:18px;line-height:1.25;color:#1A1A1A;margin:0 0 8px 0;text-align:center;">${esc(v(p+'vm_title'))}</p>
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:15px;line-height:1.65;color:#555555;margin:0 0 16px 0;text-align:center;">${esc(v(p+'vm_text'))}</p>
@@ -1987,7 +1987,7 @@ ${brefH2 ? `<!-- EN BREF (copie) -->
     <td width="1" style="white-space:nowrap;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#1A1A1A;padding-right:14px;vertical-align:middle;">${esc(v(p+'title_voy2'))}</td>
     <td style="vertical-align:middle;padding-left:14px;"><table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="height:2px;background-color:#FCD900;font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
   </tr></table>
-  ${v(p+'vm2_img') ? `<a target="_blank" href="${uu(v(p+'vm2_url'))}" style="display:block;line-height:0;"><img src="${esc(v(p+'vm2_img'))}" width="584" alt="${esc(v(p+'vm2_title'))}" style="display:block;width:100%;max-width:584px;border-radius:8px;margin:0 auto 18px;" /></a>` : ''}
+  ${v(p+'vm2_img') ? `<a target="_blank" href="${uu(v(p+'vm2_url'))}" style="display:block;line-height:0;"><img src="${esc(v(p+'vm2_img'))}" width="584" alt="${esc(v(p+'vm2_title'))}" style="display:block;width:100%;max-width:584px;height:auto;max-height:274px;object-fit:cover;border-radius:8px;margin:0 auto 18px;" /></a>` : ''}
   ${v(p+'vm2_date') ? `<table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto 8px;"><tr><td style="background-color:#EEEEEE;padding:4px 10px;border-radius:10px;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#666666;">${esc(v(p+'vm2_date'))}</td></tr></table>` : ''}
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:18px;line-height:1.25;color:#1A1A1A;margin:0 0 8px 0;text-align:center;">${esc(v(p+'vm2_title'))}</p>
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:15px;line-height:1.65;color:#555555;margin:0 0 16px 0;text-align:center;">${esc(v(p+'vm2_text'))}</p>
@@ -2027,7 +2027,7 @@ ${brefH2 ? `<!-- EN BREF (copie) -->
   const boxBody = {
     autotouring: `<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">${esc(v(p+'title_auto_kicker'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.2;color:#1A1A1A;margin:0 0 14px 0;">${esc(v(p+'title_auto_heading'))}</p>
-      <a target="_blank" href="${uu(v(p+'auto_url'))}" style="display:block;line-height:0;"><img src="${autoImg}" width="100%" alt="Autotouring" style="display:block;width:100%;border-radius:6px;" /></a>
+      <a target="_blank" href="${uu(v(p+'auto_url'))}" style="display:block;line-height:0;"><img src="${autoImg}" width="100%" alt="Autotouring" style="display:block;width:100%;height:auto;max-height:170px;object-fit:cover;border-radius:6px;" /></a>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:14px 0 0 0;">Disponible en FR, DE et EN. Prochaine édition le <strong style="color:#1A1A1A;">${esc(v(p+'auto_date'))}</strong>.</p>`,
     recrutement: `<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">${esc(v(p+'title_job_kicker'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.2;color:#1A1A1A;margin:0 0 16px 0;">${esc(v(p+'title_job_heading'))}</p>
@@ -2040,7 +2040,7 @@ ${brefH2 ? `<!-- EN BREF (copie) -->
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:0;">${esc(v(p+'extra2_text'))}</p>`,
     autotouring2: `<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">${esc(v(p+'title_auto2_kicker'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.2;color:#1A1A1A;margin:0 0 14px 0;">${esc(v(p+'title_auto2_heading'))}</p>
-      <a target="_blank" href="${uu(v(p+'auto2_url'))}" style="display:block;line-height:0;"><img src="${auto2Img}" width="100%" alt="Autotouring" style="display:block;width:100%;border-radius:6px;" /></a>
+      <a target="_blank" href="${uu(v(p+'auto2_url'))}" style="display:block;line-height:0;"><img src="${auto2Img}" width="100%" alt="Autotouring" style="display:block;width:100%;height:auto;max-height:170px;object-fit:cover;border-radius:6px;" /></a>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:14px 0 0 0;">Disponible en FR, DE et EN. Prochaine édition le <strong style="color:#1A1A1A;">${esc(v(p+'auto2_date'))}</strong>.</p>`,
     parrainage2: `${parr2Img}
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:${parr2Img?'14px':'0'} 0 6px 0;">${esc(v(p+'title_parr2_kicker'))}</p>
