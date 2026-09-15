@@ -265,7 +265,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">15/09/2026 14:41</div>
+  <div class="build-stamp">15/09/2026 14:44</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -509,7 +509,6 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       <div class="g2">
       <div class="field"><label>Image</label><input type="url" id="fr_auto_img" value="https://img.mailinblue.com/4363334/images/content_library/original/69fc509afbf75c9e7ebbd9c8.png" oninput="previewImg(this,'ppa')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="ppa" class="img-prev" src="https://img.mailinblue.com/4363334/images/content_library/original/69fc509afbf75c9e7ebbd9c8.png" /></div>
       <div>
-        <div class="field"><label>Date de parution</label><input type="text" id="fr_auto_date" value="29 juin 2026" /></div>
         <div class="field"><label>Lien</label><input type="url" id="fr_auto_url" value="https://autotouring.acl.lu/fr/publications/" /></div>
       </div>
       </div>
@@ -529,7 +528,6 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       <div class="g2">
       <div class="field"><label>Image</label><input type="url" id="fr_auto2_img" placeholder="https://..." oninput="previewImg(this,'ppa2')" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img id="ppa2" class="img-prev" src="" /></div>
       <div>
-        <div class="field"><label>Date de parution</label><input type="text" id="fr_auto2_date" placeholder="ex. 29 juin 2026" /></div>
         <div class="field"><label>Lien</label><input type="url" id="fr_auto2_url" placeholder="https://..." /></div>
       </div>
       </div>
@@ -1180,7 +1178,7 @@ const DUPLICATE_TYPES = [
     fields: [['pub3_img','pub3b_img'], ['pub3_link','pub3b_link']] },
   { from: 'autotouring', to: 'autotouring2', previewId: 'ppa2',
     fields: [['title_auto_kicker','title_auto2_kicker'], ['title_auto_heading','title_auto2_heading'],
-      ['auto_img','auto2_img'], ['auto_date','auto2_date'], ['auto_url','auto2_url'], ['auto_cta','auto2_cta'], ['auto_text','auto2_text']] },
+      ['auto_img','auto2_img'], ['auto_url','auto2_url'], ['auto_cta','auto2_cta'], ['auto_text','auto2_text']] },
   { from: 'parrainage', to: 'parrainage2', previewId: 'ppparr2',
     fields: [['title_parr_kicker','title_parr2_kicker'], ['title_parr_heading','title_parr2_heading'],
       ['parr_img','parr2_img'], ['parr_text','parr2_text'], ['parr_url','parr2_url']] },
@@ -1311,8 +1309,8 @@ function collectLangData(lang) {
     vm2: { img: v(p+'vm2_img'), date: v(p+'vm2_date'), title: v(p+'vm2_title'), text: v(p+'vm2_text'), url: v(p+'vm2_url') },
     voy: JSON.parse(JSON.stringify(D[lang].voy)), agenda: JSON.parse(JSON.stringify(D[lang].agenda)),
     voy2: JSON.parse(JSON.stringify(D[lang].voy2)), agenda2: JSON.parse(JSON.stringify(D[lang].agenda2)),
-    auto: { img: v(p+'auto_img'), date: v(p+'auto_date'), url: v(p+'auto_url'), cta: v(p+'auto_cta'), text: v(p+'auto_text') },
-    auto2: { img: v(p+'auto2_img'), date: v(p+'auto2_date'), url: v(p+'auto2_url'), cta: v(p+'auto2_cta'), text: v(p+'auto2_text') },
+    auto: { img: v(p+'auto_img'), url: v(p+'auto_url'), cta: v(p+'auto_cta'), text: v(p+'auto_text') },
+    auto2: { img: v(p+'auto2_img'), url: v(p+'auto2_url'), cta: v(p+'auto2_cta'), text: v(p+'auto2_text') },
     job_url: v(p+'job_url'), jobs: JSON.parse(JSON.stringify(D[lang].jobs)),
     jobs2: JSON.parse(JSON.stringify(D[lang].jobs2)),
     parr: { img: v(p+'parr_img'), text: v(p+'parr_text'), url: v(p+'parr_url') },
@@ -1379,10 +1377,10 @@ function applyFrDataToLang(lang, d) {
   setField(lang+'_vm2_img',   vm2.img);  setField(lang+'_vm2_title',  vm2.title);
   setField(lang+'_vm2_text',  vm2.text); setField(lang+'_vm2_url',    vm2.url);
   setField(lang+'_vm2_date',  vm2.date);
-  setField(lang+'_auto_img',  au.img);  setField(lang+'_auto_date', au.date);
+  setField(lang+'_auto_img',  au.img);
   setField(lang+'_auto_url',  au.url);  setField(lang+'_auto_cta',  au.cta);
   setField(lang+'_auto_text', au.text);
-  setField(lang+'_auto2_img', au2.img); setField(lang+'_auto2_date', au2.date);
+  setField(lang+'_auto2_img', au2.img);
   setField(lang+'_auto2_url', au2.url); setField(lang+'_auto2_cta', au2.cta);
   setField(lang+'_auto2_text', au2.text);
   setField(lang+'_job_url',   d.job_url);
@@ -1572,8 +1570,7 @@ function buildTranslatedFields(lang, d) {
     </div>
     <div class="g2">
     <div class="field"><label>Image</label><input type="url" id="${lang}_auto_img" value="${esc(au.img||'')}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img class="img-prev" src="${au.img||''}" /></div>
-    <div><div class="field"><label>Date</label><input type="text" id="${lang}_auto_date" value="${esc(au.date||'')}" /></div>
-    <div class="field"><label>URL</label><input type="url" id="${lang}_auto_url" value="${esc(au.url||'')}" /></div></div>
+    <div class="field"><label>URL</label><input type="url" id="${lang}_auto_url" value="${esc(au.url||'')}" /></div>
     </div>
     <div class="field" style="margin-top:14px;"><label>Texte de disponibilité</label><input type="text" id="${lang}_auto_text" value="${esc(au.text||'')}" placeholder="Disponible en FR, DE et EN. Prochaine édition le 29 juin 2026." /></div>
     <div class="field" style="margin-top:14px;"><label>CTA texte</label><input type="text" id="${lang}_auto_cta" value="${esc(au.cta||'')}" /></div>
@@ -1587,8 +1584,7 @@ function buildTranslatedFields(lang, d) {
     </div>
     <div class="g2">
     <div class="field"><label>Image</label><input type="url" id="${lang}_auto2_img" value="${esc(au2.img||'')}" /><button type="button" class="btn-fetch" onclick="triggerImageUpload(this)" title="Uploader une image">📤</button><img class="img-prev" src="${au2.img||''}" /></div>
-    <div><div class="field"><label>Date</label><input type="text" id="${lang}_auto2_date" value="${esc(au2.date||'')}" /></div>
-    <div class="field"><label>URL</label><input type="url" id="${lang}_auto2_url" value="${esc(au2.url||'')}" /></div></div>
+    <div class="field"><label>URL</label><input type="url" id="${lang}_auto2_url" value="${esc(au2.url||'')}" /></div>
     </div>
     <div class="field" style="margin-top:14px;"><label>Texte de disponibilité</label><input type="text" id="${lang}_auto2_text" value="${esc(au2.text||'')}" placeholder="Disponible en FR, DE et EN. Prochaine édition le 29 juin 2026." /></div>
     <div class="field" style="margin-top:14px;"><label>CTA texte</label><input type="text" id="${lang}_auto2_cta" value="${esc(au2.cta||'')}" /></div>
@@ -2057,12 +2053,8 @@ ${brefH2 ? `<!-- EN BREF (copie) -->
   </tr></table>
 </td></tr>` : '';
 
-  const autoTextH = v(p+'auto_text')
-    ? esc(v(p+'auto_text'))
-    : `Disponible en FR, DE et EN. Prochaine édition le <strong style="color:#1A1A1A;">${esc(v(p+'auto_date'))}</strong>.`;
-  const auto2TextH = v(p+'auto2_text')
-    ? esc(v(p+'auto2_text'))
-    : `Disponible en FR, DE et EN. Prochaine édition le <strong style="color:#1A1A1A;">${esc(v(p+'auto2_date'))}</strong>.`;
+  const autoTextH = v(p+'auto_text') ? esc(v(p+'auto_text')) : 'Disponible en FR, DE et EN.';
+  const auto2TextH = v(p+'auto2_text') ? esc(v(p+'auto2_text')) : 'Disponible en FR, DE et EN.';
   const boxBody = {
     autotouring: `<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">${esc(v(p+'title_auto_kicker'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.2;color:#1A1A1A;margin:0 0 14px 0;">${esc(v(p+'title_auto_heading'))}</p>
