@@ -265,7 +265,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">15/09/2026 14:23</div>
+  <div class="build-stamp">15/09/2026 14:41</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -2187,6 +2187,20 @@ ${brefH2 ? `<!-- EN BREF (copie) -->
   }
   const orderedSectionsHTML = orderedParts.join('\n');
 
+  const NEWSLETTER_URL = { fr: 'https://www.acl.lu/fr/newsletter/', en: 'https://www.acl.lu/en/newsletter/', de: 'https://www.acl.lu/de/newsletter/' };
+  const MYACL_URL = 'https://www.acl.lu/myacl/';
+  const FOOTER_LINK_STYLE = 'color:#888888!important;text-decoration:underline;';
+  const T_FOOTER = {
+    fr: `<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:9px;color:#666666;line-height:1.7;margin:0 0 5px 0;">Cet email a été envoyé à <a target="_blank" href="mailto:{{ contact.EMAIL }}" style="${FOOTER_LINK_STYLE}">{{ contact.EMAIL }}</a>. Vous recevez cet email dans le cadre des services fournis en tant que membre ACL ou parce que vous vous êtes abonné(e) à notre newsletter.</p>
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:9px;color:#666666;line-height:1.7;margin:0 0 5px 0;"><a target="_blank" href="{{update_profile}}" style="${FOOTER_LINK_STYLE}">Personnalisez vos préférences</a> ou <a target="_blank" href="{{unsubscribe}}" style="${FOOTER_LINK_STYLE}">désinscrivez-vous</a>. Données dans votre espace <a target="_blank" href="${MYACL_URL}" style="${FOOTER_LINK_STYLE}">MyACL</a>.</p>
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:9px;color:#555555;line-height:1.7;margin:0;">Cet email vous a été transmis par un tiers ? <a target="_blank" href="${NEWSLETTER_URL.fr}" style="${FOOTER_LINK_STYLE}">Inscrivez-vous ici.</a></p>`,
+    en: `<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:9px;color:#666666;line-height:1.7;margin:0 0 5px 0;">This email has been sent to <a target="_blank" href="mailto:{{ contact.EMAIL }}" style="${FOOTER_LINK_STYLE}">{{ contact.EMAIL }}</a>. You are receiving this email as part of the services provided as an ACL member or because you subscribed to our Newsletter on www.acl.lu/newsletter. <a target="_blank" href="{{update_profile}}" style="${FOOTER_LINK_STYLE}">Personalize your communication preferences</a> or <a target="_blank" href="{{unsubscribe}}" style="${FOOTER_LINK_STYLE}">unsubscribe from all our communications</a>. You can also update your personal information in your <a target="_blank" href="${MYACL_URL}" style="${FOOTER_LINK_STYLE}">myACL</a> account.</p>
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:9px;color:#555555;line-height:1.7;margin:0;">This email has been forwarded to you by a third party and you would like to receive future editions of our newsletter? <a target="_blank" href="${NEWSLETTER_URL.en}" style="${FOOTER_LINK_STYLE}">Sign up here.</a></p>`,
+    de: `<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:9px;color:#666666;line-height:1.7;margin:0 0 5px 0;">Diese E-Mail wurde gesendet an <a target="_blank" href="mailto:{{ contact.EMAIL }}" style="${FOOTER_LINK_STYLE}">{{ contact.EMAIL }}</a>. <a target="_blank" href="{{update_profile}}" style="${FOOTER_LINK_STYLE}">Passen Sie Ihre Kommunikationseinstellungen an</a> oder <a target="_blank" href="{{unsubscribe}}" style="${FOOTER_LINK_STYLE}">melden Sie sich ab</a>. Sie können Ihre persönlichen Daten in Ihrem Mitgliedsbereich auf <a target="_blank" href="${MYACL_URL}" style="${FOOTER_LINK_STYLE}">MyACL</a> anpassen.</p>
+  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:9px;color:#555555;line-height:1.7;margin:0;">Diese E-Mail wurde Ihnen von einem Bekannten weitergeleitet und Sie möchten die nächsten Ausgaben unseres Newsletters erhalten? <a target="_blank" href="${NEWSLETTER_URL.de}" style="${FOOTER_LINK_STYLE}">Melden Sie sich hier an.</a></p>`
+  };
+  const footerLegalH = T_FOOTER[lang] || T_FOOTER.fr;
+
   return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="${lang}">
 <head>
@@ -2272,9 +2286,7 @@ ${orderedSectionsHTML}
   </tr></table>
 </td></tr>
 <tr><td style="background-color:#0A0A0A;padding:16px 28px 20px;text-align:center;border-top:1px solid #1E1E1E;">
-  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:9px;color:#666666;line-height:1.7;margin:0 0 5px 0;">Cet email a été envoyé à <a target="_blank" href="mailto:{{ contact.EMAIL }}" style="color:#888888!important;text-decoration:underline;">{{ contact.EMAIL }}</a>. Vous recevez cet email dans le cadre des services fournis en tant que membre ACL ou parce que vous vous êtes abonné(e) à notre newsletter.</p>
-  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:9px;color:#666666;line-height:1.7;margin:0 0 5px 0;"><a target="_blank" href="{{update_profile}}" style="color:#888888!important;text-decoration:underline;">Personnalisez vos préférences</a> ou <a target="_blank" href="{{unsubscribe}}" style="color:#888888!important;text-decoration:underline;">désinscrivez-vous</a>. Données dans votre espace <a target="_blank" href="https://www.acl.lu/myacl/" style="color:#888888!important;text-decoration:underline;">MyACL</a>.</p>
-  <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:9px;color:#555555;line-height:1.7;margin:0;">Cet email vous a été transmis par un tiers ? <a target="_blank" href="${uu('https://www.acl.lu/fr/newsletter/')}" style="color:#888888!important;text-decoration:underline;">Inscrivez-vous ici.</a></p>
+  ${footerLegalH}
 </td></tr>
 
 </table></td></tr></table>
