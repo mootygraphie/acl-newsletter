@@ -265,7 +265,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">15/09/2026 14:02</div>
+  <div class="build-stamp">15/09/2026 14:08</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -1716,13 +1716,15 @@ function buildHTML(lang) {
   const parrainageCta = T_PARRAINAGE_CTA[lang] || T_PARRAINAGE_CTA.fr;
   const AGENDA_LOCALE = { fr: 'fr-FR', en: 'en-GB', de: 'de-DE' };
   const AGENDA_JOUR_LEN = { fr: 3, en: 3, de: 2 };
+  const AGENDA_NUM_DOT = { fr: false, en: false, de: true };
   const formatAgendaDate = (ev) => {
     const d = ev.date ? new Date(ev.date + 'T00:00:00') : null;
     if (!d || isNaN(d)) return { jour: ev.jour || '', num: ev.num || '', mois: ev.mois || '' };
     const locale = AGENDA_LOCALE[lang] || 'fr-FR';
     const weekdayFull = new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(d);
     const monthFull = new Intl.DateTimeFormat(locale, { month: 'long' }).format(d);
-    const num = new Intl.DateTimeFormat(locale, { day: '2-digit' }).format(d);
+    const numRaw = new Intl.DateTimeFormat(locale, { day: '2-digit' }).format(d);
+    const num = AGENDA_NUM_DOT[lang] ? numRaw + '.' : numRaw;
     const jourLen = AGENDA_JOUR_LEN[lang] || 3;
     const jour = weekdayFull.slice(0, jourLen) + '.';
     const mois = monthFull.length > 4 ? monthFull.slice(0, 4) + '.' : monthFull;
