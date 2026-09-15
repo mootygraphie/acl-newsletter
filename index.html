@@ -265,7 +265,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">15/09/2026 14:08</div>
+  <div class="build-stamp">15/09/2026 14:23</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -1717,18 +1717,33 @@ function buildHTML(lang) {
   const AGENDA_LOCALE = { fr: 'fr-FR', en: 'en-GB', de: 'de-DE' };
   const AGENDA_JOUR_LEN = { fr: 3, en: 3, de: 2 };
   const AGENDA_NUM_DOT = { fr: false, en: false, de: true };
+  const abbrevJour = (full) => {
+    if (!full) return '';
+    const jourLen = AGENDA_JOUR_LEN[lang] || 3;
+    return full.replace(/\.$/, '').slice(0, jourLen) + '.';
+  };
+  const abbrevMois = (full) => {
+    if (!full) return '';
+    const clean = full.replace(/\.$/, '');
+    return clean.length > 4 ? clean.slice(0, 4) + '.' : clean;
+  };
+  const abbrevNum = (full) => {
+    if (!full) return '';
+    const clean = full.replace(/\.$/, '');
+    return AGENDA_NUM_DOT[lang] ? clean + '.' : clean;
+  };
   const formatAgendaDate = (ev) => {
     const d = ev.date ? new Date(ev.date + 'T00:00:00') : null;
-    if (!d || isNaN(d)) return { jour: ev.jour || '', num: ev.num || '', mois: ev.mois || '' };
+    if (!d || isNaN(d)) {
+      // Anciennes entrées sans date : on applique quand même les regles d'abreviation
+      // au texte deja saisi, meme si on ne peut pas le traduire faute de date reelle.
+      return { jour: abbrevJour(ev.jour), num: abbrevNum(ev.num), mois: abbrevMois(ev.mois) };
+    }
     const locale = AGENDA_LOCALE[lang] || 'fr-FR';
     const weekdayFull = new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(d);
     const monthFull = new Intl.DateTimeFormat(locale, { month: 'long' }).format(d);
     const numRaw = new Intl.DateTimeFormat(locale, { day: '2-digit' }).format(d);
-    const num = AGENDA_NUM_DOT[lang] ? numRaw + '.' : numRaw;
-    const jourLen = AGENDA_JOUR_LEN[lang] || 3;
-    const jour = weekdayFull.slice(0, jourLen) + '.';
-    const mois = monthFull.length > 4 ? monthFull.slice(0, 4) + '.' : monthFull;
-    return { jour, num, mois };
+    return { jour: abbrevJour(weekdayFull), num: abbrevNum(numRaw), mois: abbrevMois(monthFull) };
   };
   const buildAgendaH = (items) => items.map(ev => { const dt = formatAgendaDate(ev); return `
     <a target="_blank" href="${uu(ev.url)}" style="display:block;text-decoration:none;margin-bottom:10px;">
