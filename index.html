@@ -265,7 +265,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">11/09/2026 11:26</div>
+  <div class="build-stamp">15/09/2026 14:02</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -513,6 +513,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
         <div class="field"><label>Lien</label><input type="url" id="fr_auto_url" value="https://autotouring.acl.lu/fr/publications/" /></div>
       </div>
       </div>
+      <div class="field" style="margin-top:14px;"><label>Texte de disponibilité</label><input type="text" id="fr_auto_text" placeholder="Disponible en FR, DE et EN. Prochaine édition le 29 juin 2026." /></div>
       <div class="field" style="margin-top:14px;"><label>CTA texte</label><input type="text" id="fr_auto_cta" placeholder="Lire le magazine digital" /></div>
     </div>
   </div>
@@ -532,6 +533,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
         <div class="field"><label>Lien</label><input type="url" id="fr_auto2_url" placeholder="https://..." /></div>
       </div>
       </div>
+      <div class="field" style="margin-top:14px;"><label>Texte de disponibilité</label><input type="text" id="fr_auto2_text" placeholder="Disponible en FR, DE et EN. Prochaine édition le 29 juin 2026." /></div>
       <div class="field" style="margin-top:14px;"><label>CTA texte</label><input type="text" id="fr_auto2_cta" placeholder="Lire le magazine digital" /></div>
     </div>
   </div>
@@ -1178,7 +1180,7 @@ const DUPLICATE_TYPES = [
     fields: [['pub3_img','pub3b_img'], ['pub3_link','pub3b_link']] },
   { from: 'autotouring', to: 'autotouring2', previewId: 'ppa2',
     fields: [['title_auto_kicker','title_auto2_kicker'], ['title_auto_heading','title_auto2_heading'],
-      ['auto_img','auto2_img'], ['auto_date','auto2_date'], ['auto_url','auto2_url'], ['auto_cta','auto2_cta']] },
+      ['auto_img','auto2_img'], ['auto_date','auto2_date'], ['auto_url','auto2_url'], ['auto_cta','auto2_cta'], ['auto_text','auto2_text']] },
   { from: 'parrainage', to: 'parrainage2', previewId: 'ppparr2',
     fields: [['title_parr_kicker','title_parr2_kicker'], ['title_parr_heading','title_parr2_heading'],
       ['parr_img','parr2_img'], ['parr_text','parr2_text'], ['parr_url','parr2_url']] },
@@ -1309,8 +1311,8 @@ function collectLangData(lang) {
     vm2: { img: v(p+'vm2_img'), date: v(p+'vm2_date'), title: v(p+'vm2_title'), text: v(p+'vm2_text'), url: v(p+'vm2_url') },
     voy: JSON.parse(JSON.stringify(D[lang].voy)), agenda: JSON.parse(JSON.stringify(D[lang].agenda)),
     voy2: JSON.parse(JSON.stringify(D[lang].voy2)), agenda2: JSON.parse(JSON.stringify(D[lang].agenda2)),
-    auto: { img: v(p+'auto_img'), date: v(p+'auto_date'), url: v(p+'auto_url'), cta: v(p+'auto_cta') },
-    auto2: { img: v(p+'auto2_img'), date: v(p+'auto2_date'), url: v(p+'auto2_url'), cta: v(p+'auto2_cta') },
+    auto: { img: v(p+'auto_img'), date: v(p+'auto_date'), url: v(p+'auto_url'), cta: v(p+'auto_cta'), text: v(p+'auto_text') },
+    auto2: { img: v(p+'auto2_img'), date: v(p+'auto2_date'), url: v(p+'auto2_url'), cta: v(p+'auto2_cta'), text: v(p+'auto2_text') },
     job_url: v(p+'job_url'), jobs: JSON.parse(JSON.stringify(D[lang].jobs)),
     jobs2: JSON.parse(JSON.stringify(D[lang].jobs2)),
     parr: { img: v(p+'parr_img'), text: v(p+'parr_text'), url: v(p+'parr_url') },
@@ -1379,8 +1381,10 @@ function applyFrDataToLang(lang, d) {
   setField(lang+'_vm2_date',  vm2.date);
   setField(lang+'_auto_img',  au.img);  setField(lang+'_auto_date', au.date);
   setField(lang+'_auto_url',  au.url);  setField(lang+'_auto_cta',  au.cta);
+  setField(lang+'_auto_text', au.text);
   setField(lang+'_auto2_img', au2.img); setField(lang+'_auto2_date', au2.date);
   setField(lang+'_auto2_url', au2.url); setField(lang+'_auto2_cta', au2.cta);
+  setField(lang+'_auto2_text', au2.text);
   setField(lang+'_job_url',   d.job_url);
   setField(lang+'_parr_img',  pa.img);  setField(lang+'_parr_text', pa.text);
   setField(lang+'_parr_url',  pa.url);
@@ -1571,6 +1575,7 @@ function buildTranslatedFields(lang, d) {
     <div><div class="field"><label>Date</label><input type="text" id="${lang}_auto_date" value="${esc(au.date||'')}" /></div>
     <div class="field"><label>URL</label><input type="url" id="${lang}_auto_url" value="${esc(au.url||'')}" /></div></div>
     </div>
+    <div class="field" style="margin-top:14px;"><label>Texte de disponibilité</label><input type="text" id="${lang}_auto_text" value="${esc(au.text||'')}" placeholder="Disponible en FR, DE et EN. Prochaine édition le 29 juin 2026." /></div>
     <div class="field" style="margin-top:14px;"><label>CTA texte</label><input type="text" id="${lang}_auto_cta" value="${esc(au.cta||'')}" /></div>
   </div></div>
 
@@ -1585,6 +1590,7 @@ function buildTranslatedFields(lang, d) {
     <div><div class="field"><label>Date</label><input type="text" id="${lang}_auto2_date" value="${esc(au2.date||'')}" /></div>
     <div class="field"><label>URL</label><input type="url" id="${lang}_auto2_url" value="${esc(au2.url||'')}" /></div></div>
     </div>
+    <div class="field" style="margin-top:14px;"><label>Texte de disponibilité</label><input type="text" id="${lang}_auto2_text" value="${esc(au2.text||'')}" placeholder="Disponible en FR, DE et EN. Prochaine édition le 29 juin 2026." /></div>
     <div class="field" style="margin-top:14px;"><label>CTA texte</label><input type="text" id="${lang}_auto2_cta" value="${esc(au2.cta||'')}" /></div>
   </div></div>
 
@@ -1698,6 +1704,16 @@ function buildHTML(lang) {
   const uu = (url) => url || '#';
   const SMALL_BTN_STYLE = "font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;color:#000000!important;display:inline-block;margin-top:14px;padding:6px 12px;border-radius:15px;background:#FCD900;text-transform:uppercase;letter-spacing:1px;text-decoration:none!important;";
 
+  const T_EN_SAVOIR_PLUS = { fr: 'En savoir plus', en: 'More infos', de: 'Mehr infos' };
+  const T_PARRAINAGE_CTA = { fr: 'Mon lien de parrainage', en: 'My referral link', de: 'Jetzt neues Mitglied werben!' };
+  const T_TOPBAR = {
+    infoTrafic: { fr: 'Info Trafic', en: 'Info Trafic', de: 'Live-Verkehrsinfos' },
+    newsletters: { fr: 'Nos Newsletters', en: 'Our Newsletters', de: 'Unsere Newsletter' },
+    app: { fr: 'App ACL', en: 'ACL App', de: 'ACL-App' },
+    online: { fr: 'Voir en ligne', en: 'Open in Browser', de: 'Im Browser öffnen' }
+  };
+  const enSavoirPlus = T_EN_SAVOIR_PLUS[lang] || T_EN_SAVOIR_PLUS.fr;
+  const parrainageCta = T_PARRAINAGE_CTA[lang] || T_PARRAINAGE_CTA.fr;
   const AGENDA_LOCALE = { fr: 'fr-FR', en: 'en-GB', de: 'de-DE' };
   const AGENDA_JOUR_LEN = { fr: 3, en: 3, de: 2 };
   const formatAgendaDate = (ev) => {
@@ -1753,7 +1769,7 @@ function buildHTML(lang) {
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.35;color:#1A1A1A;margin:0;">${esc(d.title)}</p>
     </td></tr></table>`;
   const actuCta = (d) => `<table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td class="mobile-center" style="border-top:1px solid #E8E8E8;padding-top:14px;">
-      <a target="_blank" href="${uu(d.url)}" style="${SMALL_BTN_STYLE}margin-top:0;">${esc(d.cta||'En savoir plus')} ▸</a>
+      <a target="_blank" href="${uu(d.url)}" style="${SMALL_BTN_STYLE}margin-top:0;">${esc(d.cta||enSavoirPlus)} ▸</a>
     </td></tr></table>`;
   const actuCard = (d) => `${actuBody(d)}${actuCta(d)}`;
   const buildActuH = (items) => items.length === 0 ? '' : chunkPairs(items).map((pair, gi) => `
@@ -1810,7 +1826,7 @@ function buildHTML(lang) {
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.55;color:#666666;margin:0;">${esc(d.text||'')}</p>
     </td></tr></table>`;
   const voyCta = (d) => `<table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td class="mobile-center" style="border-top:1px solid #F0F0F0;padding-top:14px;">
-      <a target="_blank" href="${uu(d.url)}" style="${SMALL_BTN_STYLE}margin-top:0;">En savoir plus ▸</a>
+      <a target="_blank" href="${uu(d.url)}" style="${SMALL_BTN_STYLE}margin-top:0;">${enSavoirPlus} ▸</a>
     </td></tr></table>`;
   const voyCard = (d) => `${voyBody(d)}${voyCta(d)}`;
   const buildVoyH = (items) => items.length === 0 ? '' : chunkPairs(items).map((pair, gi) => `
@@ -1975,8 +1991,8 @@ ${brefH2 ? `<!-- EN BREF (copie) -->
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:18px;line-height:1.25;color:#1A1A1A;margin:0 0 8px 0;text-align:center;">${esc(v(p+'vm_title'))}</p>
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:15px;line-height:1.65;color:#555555;margin:0 0 16px 0;text-align:center;">${esc(v(p+'vm_text'))}</p>
   <div style="text-align:center;margin-bottom:24px;">
-    <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${uu(v(p+'vm_url'))}" style="height:40px;v-text-anchor:middle;width:162px;" arcsize="20%" fillcolor="#FCD900" stroke="f"><w:anchorlock/><center style="color:#1A1A1A;font-family:Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">EN SAVOIR PLUS</center></v:roundrect><![endif]-->
-    <!--[if !mso]><!--><a target="_blank" href="${uu(v(p+'vm_url'))}" style="display:inline-block;background-color:#FCD900;color:#1A1A1A!important;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none!important;padding:11px 22px;border-radius:20px;">En savoir plus</a><!--<![endif]-->
+    <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${uu(v(p+'vm_url'))}" style="height:40px;v-text-anchor:middle;width:162px;" arcsize="20%" fillcolor="#FCD900" stroke="f"><w:anchorlock/><center style="color:#1A1A1A;font-family:Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">${enSavoirPlus.toUpperCase()}</center></v:roundrect><![endif]-->
+    <!--[if !mso]><!--><a target="_blank" href="${uu(v(p+'vm_url'))}" style="display:inline-block;background-color:#FCD900;color:#1A1A1A!important;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none!important;padding:11px 22px;border-radius:20px;">${enSavoirPlus}</a><!--<![endif]-->
   </div>
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr><td style="border-top:1px solid #F0F0F0;font-size:0;line-height:0;">&nbsp;</td></tr></table>
   ${voyH}
@@ -1992,8 +2008,8 @@ ${brefH2 ? `<!-- EN BREF (copie) -->
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:18px;line-height:1.25;color:#1A1A1A;margin:0 0 8px 0;text-align:center;">${esc(v(p+'vm2_title'))}</p>
   <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:15px;line-height:1.65;color:#555555;margin:0 0 16px 0;text-align:center;">${esc(v(p+'vm2_text'))}</p>
   ${v(p+'vm2_title') ? `<div style="text-align:center;margin-bottom:24px;">
-    <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${uu(v(p+'vm2_url'))}" style="height:40px;v-text-anchor:middle;width:162px;" arcsize="20%" fillcolor="#FCD900" stroke="f"><w:anchorlock/><center style="color:#1A1A1A;font-family:Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">EN SAVOIR PLUS</center></v:roundrect><![endif]-->
-    <!--[if !mso]><!--><a target="_blank" href="${uu(v(p+'vm2_url'))}" style="display:inline-block;background-color:#FCD900;color:#1A1A1A!important;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none!important;padding:11px 22px;border-radius:20px;">En savoir plus</a><!--<![endif]-->
+    <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${uu(v(p+'vm2_url'))}" style="height:40px;v-text-anchor:middle;width:162px;" arcsize="20%" fillcolor="#FCD900" stroke="f"><w:anchorlock/><center style="color:#1A1A1A;font-family:Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">${enSavoirPlus.toUpperCase()}</center></v:roundrect><![endif]-->
+    <!--[if !mso]><!--><a target="_blank" href="${uu(v(p+'vm2_url'))}" style="display:inline-block;background-color:#FCD900;color:#1A1A1A!important;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none!important;padding:11px 22px;border-radius:20px;">${enSavoirPlus}</a><!--<![endif]-->
   </div>
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom:22px;"><tr><td style="border-top:1px solid #F0F0F0;font-size:0;line-height:0;">&nbsp;</td></tr></table>` : ''}
   ${voyH2}
@@ -2024,11 +2040,17 @@ ${brefH2 ? `<!-- EN BREF (copie) -->
   </tr></table>
 </td></tr>` : '';
 
+  const autoTextH = v(p+'auto_text')
+    ? esc(v(p+'auto_text'))
+    : `Disponible en FR, DE et EN. Prochaine édition le <strong style="color:#1A1A1A;">${esc(v(p+'auto_date'))}</strong>.`;
+  const auto2TextH = v(p+'auto2_text')
+    ? esc(v(p+'auto2_text'))
+    : `Disponible en FR, DE et EN. Prochaine édition le <strong style="color:#1A1A1A;">${esc(v(p+'auto2_date'))}</strong>.`;
   const boxBody = {
     autotouring: `<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">${esc(v(p+'title_auto_kicker'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.2;color:#1A1A1A;margin:0 0 14px 0;">${esc(v(p+'title_auto_heading'))}</p>
       <a target="_blank" href="${uu(v(p+'auto_url'))}" style="display:block;line-height:0;"><img src="${autoImg}" width="100%" alt="Autotouring" style="display:block;width:100%;height:auto;max-height:170px;object-fit:cover;border-radius:6px;" /></a>
-      <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:14px 0 0 0;">Disponible en FR, DE et EN. Prochaine édition le <strong style="color:#1A1A1A;">${esc(v(p+'auto_date'))}</strong>.</p>`,
+      <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:14px 0 0 0;">${autoTextH}</p>`,
     recrutement: `<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">${esc(v(p+'title_job_kicker'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.2;color:#1A1A1A;margin:0 0 16px 0;">${esc(v(p+'title_job_heading'))}</p>
       <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">${jobsH}</table>`,
@@ -2041,7 +2063,7 @@ ${brefH2 ? `<!-- EN BREF (copie) -->
     autotouring2: `<p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:0 0 6px 0;">${esc(v(p+'title_auto2_kicker'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.2;color:#1A1A1A;margin:0 0 14px 0;">${esc(v(p+'title_auto2_heading'))}</p>
       <a target="_blank" href="${uu(v(p+'auto2_url'))}" style="display:block;line-height:0;"><img src="${auto2Img}" width="100%" alt="Autotouring" style="display:block;width:100%;height:auto;max-height:170px;object-fit:cover;border-radius:6px;" /></a>
-      <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:14px 0 0 0;">Disponible en FR, DE et EN. Prochaine édition le <strong style="color:#1A1A1A;">${esc(v(p+'auto2_date'))}</strong>.</p>`,
+      <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#666666;margin:14px 0 0 0;">${auto2TextH}</p>`,
     parrainage2: `${parr2Img}
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#888888;margin:${parr2Img?'14px':'0'} 0 6px 0;">${esc(v(p+'title_parr2_kicker'))}</p>
       <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:14px;line-height:1.2;color:#1A1A1A;margin:0 0 14px 0;">${esc(v(p+'title_parr2_heading'))}</p>
@@ -2059,12 +2081,12 @@ ${brefH2 ? `<!-- EN BREF (copie) -->
   const boxCta = {
     autotouring: `<a target="_blank" href="${uu(v(p+'auto_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'auto_cta')||'Lire le magazine digital')} ▸</a>`,
     recrutement: `<a target="_blank" href="${uu(v(p+'job_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'job_cta')||'Toutes nos offres')} ▸</a>`,
-    extra1: `<a target="_blank" href="${uu(v(p+'extra1_url'))}" style="${SMALL_BTN_STYLE}margin-top:0;">${esc(v(p+'extra1_cta')||'En savoir plus')} ▸</a>`,
-    extra2: `<a target="_blank" href="${uu(v(p+'extra2_url'))}" style="${SMALL_BTN_STYLE}margin-top:0;">${esc(v(p+'extra2_cta')||'En savoir plus')} ▸</a>`,
+    extra1: `<a target="_blank" href="${uu(v(p+'extra1_url'))}" style="${SMALL_BTN_STYLE}margin-top:0;">${esc(v(p+'extra1_cta')||enSavoirPlus)} ▸</a>`,
+    extra2: `<a target="_blank" href="${uu(v(p+'extra2_url'))}" style="${SMALL_BTN_STYLE}margin-top:0;">${esc(v(p+'extra2_cta')||enSavoirPlus)} ▸</a>`,
     autotouring2: `<a target="_blank" href="${uu(v(p+'auto2_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'auto2_cta')||'Lire le magazine digital')} ▸</a>`,
-    parrainage2: `<a target="_blank" href="${uu(v(p+'parr2_url'))}" style="${SMALL_BTN_STYLE}margin-top:0;">Mon lien de parrainage ▸</a>`,
-    extra3: `<a target="_blank" href="${uu(v(p+'extra3_url'))}" style="${SMALL_BTN_STYLE}margin-top:0;">${esc(v(p+'extra3_cta')||'En savoir plus')} ▸</a>`,
-    extra4: `<a target="_blank" href="${uu(v(p+'extra4_url'))}" style="${SMALL_BTN_STYLE}margin-top:0;">${esc(v(p+'extra4_cta')||'En savoir plus')} ▸</a>`,
+    parrainage2: `<a target="_blank" href="${uu(v(p+'parr2_url'))}" style="${SMALL_BTN_STYLE}margin-top:0;">${parrainageCta} ▸</a>`,
+    extra3: `<a target="_blank" href="${uu(v(p+'extra3_url'))}" style="${SMALL_BTN_STYLE}margin-top:0;">${esc(v(p+'extra3_cta')||enSavoirPlus)} ▸</a>`,
+    extra4: `<a target="_blank" href="${uu(v(p+'extra4_url'))}" style="${SMALL_BTN_STYLE}margin-top:0;">${esc(v(p+'extra4_cta')||enSavoirPlus)} ▸</a>`,
     recrutement2: `<a target="_blank" href="${uu(v(p+'job2_url'))}" style="display:block;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:#1A1A1A!important;text-decoration:none;">${esc(v(p+'job2_cta')||'Toutes nos offres')} ▸</a>`
   };
   const boxInner = {
@@ -2121,8 +2143,8 @@ ${brefH2 ? `<!-- EN BREF (copie) -->
         <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:#1A1A1A;margin:0 0 8px 0;opacity:0.5;">${esc(v(p+'title_parr_kicker'))}</p>
         <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:700;font-style:italic;text-transform:uppercase;font-size:20px;line-height:1.2;color:#1A1A1A;margin:0 0 12px 0;">${esc(v(p+'title_parr_heading'))}</p>
         <p style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-weight:400;font-size:13px;line-height:1.6;color:#1A1A1A;margin:0 0 20px 0;opacity:0.7;">${esc(v(p+'parr_text'))}</p>
-        <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${uu(v(p+'parr_url'))}" style="height:40px;v-text-anchor:middle;width:192px;" arcsize="20%" fillcolor="#1A1A1A" stroke="f"><w:anchorlock/><center style="color:#FCD900;font-family:Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">MON LIEN DE PARRAINAGE</center></v:roundrect><![endif]-->
-        <!--[if !mso]><!--><a target="_blank" href="${uu(v(p+'parr_url'))}" style="display:inline-block;background-color:#1A1A1A;color:#FCD900!important;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none!important;padding:11px 22px;border-radius:20px;">Mon lien de parrainage</a><!--<![endif]-->
+        <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${uu(v(p+'parr_url'))}" style="height:40px;v-text-anchor:middle;width:192px;" arcsize="20%" fillcolor="#1A1A1A" stroke="f"><w:anchorlock/><center style="color:#FCD900;font-family:Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">${parrainageCta.toUpperCase()}</center></v:roundrect><![endif]-->
+        <!--[if !mso]><!--><a target="_blank" href="${uu(v(p+'parr_url'))}" style="display:inline-block;background-color:#1A1A1A;color:#FCD900!important;font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none!important;padding:11px 22px;border-radius:20px;">${parrainageCta}</a><!--<![endif]-->
       </td>
       ${parrImgH}
     </tr>
@@ -2189,14 +2211,14 @@ body{background-color:#EFEFEF;font-family:'Albert Sans',Helvetica,Arial,sans-ser
 <tr><td style="background-color:#3A3A3A;padding:10px 24px;">
   <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
     <td valign="middle" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;">
-      <a target="_blank" href="${uu('https://www.acl.lu/fr/mobilite/informations-trafic/info-trafic/')}" style="color:#F9F9F9!important;text-decoration:none;font-weight:700;">Info Trafic</a>
+      <a target="_blank" href="${uu('https://www.acl.lu/fr/mobilite/informations-trafic/info-trafic/')}" style="color:#F9F9F9!important;text-decoration:none;font-weight:700;">${T_TOPBAR.infoTrafic[lang] || T_TOPBAR.infoTrafic.fr}</a>
       <span style="color:#F9F9F9;margin:0 8px;opacity:0.4;">|</span>
-      <a target="_blank" href="${uu('https://www.acl.lu/fr/newsletter/')}" style="color:#F9F9F9!important;text-decoration:none;font-weight:700;">Nos Newsletters</a>
+      <a target="_blank" href="${uu('https://www.acl.lu/fr/newsletter/')}" style="color:#F9F9F9!important;text-decoration:none;font-weight:700;">${T_TOPBAR.newsletters[lang] || T_TOPBAR.newsletters.fr}</a>
       <span style="color:#F9F9F9;margin:0 8px;opacity:0.4;">|</span>
-      <a target="_blank" href="${uu('https://www.acl.lu/fr/assistance/application-acl/')}" style="color:#F9F9F9!important;text-decoration:none;font-weight:700;">App ACL</a>
+      <a target="_blank" href="${uu('https://www.acl.lu/fr/assistance/application-acl/')}" style="color:#F9F9F9!important;text-decoration:none;font-weight:700;">${T_TOPBAR.app[lang] || T_TOPBAR.app.fr}</a>
     </td>
     <td valign="middle" align="right" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:9px;color:#AAAAAA;white-space:nowrap;">
-      <a target="_blank" href="{{mirror}}" style="color:#AAAAAA!important;text-decoration:none;">Voir en ligne</a>
+      <a target="_blank" href="{{mirror}}" style="color:#AAAAAA!important;text-decoration:none;">${T_TOPBAR.online[lang] || T_TOPBAR.online.fr}</a>
     </td>
   </tr></table>
 </td></tr>
