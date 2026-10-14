@@ -197,6 +197,23 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
 .modal-box h3 { font-size: 13px; font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: 0.08em; color: var(--black); margin-bottom: 12px; }
 .modal-box p { font-size: 12px; color: #666; margin-bottom: 16px; line-height: 1.6; }
 
+/* ── AJOUT DE BLOCS STANDARDS ── */
+.add-block-bar { padding: 0 32px 48px; max-width: 1280px; margin: 0 auto; }
+.btn-add-block { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--font); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mid); background: #fff; border: 2px dashed var(--border); border-radius: var(--radius); padding: 16px; cursor: pointer; transition: border-color 0.15s, color 0.15s; }
+.btn-add-block:hover { border-color: var(--yellow); color: var(--black); }
+.btn-add-block .plus { font-size: 20px; line-height: 1; }
+#addBlockModal .modal-box { width: 480px; max-height: 90vh; overflow-y: auto; }
+.add-block-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+.add-block-opt { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 13px; }
+.add-block-opt:hover { border-color: var(--yellow); }
+.add-block-opt.disabled { opacity: 0.45; cursor: not-allowed; }
+.add-block-opt input { accent-color: var(--black); }
+.add-block-opt .opt-note { margin-left: auto; font-size: 10px; color: var(--mid); text-align: right; }
+.add-block-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.add-block-actions button { font-family: var(--font); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; border-radius: 18px; padding: 9px 18px; cursor: pointer; border: 1.5px solid var(--border); background: #fff; color: var(--black); }
+.add-block-actions button.primary { background: var(--yellow); border-color: var(--yellow); }
+.add-block-actions button:disabled { opacity: 0.4; cursor: not-allowed; }
+
 </style>
 </head>
 <body>
@@ -265,7 +282,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">14/10/2026 13:36</div>
+  <div class="build-stamp">14/10/2026 15:12</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -650,7 +667,9 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
     </div>
   </div>
 
-</div></div><!-- /pane FR -->
+</div>
+<div class="add-block-bar"><button type="button" class="btn-add-block" onclick="openAddBlocks('fr')"><span class="plus">+</span> Ajouter des blocs standards</button></div>
+</div><!-- /pane FR -->
 
 <!-- ══ TABS EN & DE — remplis dynamiquement ══ -->
 <div class="tab-pane" id="pane-en">
@@ -658,12 +677,27 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
     <div class="tl-notice"><span>Tous les champs sont éditables. Utilisez <strong>→ Créer EN &amp; DE</strong> dans le panneau gauche pour recopier le contenu FR ici.</span></div>
     <div id="en_fields"></div>
   </div>
+  <div class="add-block-bar"><button type="button" class="btn-add-block" onclick="openAddBlocks('en')"><span class="plus">+</span> Ajouter des blocs standards</button></div>
 </div>
 
 <div class="tab-pane" id="pane-de">
   <div class="content">
     <div class="tl-notice"><span>Tous les champs sont éditables. Utilisez <strong>→ Créer EN &amp; DE</strong> dans le panneau gauche pour recopier le contenu FR ici.</span></div>
     <div id="de_fields"></div>
+  </div>
+  <div class="add-block-bar"><button type="button" class="btn-add-block" onclick="openAddBlocks('de')"><span class="plus">+</span> Ajouter des blocs standards</button></div>
+</div>
+
+<!-- MODALE : AJOUT DE BLOCS STANDARDS -->
+<div class="modal-overlay" id="addBlockModal" style="display:none;" onclick="if(event.target===this)closeAddBlocks()">
+  <div class="modal-box">
+    <h3 id="addBlockTitle">Ajouter des blocs</h3>
+    <p>Cochez les blocs à ajouter en bas de cette version. Ils arrivent vides, avec les titres par défaut dans la langue de l'onglet.</p>
+    <div class="add-block-list" id="addBlockList"></div>
+    <div class="add-block-actions">
+      <button type="button" onclick="closeAddBlocks()">Annuler</button>
+      <button type="button" class="primary" id="addBlockConfirm" onclick="confirmAddBlocks()">Ajouter</button>
+    </div>
   </div>
 </div>
 
@@ -1144,10 +1178,32 @@ const SECTION_LABELS = {
   extra4: 'Carte additionnelle 4'
 };
 
-function getSectionOrder() {
-  const els = document.querySelectorAll('#pane-fr .content > .form-section[data-section]:not(.section-hidden)');
+// Chaque langue a sa propre visibilité de sections (supprimer un bloc en EN ne touche ni FR ni DE).
+// L'ordre, lui, reste piloté par l'onglet FR (seul onglet avec drag & drop).
+function langOfEl(el) {
+  const pane = el && el.closest('.tab-pane');
+  return pane ? pane.id.replace('pane-', '') : 'fr';
+}
+function sectionEl(lang, key) {
+  return document.querySelector(`#pane-${lang} .form-section[data-section="${key}"]`);
+}
+function isSectionHidden(lang, key) {
+  const el = sectionEl(lang, key);
+  if (!el) return lang === 'fr' ? false : isSectionHidden('fr', key);
+  return el.classList.contains('section-hidden');
+}
+
+// Ordre complet de l'onglet FR, sections masquées comprises.
+function getFullSectionOrder() {
+  const els = document.querySelectorAll('#pane-fr .content > .form-section[data-section]');
   if (!els.length) return DEFAULT_SECTION_ORDER.slice();
   return Array.from(els).map(el => el.dataset.section).filter(k => k && k !== 'params');
+}
+
+// Sections visibles dans la langue donnée, dans l'ordre FR.
+function getSectionOrder(lang) {
+  lang = lang || 'fr';
+  return getFullSectionOrder().filter(k => !isSectionHidden(lang, k));
 }
 
 function applySectionOrder(order) {
@@ -1164,9 +1220,10 @@ function deleteSection(btn) {
   const section = btn.closest('.form-section');
   const key = section && section.dataset.section;
   if (!key) return;
+  const lang = langOfEl(section);
   const label = SECTION_LABELS[key] || 'cette section';
-  if (!confirm(`Supprimer "${label}" de la newsletter ?`)) return;
-  document.querySelectorAll(`.form-section[data-section="${key}"]`).forEach(el => el.classList.add('section-hidden'));
+  if (!confirm(`Supprimer "${label}" de la version ${lang.toUpperCase()} ?`)) return;
+  section.classList.add('section-hidden');
 }
 
 const DUPLICATE_TYPES = [
@@ -1210,35 +1267,148 @@ function duplicateSection(btn) {
   const key = section && section.dataset.section;
   const spec = DUPLICATE_TYPES.find(t => t.from === key);
   if (!spec) return;
-  ['fr','en','de'].forEach(lang => {
-    spec.fields.forEach(([src, dst]) => setField(lang+'_'+dst, v(lang+'_'+src)));
-    if (spec.arrays) {
-      spec.arrays.forEach(([fromArr, toArr]) => {
-        D[lang][toArr] = JSON.parse(JSON.stringify(D[lang][fromArr]));
-        if (ITEM_RENDER_FNS[toArr]) ITEM_RENDER_FNS[toArr](lang);
-      });
-    }
-  });
-  document.querySelectorAll(`.form-section[data-section="${spec.to}"]`).forEach(el => {
-    el.classList.remove('section-hidden');
-    el.classList.remove('collapsed');
-  });
-  const frOriginal = document.querySelector(`#pane-fr .form-section[data-section="${key}"]`);
-  const frTwin = document.querySelector(`#pane-fr .form-section[data-section="${spec.to}"]`);
-  if (frOriginal && frTwin && frOriginal.nextElementSibling !== frTwin) {
+  const lang = langOfEl(section);
+  spec.fields.forEach(([src, dst]) => setField(lang+'_'+dst, v(lang+'_'+src)));
+  if (spec.arrays) {
+    spec.arrays.forEach(([fromArr, toArr]) => {
+      D[lang][toArr] = JSON.parse(JSON.stringify(D[lang][fromArr]));
+      if (ITEM_RENDER_FNS[toArr]) ITEM_RENDER_FNS[toArr](lang);
+    });
+  }
+  const twin = sectionEl(lang, spec.to);
+  if (twin) {
+    twin.classList.remove('section-hidden');
+    twin.classList.remove('collapsed');
+  }
+  // L'ordre de la newsletter suit l'onglet FR : on ne déplace la copie FR que si elle n'y est pas visible
+  const frOriginal = sectionEl('fr', key);
+  const frTwin = sectionEl('fr', spec.to);
+  if ((lang === 'fr' || isSectionHidden('fr', spec.to)) && frOriginal && frTwin && frOriginal.nextElementSibling !== frTwin) {
     frOriginal.parentNode.insertBefore(frTwin, frOriginal.nextElementSibling);
   }
-  if (spec.previewId) {
-    const imgField = spec.fields.find(([, dst]) => dst.endsWith('_img'));
-    const prevEl = document.getElementById(spec.previewId);
-    if (imgField && prevEl) prevEl.src = v('fr_'+imgField[1]);
-  }
-  ['en','de'].forEach(lang => {
-    document.querySelectorAll(`#${lang}_fields .field input[type="url"]`).forEach(inp => {
-      const img = inp.nextElementSibling; if (img && img.tagName === 'IMG') img.src = inp.value;
-    });
+  if (lang !== 'fr' && twin && section.nextElementSibling !== twin) section.parentNode.insertBefore(twin, section.nextElementSibling);
+  refreshImgPreviews(lang);
+  if (twin) twin.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ── AJOUT DE BLOCS STANDARDS (bouton +) ───────────
+// Chaque type a 2 emplacements (original + copie). Textes par défaut traduits par langue.
+const STANDARD_BLOCKS = [
+  { type: 'unebref', icon: '🗞', label: 'À la Une / Actualités / En Bref', slots: [
+    { key: 'unebref', arrays: ['actu','bref'], defaults: { title_une: 'une', title_actu: 'actu', title_bref: 'bref', une_cta: 'more' } },
+    { key: 'unebref2', arrays: ['actu2','bref2'], defaults: { title_une2: 'une', title_actu2: 'actu', title_bref2: 'bref', une2_cta: 'more' } } ] },
+  { type: 'banc', icon: '🚗', label: "Au banc d'essai", slots: [
+    { key: 'banc', arrays: ['banc'], defaults: { title_banc: 'banc' } },
+    { key: 'banc2', arrays: ['banc2'], defaults: { title_banc2: 'banc' } } ] },
+  { type: 'voy', icon: '✈️', label: 'Nos Voyages', slots: [
+    { key: 'voy', arrays: ['voy'], defaults: { title_voy: 'voy' } },
+    { key: 'voy2', arrays: ['voy2'], defaults: { title_voy2: 'voy' } } ] },
+  { type: 'agenda', icon: '📅', label: "L'Agenda", slots: [
+    { key: 'agenda', arrays: ['agenda'], defaults: { title_agenda: 'agenda', title_agenda_kicker: 'agendaKicker', agenda_cta: 'agendaCta' } },
+    { key: 'agenda2', arrays: ['agenda2'], defaults: { title_agenda2: 'agenda', title_agenda2_kicker: 'agendaKicker', agenda2_cta: 'agendaCta' } } ] },
+  { type: 'autotouring', icon: '📖', label: 'Autotouring', slots: [
+    { key: 'autotouring', arrays: [], defaults: { title_auto_kicker: 'autoKicker', title_auto_heading: 'autoHeading', auto_cta: 'autoCta' } },
+    { key: 'autotouring2', arrays: [], defaults: { title_auto2_kicker: 'autoKicker', title_auto2_heading: 'autoHeading', auto2_cta: 'autoCta' } } ] },
+  { type: 'recrutement', icon: '💼', label: 'Recrutement', slots: [
+    { key: 'recrutement', arrays: ['jobs'], defaults: { title_job_kicker: 'jobKicker', title_job_heading: 'jobHeading', job_cta: 'jobCta' } },
+    { key: 'recrutement2', arrays: ['jobs2'], defaults: { title_job2_kicker: 'jobKicker', title_job2_heading: 'jobHeading', job2_cta: 'jobCta' } } ] },
+  { type: 'parrainage', icon: '🎁', label: 'Parrainage', slots: [
+    { key: 'parrainage', arrays: [], defaults: { title_parr_kicker: 'parrKicker', title_parr_heading: 'parrHeading' } },
+    { key: 'parrainage2', arrays: [], defaults: { title_parr2_kicker: 'parrKicker', title_parr2_heading: 'parrHeading' } } ] }
+];
+
+const BLOCK_TEXTS = {
+  une:          { fr: 'À la une', en: 'Headlines', de: 'Im Fokus' },
+  actu:         { fr: 'Actualités', en: 'News', de: 'Aktuelles' },
+  bref:         { fr: 'En bref', en: 'In brief', de: 'Kurz notiert' },
+  more:         { fr: 'En savoir plus', en: 'More infos', de: 'Mehr infos' },
+  banc:         { fr: "Au banc d'essai", en: 'Road tests', de: 'Im Test' },
+  voy:          { fr: 'Nos Voyages', en: 'Our Trips', de: 'Unsere Reisen' },
+  agenda:       { fr: "L'Agenda", en: 'Agenda', de: 'Agenda' },
+  agendaKicker: { fr: 'Formations & événements', en: 'Training & events', de: 'Kurse & Veranstaltungen' },
+  agendaCta:    { fr: "Voir tout l'agenda", en: 'See the full agenda', de: 'Zur kompletten Agenda' },
+  autoKicker:   { fr: 'Magazine', en: 'Magazine', de: 'Magazin' },
+  autoHeading:  { fr: 'Lisez Autotouring !', en: 'Read Autotouring!', de: 'Lesen Sie Autotouring!' },
+  autoCta:      { fr: 'Lire le magazine digital', en: 'Read the digital magazine', de: 'Zum digitalen Magazin' },
+  jobKicker:    { fr: 'On recrute', en: "We're hiring", de: 'Wir stellen ein' },
+  jobHeading:   { fr: "Rejoignez l'équipe ACL", en: 'Join the ACL team', de: 'Werden Sie Teil des ACL-Teams' },
+  jobCta:       { fr: 'Toutes nos offres', en: 'All our vacancies', de: 'Alle Stellenangebote' },
+  parrKicker:   { fr: 'Programme membres', en: 'Members programme', de: 'Mitgliederprogramm' },
+  parrHeading:  { fr: 'Parrainez un proche, gagnez 10 €', en: 'Refer a friend, earn €10', de: 'Mitglied werben, 10 € erhalten' }
+};
+
+let addBlockLang = 'fr';
+
+function openAddBlocks(lang) {
+  addBlockLang = lang;
+  const flag = { fr: '🇫🇷 FR', en: '🇬🇧 EN', de: '🇩🇪 DE' }[lang] || lang.toUpperCase();
+  document.getElementById('addBlockTitle').textContent = 'Ajouter des blocs — ' + flag;
+  document.getElementById('addBlockList').innerHTML = STANDARD_BLOCKS.map(b => {
+    const free = b.slots.filter(s => isSectionHidden(lang, s.key)).length;
+    const note = free === 0 ? 'Maximum atteint (2)' : free === 1 ? 'Déjà présent · ajoutera un 2e bloc' : '';
+    return `<label class="add-block-opt${free ? '' : ' disabled'}">
+      <input type="checkbox" value="${b.type}"${free ? '' : ' disabled'} onchange="updateAddBlocksBtn()" />
+      <span>${b.icon} ${esc(b.label)}</span><span class="opt-note">${note}</span></label>`;
+  }).join('');
+  updateAddBlocksBtn();
+  document.getElementById('addBlockModal').style.display = 'flex';
+}
+
+function closeAddBlocks() { document.getElementById('addBlockModal').style.display = 'none'; }
+
+function updateAddBlocksBtn() {
+  document.getElementById('addBlockConfirm').disabled = !document.querySelector('#addBlockList input:checked');
+}
+
+function resetBlockSlot(lang, slot) {
+  const el = sectionEl(lang, slot.key);
+  if (!el) return null;
+  el.querySelectorAll('input, textarea').forEach(inp => { if (inp.type !== 'checkbox') inp.value = ''; });
+  el.querySelectorAll('img.img-prev').forEach(img => img.removeAttribute('src'));
+  slot.arrays.forEach(arr => {
+    D[lang][arr] = [];
+    if (ITEM_RENDER_FNS[arr]) ITEM_RENDER_FNS[arr](lang);
   });
-  if (frTwin) frTwin.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  Object.entries(slot.defaults).forEach(([field, textKey]) => {
+    const t = BLOCK_TEXTS[textKey];
+    setField(lang + '_' + field, t[lang] || t.fr);
+  });
+  return el;
+}
+
+function confirmAddBlocks() {
+  const lang = addBlockLang;
+  const types = Array.from(document.querySelectorAll('#addBlockList input:checked')).map(i => i.value);
+  const frContainer = document.querySelector('#pane-fr .content');
+  let last = null;
+  types.forEach(type => {
+    const block = STANDARD_BLOCKS.find(b => b.type === type);
+    const slot = block && block.slots.find(s => isSectionHidden(lang, s.key));
+    if (!slot) return;
+    const el = resetBlockSlot(lang, slot);
+    if (!el) return;
+    el.classList.remove('section-hidden', 'collapsed');
+    // Placé en bas de l'onglet ; côté FR (qui pilote l'ordre), seulement si le bloc n'y est pas visible
+    el.parentNode.appendChild(el);
+    if (lang !== 'fr' && isSectionHidden('fr', slot.key)) {
+      const frEl = sectionEl('fr', slot.key);
+      if (frEl && frContainer) frContainer.appendChild(frEl);
+    }
+    last = el;
+  });
+  closeAddBlocks();
+  if (last) {
+    last.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    toast(`${types.length > 1 ? types.length + ' blocs ajoutés' : 'Bloc ajouté'} (${lang.toUpperCase()}) ✓`, 'green');
+  }
+}
+
+// Rafraîchit les aperçus d'image d'une langue à partir des champs URL
+function refreshImgPreviews(lang) {
+  document.querySelectorAll(`#pane-${lang} .field input[type="url"]`).forEach(inp => {
+    const img = inp.parentNode.querySelector('img.img-prev');
+    if (img) img.src = inp.value;
+  });
 }
 
 // ── VALIDATION : ÉDITION OBLIGATOIRE ──────────────
@@ -1411,6 +1581,10 @@ function createEnDe() {
   const fr = collectLangData('fr');
   applyFrDataToLang('en', JSON.parse(JSON.stringify(fr)));
   applyFrDataToLang('de', JSON.parse(JSON.stringify(fr)));
+  // EN & DE repartent avec les mêmes blocs visibles que le FR
+  const frHidden = getHiddenSections('fr');
+  applyHiddenSectionsForLang('en', frHidden);
+  applyHiddenSectionsForLang('de', frHidden);
   document.getElementById('badge-en').textContent = '✓ Copié';
   document.getElementById('badge-de').textContent = '✓ Copié';
   updateWorkflowStep(3);
@@ -2161,7 +2335,7 @@ ${brefH2 ? `<!-- EN BREF (copie) -->
 </td></tr>`;
 
   const BOXABLE = new Set(['autotouring', 'recrutement', 'extra1', 'extra2', 'autotouring2', 'recrutement2', 'parrainage2', 'extra3', 'extra4']);
-  const sectionOrder = getSectionOrder();
+  const sectionOrder = getSectionOrder(lang);
   const orderedParts = [];
   for (let i = 0; i < sectionOrder.length; i++) {
     const key = sectionOrder[i];
@@ -2287,10 +2461,19 @@ ${orderedSectionsHTML}
 }
 
 // ── FIREBASE — SAUVEGARDE & CHARGEMENT ──────────────
-function getHiddenSections() {
+function getHiddenSections(lang) {
+  lang = lang || 'fr';
   return Object.keys(SECTION_LABELS).filter(key => {
-    const el = document.querySelector(`#pane-fr .form-section[data-section="${key}"]`);
+    const el = sectionEl(lang, key);
     return el && el.classList.contains('section-hidden');
+  });
+}
+
+function applyHiddenSectionsForLang(lang, hidden) {
+  const hiddenList = Array.isArray(hidden) ? hidden : [];
+  Object.keys(SECTION_LABELS).forEach(key => {
+    const el = sectionEl(lang, key);
+    if (el) el.classList.toggle('section-hidden', hiddenList.includes(key));
   });
 }
 
@@ -2312,8 +2495,10 @@ function collectAllData() {
   return {
     savedAt: new Date().toISOString(),
     name: v('fr_edition') || 'Sans titre',
-    order: getSectionOrder(),
-    hidden: getHiddenSections(),
+    order: getSectionOrder('fr'),
+    hidden: getHiddenSections('fr'),
+    fullOrder: getFullSectionOrder(),
+    hiddenByLang: { fr: getHiddenSections('fr'), en: getHiddenSections('en'), de: getHiddenSections('de') },
     fr: collectLangData('fr'),
     en: collectLangData('en'),
     de: collectLangData('de')
@@ -2324,8 +2509,13 @@ function setField(id, val) { const el = document.getElementById(id); if(el && va
 
 function loadAllData(data) {
   if (!data || !data.fr) return;
-  applyHiddenSections(data.hidden, data.order);
-  if (data.order) applySectionOrder(data.order);
+  if (data.hiddenByLang) {
+    ['fr','en','de'].forEach(l => applyHiddenSectionsForLang(l, data.hiddenByLang[l]));
+  } else {
+    // Éditions sauvegardées avant la visibilité par langue : même visibilité partout
+    applyHiddenSections(data.hidden, data.order);
+  }
+  if (data.fullOrder || data.order) applySectionOrder(data.fullOrder || data.order);
   applyFrDataToLang('fr', data.fr);
   if (data.en) { applyFrDataToLang('en', data.en); document.getElementById('badge-en').textContent = data.en.actu?.length ? '✓ Copié' : '—'; }
   if (data.de) { applyFrDataToLang('de', data.de); document.getElementById('badge-de').textContent = data.de.actu?.length ? '✓ Copié' : '—'; }
