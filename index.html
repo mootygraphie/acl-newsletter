@@ -282,7 +282,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">14/10/2026 16:34</div>
+  <div class="build-stamp">14/10/2026 17:20</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -694,6 +694,11 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
     <h3 id="addBlockTitle">Ajouter des blocs</h3>
     <p>Cochez les blocs à ajouter en bas de cette version. Ils arrivent vides, avec les titres par défaut dans la langue de l'onglet.</p>
     <div class="add-block-list" id="addBlockList"></div>
+    <div id="restoreBlockWrap" style="display:none;">
+      <h3>Restaurer un bloc supprimé</h3>
+      <p>Le bloc revient avec son contenu, à sa place d'origine.</p>
+      <div class="add-block-list" id="restoreBlockList"></div>
+    </div>
     <div class="add-block-actions">
       <button type="button" onclick="closeAddBlocks()">Annuler</button>
       <button type="button" class="primary" id="addBlockConfirm" onclick="confirmAddBlocks()">Ajouter</button>
@@ -1365,6 +1370,15 @@ function openAddBlocks(lang) {
       <input type="checkbox" value="${b.type}"${free ? '' : ' disabled'} onchange="updateAddBlocksBtn()" />
       <span>${b.icon} ${esc(b.label)}</span><span class="opt-note">${note}</span></label>`;
   }).join('');
+  const restorable = Object.keys(SECTION_LABELS).filter(k => isSectionHidden(lang, k) && sectionHasContent(lang, k));
+  document.getElementById('restoreBlockWrap').style.display = restorable.length ? '' : 'none';
+  document.getElementById('restoreBlockList').innerHTML = restorable.map(k => {
+    const el = sectionEl(lang, k);
+    const icon = (el.querySelector('.form-section-icon') || {}).textContent || '';
+    return `<label class="add-block-opt">
+      <input type="checkbox" value="${k}" onchange="updateAddBlocksBtn()" />
+      <span>${icon} ${esc(SECTION_LABELS[k])}</span><span class="opt-note">avec son contenu</span></label>`;
+  }).join('');
   updateAddBlocksBtn();
   document.getElementById('addBlockModal').style.display = 'flex';
 }
@@ -1372,7 +1386,19 @@ function openAddBlocks(lang) {
 function closeAddBlocks() { document.getElementById('addBlockModal').style.display = 'none'; }
 
 function updateAddBlocksBtn() {
-  document.getElementById('addBlockConfirm').disabled = !document.querySelector('#addBlockList input:checked');
+  document.getElementById('addBlockConfirm').disabled = !document.querySelector('#addBlockList input:checked, #restoreBlockList input:checked');
+}
+
+// Un bloc masqué a-t-il encore du contenu ? (titres par défaut et listes d'items vides exclus)
+function sectionHasContent(lang, key) {
+  const el = sectionEl(lang, key);
+  if (!el) return false;
+  let slot = null;
+  STANDARD_BLOCKS.forEach(b => b.slots.forEach(s => { if (s.key === key) slot = s; }));
+  if (slot && slot.arrays.some(arr => (D[lang][arr] || []).length)) return true;
+  const ignored = new Set(slot ? Object.keys(slot.defaults).map(f => lang + '_' + f) : []);
+  return Array.from(el.querySelectorAll('input, textarea'))
+    .some(inp => inp.type !== 'checkbox' && !ignored.has(inp.id) && inp.value.trim());
 }
 
 function resetBlockSlot(lang, slot) {
@@ -1394,7 +1420,16 @@ function resetBlockSlot(lang, slot) {
 function confirmAddBlocks() {
   const lang = addBlockLang;
   const types = Array.from(document.querySelectorAll('#addBlockList input:checked')).map(i => i.value);
+  const restores = Array.from(document.querySelectorAll('#restoreBlockList input:checked')).map(i => i.value);
   let last = null;
+  // Restaurations d'abord : un ajout du même type prendra alors l'emplacement libre suivant
+  restores.forEach(key => {
+    const el = sectionEl(lang, key);
+    if (!el) return;
+    el.classList.remove('section-hidden', 'collapsed');
+    last = el;
+  });
+  if (restores.length) refreshImgPreviews(lang);
   types.forEach(type => {
     const block = STANDARD_BLOCKS.find(b => b.type === type);
     const slot = block && block.slots.find(s => isSectionHidden(lang, s.key));
@@ -1408,7 +1443,8 @@ function confirmAddBlocks() {
   closeAddBlocks();
   if (last) {
     last.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    toast(`${types.length > 1 ? types.length + ' blocs ajoutés' : 'Bloc ajouté'} (${lang.toUpperCase()}) ✓`, 'green');
+    const n = types.length + restores.length;
+    toast(`${n > 1 ? n + ' blocs ajoutés/restaurés' : restores.length ? 'Bloc restauré' : 'Bloc ajouté'} (${lang.toUpperCase()}) ✓`, 'green');
   }
 }
 
