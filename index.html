@@ -265,7 +265,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">15/09/2026 14:44</div>
+  <div class="build-stamp">14/10/2026 13:36</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -1811,7 +1811,7 @@ function buildHTML(lang) {
   const buildBrefH = (items) => items.map((d,i,a) => `
       <tr><td style="padding:14px 0;${i<a.length-1?'border-bottom:1px solid #F0F0F0;':''}">
         <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr>
-          <td width="70" style="vertical-align:middle;"><span style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#555555;">${esc(d.cat)}</span></td>
+          <td width="90" style="vertical-align:middle;padding-right:12px;"><span style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#555555;">${esc(d.cat)}</span></td>
           <td style="vertical-align:middle;"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#1A1A1A!important;text-decoration:none;line-height:1.3;">${esc(d.title)}</a></td>
           <td width="44" align="right" style="vertical-align:middle;padding-right:8px;"><a target="_blank" href="${uu(d.url)}" style="font-family:'Albert Sans',Helvetica,Arial,sans-serif;font-size:22px;font-weight:700;color:#444444!important;text-decoration:none;">▸</a></td>
         </tr></table>
