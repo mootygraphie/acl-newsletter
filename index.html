@@ -282,7 +282,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">14/10/2026 15:12</div>
+  <div class="build-stamp">14/10/2026 16:34</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -1139,6 +1139,7 @@ function sectionDragOver(e) {
   if (!dragSectionEl) return;
   const target = e.currentTarget;
   if (target === dragSectionEl) return;
+  if (target.parentNode !== dragSectionEl.parentNode) return; // pas de déplacement d'un onglet à l'autre
   e.preventDefault();
   const rect = target.getBoundingClientRect();
   const before = (e.clientY - rect.top) < rect.height / 2;
@@ -1147,6 +1148,20 @@ function sectionDragOver(e) {
 function sectionDragEnd() {
   if (dragSectionEl) dragSectionEl.classList.remove('dragging');
   dragSectionEl = null;
+}
+
+// Onglets EN/DE (générés en JS) : ajoute la poignée ⠿ et les handlers de drag comme en FR
+function enableSectionDrag(lang) {
+  document.querySelectorAll(`#pane-${lang} .form-section[data-section]:not([data-section="params"])`).forEach(sec => {
+    sec.ondragstart = sectionDragStart;
+    sec.ondragover = sectionDragOver;
+    sec.ondrop = (e) => e.preventDefault();
+    sec.ondragend = sectionDragEnd;
+    const header = sec.querySelector('.form-section-header');
+    if (header && !header.querySelector('.section-drag-handle')) {
+      header.insertAdjacentHTML('afterbegin', '<span class="section-drag-handle" title="Déplacer">⠿</span>');
+    }
+  });
 }
 
 const DEFAULT_SECTION_ORDER = ['pub1','unebref','pub2','banc','voy','agenda','pub3','autotouring','recrutement','parrainage','extra1','extra2'];
@@ -1178,8 +1193,8 @@ const SECTION_LABELS = {
   extra4: 'Carte additionnelle 4'
 };
 
-// Chaque langue a sa propre visibilité de sections (supprimer un bloc en EN ne touche ni FR ni DE).
-// L'ordre, lui, reste piloté par l'onglet FR (seul onglet avec drag & drop).
+// Chaque langue a sa propre visibilité et son propre ordre de sections :
+// supprimer ou déplacer un bloc en EN ne touche ni FR ni DE.
 function langOfEl(el) {
   const pane = el && el.closest('.tab-pane');
   return pane ? pane.id.replace('pane-', '') : 'fr';
@@ -1193,21 +1208,27 @@ function isSectionHidden(lang, key) {
   return el.classList.contains('section-hidden');
 }
 
-// Ordre complet de l'onglet FR, sections masquées comprises.
-function getFullSectionOrder() {
-  const els = document.querySelectorAll('#pane-fr .content > .form-section[data-section]');
-  if (!els.length) return DEFAULT_SECTION_ORDER.slice();
+// Ordre complet d'un onglet, sections masquées comprises (onglet pas encore construit → ordre FR).
+function getFullSectionOrder(lang) {
+  lang = lang || 'fr';
+  const els = document.querySelectorAll(`#pane-${lang} .form-section[data-section]`);
+  if (!els.length) return lang === 'fr' ? DEFAULT_SECTION_ORDER.slice() : getFullSectionOrder('fr');
   return Array.from(els).map(el => el.dataset.section).filter(k => k && k !== 'params');
 }
 
-// Sections visibles dans la langue donnée, dans l'ordre FR.
+// Sections visibles dans la langue donnée, dans l'ordre de son onglet.
 function getSectionOrder(lang) {
   lang = lang || 'fr';
-  return getFullSectionOrder().filter(k => !isSectionHidden(lang, k));
+  return getFullSectionOrder(lang).filter(k => !isSectionHidden(lang, k));
 }
 
-function applySectionOrder(order) {
-  const container = document.querySelector('#pane-fr .content');
+function sectionContainer(lang) {
+  const first = document.querySelector(`#pane-${lang} .form-section[data-section]`);
+  return first ? first.parentNode : null;
+}
+
+function applySectionOrder(order, lang) {
+  const container = sectionContainer(lang || 'fr');
   if (!container || !Array.isArray(order)) return;
   order.forEach(key => {
     const el = container.querySelector(`.form-section[data-section="${key}"]`);
@@ -1280,13 +1301,7 @@ function duplicateSection(btn) {
     twin.classList.remove('section-hidden');
     twin.classList.remove('collapsed');
   }
-  // L'ordre de la newsletter suit l'onglet FR : on ne déplace la copie FR que si elle n'y est pas visible
-  const frOriginal = sectionEl('fr', key);
-  const frTwin = sectionEl('fr', spec.to);
-  if ((lang === 'fr' || isSectionHidden('fr', spec.to)) && frOriginal && frTwin && frOriginal.nextElementSibling !== frTwin) {
-    frOriginal.parentNode.insertBefore(frTwin, frOriginal.nextElementSibling);
-  }
-  if (lang !== 'fr' && twin && section.nextElementSibling !== twin) section.parentNode.insertBefore(twin, section.nextElementSibling);
+  if (twin && section.nextElementSibling !== twin) section.parentNode.insertBefore(twin, section.nextElementSibling);
   refreshImgPreviews(lang);
   if (twin) twin.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
@@ -1379,7 +1394,6 @@ function resetBlockSlot(lang, slot) {
 function confirmAddBlocks() {
   const lang = addBlockLang;
   const types = Array.from(document.querySelectorAll('#addBlockList input:checked')).map(i => i.value);
-  const frContainer = document.querySelector('#pane-fr .content');
   let last = null;
   types.forEach(type => {
     const block = STANDARD_BLOCKS.find(b => b.type === type);
@@ -1388,12 +1402,7 @@ function confirmAddBlocks() {
     const el = resetBlockSlot(lang, slot);
     if (!el) return;
     el.classList.remove('section-hidden', 'collapsed');
-    // Placé en bas de l'onglet ; côté FR (qui pilote l'ordre), seulement si le bloc n'y est pas visible
-    el.parentNode.appendChild(el);
-    if (lang !== 'fr' && isSectionHidden('fr', slot.key)) {
-      const frEl = sectionEl('fr', slot.key);
-      if (frEl && frContainer) frContainer.appendChild(frEl);
-    }
+    el.parentNode.appendChild(el); // placé en bas de l'onglet
     last = el;
   });
   closeAddBlocks();
@@ -1433,7 +1442,7 @@ function initApp() {
   // Initialise les onglets EN/DE avec des formulaires vides éditables
   ['en', 'de'].forEach(lang => {
     const el = document.getElementById(lang+'_fields');
-    if (el) { el.innerHTML = buildTranslatedFields(lang, {}); renderAll(lang); }
+    if (el) { el.innerHTML = buildTranslatedFields(lang, {}); renderAll(lang); enableSectionDrag(lang); }
   });
   // Seule "Paramètres généraux" est ouverte à l'origine
   collapseAllExceptParams(document);
@@ -1585,6 +1594,9 @@ function createEnDe() {
   const frHidden = getHiddenSections('fr');
   applyHiddenSectionsForLang('en', frHidden);
   applyHiddenSectionsForLang('de', frHidden);
+  const frOrder = getFullSectionOrder('fr');
+  applySectionOrder(frOrder, 'en');
+  applySectionOrder(frOrder, 'de');
   document.getElementById('badge-en').textContent = '✓ Copié';
   document.getElementById('badge-de').textContent = '✓ Copié';
   updateWorkflowStep(3);
@@ -2497,7 +2509,8 @@ function collectAllData() {
     name: v('fr_edition') || 'Sans titre',
     order: getSectionOrder('fr'),
     hidden: getHiddenSections('fr'),
-    fullOrder: getFullSectionOrder(),
+    fullOrder: getFullSectionOrder('fr'),
+    orderByLang: { fr: getFullSectionOrder('fr'), en: getFullSectionOrder('en'), de: getFullSectionOrder('de') },
     hiddenByLang: { fr: getHiddenSections('fr'), en: getHiddenSections('en'), de: getHiddenSections('de') },
     fr: collectLangData('fr'),
     en: collectLangData('en'),
@@ -2515,7 +2528,12 @@ function loadAllData(data) {
     // Éditions sauvegardées avant la visibilité par langue : même visibilité partout
     applyHiddenSections(data.hidden, data.order);
   }
-  if (data.fullOrder || data.order) applySectionOrder(data.fullOrder || data.order);
+  // Éditions sans ordre par langue : EN & DE prennent l'ordre FR (comportement d'avant)
+  const legacyOrder = data.fullOrder || data.order;
+  ['fr','en','de'].forEach(l => {
+    const ord = (data.orderByLang && data.orderByLang[l]) || legacyOrder;
+    if (ord) applySectionOrder(ord, l);
+  });
   applyFrDataToLang('fr', data.fr);
   if (data.en) { applyFrDataToLang('en', data.en); document.getElementById('badge-en').textContent = data.en.actu?.length ? '✓ Copié' : '—'; }
   if (data.de) { applyFrDataToLang('de', data.de); document.getElementById('badge-de').textContent = data.de.actu?.length ? '✓ Copié' : '—'; }
