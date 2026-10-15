@@ -282,7 +282,7 @@ body { font-family: var(--font); background: var(--grey); color: var(--black); f
       </div>
     </div>
   </div>
-  <div class="build-stamp">14/10/2026 17:20</div>
+  <div class="build-stamp">15/10/2026 10:30</div>
 </div>
 
 <!-- ED-MENU (outside sidebar to avoid overflow clipping) -->
@@ -1940,10 +1940,24 @@ function buildHTML(lang) {
     const jourLen = AGENDA_JOUR_LEN[lang] || 3;
     return full.replace(/\.$/, '').slice(0, jourLen) + '.';
   };
+  // Mois sur 3 lettres ; pas de point quand le mois complet fait 3 lettres (Mai / May)
+  const AGENDA_MOIS = {
+    fr: ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'],
+    en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    de: ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez']
+  };
+  const moisNoms = (l) => Array.from({ length: 12 }, (_, m) =>
+    new Intl.DateTimeFormat(AGENDA_LOCALE[l] || 'fr-FR', { month: 'long' }).format(new Date(2026, m, 1)).toLowerCase());
   const abbrevMois = (full) => {
     if (!full) return '';
-    const clean = full.replace(/\.$/, '');
-    return clean.length > 4 ? clean.slice(0, 4) + '.' : clean;
+    const clean = full.replace(/\.$/, '').trim().toLowerCase();
+    const l = AGENDA_MOIS[lang] ? lang : 'fr';
+    const noms = moisNoms(l);
+    let idx = noms.indexOf(clean);
+    if (idx < 0) idx = clean === 'juil' ? 6 : noms.findIndex(n => n.startsWith(clean));
+    if (idx < 0) return clean.length > 3 ? full.trim().slice(0, 3) + '.' : full.trim();
+    const abbr = AGENDA_MOIS[l][idx];
+    return noms[idx].length > 3 ? abbr + '.' : abbr;
   };
   const abbrevNum = (full) => {
     if (!full) return '';
